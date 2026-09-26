@@ -138,14 +138,14 @@
 
       <!-- Segmented Control Navigation -->
       <nav class="flex items-center bg-apple-surface p-1 rounded-xl border border-apple-border text-xs font-medium">
-        <button onclick="switchTab('assessment')" id="nav-assessment" class="segmented-item px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 bg-white text-black font-semibold shadow-sm">
-          <span>Kiểm tra trắc nghiệm</span>
+        <button onclick="switchTab('reference')" id="nav-reference" class="segmented-item px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 bg-white text-black font-semibold shadow-sm">
+          <span>Kiến thức & Sơ đồ</span>
         </button>
         <button onclick="switchTab('flashcards')" id="nav-flashcards" class="segmented-item px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 text-apple-secondary hover:text-apple-text">
           <span>Flashcard ghi nhớ</span>
         </button>
-        <button onclick="switchTab('reference')" id="nav-reference" class="segmented-item px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 text-apple-secondary hover:text-apple-text">
-          <span>Tài liệu tổng hợp</span>
+        <button onclick="switchTab('assessment')" id="nav-assessment" class="segmented-item px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 text-apple-secondary hover:text-apple-text">
+          <span>Kiểm tra năng lực</span>
         </button>
       </nav>
 
@@ -161,138 +161,244 @@
   <main class="max-w-6xl w-full mx-auto px-4 sm:px-6 py-8 flex-grow flex flex-col justify-start">
 
     <!-- ============================================================== -->
-    <!-- MODULE 1: MULTIPLE CHOICE ASSESSMENT (FORMER KAHOOT)           -->
+    <!-- MODULE 1: COMPREHENSIVE CURRICULUM REFERENCE & INTERACTIVE MINDMAP -->
     <!-- ============================================================== -->
-    <section id="view-assessment" class="w-full">
+    <section id="view-reference" class="w-full">
       
-      <!-- START PANEL -->
-      <div id="quiz-start-screen" class="max-w-2xl mx-auto py-12 px-6 sm:px-8 card-surface rounded-2xl border border-apple-border text-center">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-apple-accent/10 border border-apple-accent/20 text-apple-accent text-xs font-mono mb-4">
-          Phần 1: Bài đánh giá hiểu biết thực tế
-        </div>
-        <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-white mb-3">
-          Kiểm Tra Năng Lực Ứng Dụng AI Agency
-        </h2>
-        <p class="text-apple-secondary text-sm leading-relaxed mb-8 max-w-lg mx-auto">
-          Bộ đề gồm 15 câu hỏi tình huống thực tế dành cho Planner, Account và Creative. Nội dung bao quát các giới hạn kỹ thuật của Image Models, LLM, RAG, Vision-Language, Audio và Tiêu chuẩn an toàn thương hiệu (Brand Safety).
-        </p>
-
-        <div class="bg-apple-surface border border-apple-border rounded-xl p-4 mb-6 text-left max-w-md mx-auto text-xs text-apple-secondary space-y-2">
-          <div class="flex items-center justify-between text-apple-text font-medium border-b border-apple-border/50 pb-2">
-            <span>Cấu trúc bài kiểm tra</span>
-            <span class="font-mono">15 câu hỏi</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <span>Thời gian trả lời mỗi câu</span>
-            <span class="font-mono text-apple-text">30 giây</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <span>Hình thức đánh giá</span>
-            <span class="text-apple-text">Trắc nghiệm 4 lựa chọn có phản hồi học thuật</span>
-          </div>
+      <!-- Section Header -->
+      <div class="mb-6 pb-4 border-b border-apple-border flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <div class="text-xs font-mono text-apple-accent mb-1 uppercase tracking-wider">Hệ thống hóa kiến thức</div>
+          <h2 class="text-2xl sm:text-3xl font-semibold text-white tracking-tight">
+            Cẩm Nang & Sơ Đồ Nền Tảng AI Agency
+          </h2>
+          <p class="text-apple-secondary text-xs sm:text-sm mt-1 max-w-2xl">
+            Cấu trúc bài giảng của Trainer Trung Nguyễn được trực quan hóa dưới dạng Mindmap tương tác và bảng tham chiếu kỹ thuật, hỗ trợ xây dựng Proposal và Brief khả thi cho Production House.
+          </p>
         </div>
 
-        <div class="flex flex-col sm:flex-row gap-3 justify-center max-w-md mx-auto">
-          <input type="text" id="candidate-name" value="Học viên Agency" placeholder="Nhập tên hoặc bộ phận..." 
-            class="px-4 py-2.5 rounded-lg bg-black/60 border border-apple-border text-apple-text text-sm focus:outline-none focus:border-apple-accent focus:ring-1 focus:ring-apple-accent text-center font-medium">
-          <button onclick="startAssessment()" class="px-6 py-2.5 rounded-lg bg-apple-text text-black font-semibold text-sm hover:bg-white active:scale-[0.99] transition-all">
-            Bắt đầu làm bài
+        <!-- View Mode Switcher -->
+        <div class="inline-flex p-1 rounded-lg bg-apple-surface border border-apple-border text-xs shrink-0">
+          <button onclick="setReferenceView('mindmap')" id="btn-view-mindmap" class="px-3 py-1.5 rounded-md bg-white text-black font-semibold transition-all">
+            Sơ đồ tư duy (Mindmap)
+          </button>
+          <button onclick="setReferenceView('bento')" id="btn-view-bento" class="px-3 py-1.5 rounded-md text-apple-secondary hover:text-apple-text transition-all">
+            Bảng tham chiếu chi tiết
           </button>
         </div>
       </div>
 
-      <!-- ACTIVE ASSESSMENT PANEL -->
-      <div id="quiz-active-screen" class="hidden max-w-3xl mx-auto w-full">
+      <!-- INTERACTIVE MINDMAP CONTAINER -->
+      <div id="mindmap-container" class="space-y-6">
         
-        <!-- Header Info Bar -->
-        <div class="flex items-center justify-between gap-4 mb-4 text-xs">
-          <div class="flex items-center gap-3">
-            <span id="question-index-badge" class="font-mono px-2.5 py-1 rounded-md bg-apple-surface border border-apple-border text-apple-text font-medium">
-              Câu 01 / 15
-            </span>
-            <span id="question-domain-badge" class="text-apple-secondary font-medium tracking-wide">
-              Image Model Architecture
-            </span>
+        <!-- Mindmap Navigator Canvas & Tree -->
+        <div class="card-surface rounded-2xl p-5 sm:p-6 border border-apple-border">
+          <div class="flex items-center justify-between pb-3 mb-4 border-b border-apple-border/60 text-xs">
+            <span class="text-apple-secondary">Nhấp vào từng nhánh bên dưới để truy xuất phân tích kỹ thuật và bối cảnh ứng dụng thực tế:</span>
+            <span class="font-mono text-apple-accent text-[11px] hidden sm:inline">Interactive Mindmap 2.0</span>
           </div>
 
-          <!-- Timer Bar & Value -->
-          <div class="flex items-center gap-2 font-mono">
-            <span class="text-apple-secondary">Thời gian:</span>
-            <span id="timer-display" class="font-semibold text-apple-text w-6 text-right">30s</span>
-          </div>
-        </div>
-
-        <!-- Timer progress rail -->
-        <div class="w-full h-1 bg-white/10 rounded-full overflow-hidden mb-6">
-          <div id="timer-progress-bar" class="h-full bg-apple-accent transition-all duration-100 ease-linear" style="width: 100%;"></div>
-        </div>
-
-        <!-- Question Stem -->
-        <div class="card-surface rounded-2xl p-6 sm:p-8 mb-4 border border-apple-border">
-          <h3 id="question-stem" class="text-base sm:text-lg font-medium text-apple-text leading-relaxed tracking-tight">
-            Đang tải dữ liệu câu hỏi...
-          </h3>
-        </div>
-
-        <!-- 4 Options Grid -->
-        <div class="grid grid-cols-1 gap-2.5 mb-5" id="options-container">
-          <!-- Dynamically populated via script -->
-        </div>
-
-        <!-- Academic Explanatory Rationale -->
-        <div id="explanation-box" class="hidden card-surface rounded-2xl p-5 border border-apple-border">
-          <div class="flex items-center justify-between pb-3 mb-3 border-b border-apple-border/60">
-            <div class="flex items-center gap-2">
-              <span id="eval-status-icon" class="text-sm font-semibold font-mono"></span>
-              <span id="eval-status-text" class="text-sm font-medium"></span>
-            </div>
-            <span id="eval-score-delta" class="font-mono text-xs text-apple-secondary"></span>
-          </div>
-          
-          <div class="text-xs sm:text-sm text-apple-secondary leading-relaxed space-y-1.5" id="eval-rationale-content">
-            <!-- Content inserted via script -->
-          </div>
-
-          <div class="mt-5 flex justify-end">
-            <button onclick="advanceNextQuestion()" class="px-5 py-2 rounded-lg bg-apple-text text-black hover:bg-white font-medium text-xs sm:text-sm transition-colors flex items-center gap-2">
-              <span>Chuyển sang câu tiếp theo</span>
-              <span>→</span>
+          <!-- Mindmap Branches Layout -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 mb-6">
+            
+            <!-- Branch 1 -->
+            <button onclick="selectMindmapNode('ecosystem')" id="node-ecosystem" class="mindmap-node text-left p-3.5 rounded-xl border border-apple-border bg-apple-surface hover:border-apple-accent/60 transition-all group">
+              <div class="flex items-center justify-between mb-2">
+                <span class="w-2 h-2 rounded-full bg-apple-accent"></span>
+                <span class="text-[10px] font-mono text-apple-tertiary">01</span>
+              </div>
+              <div class="text-xs font-semibold text-white group-hover:text-apple-accent transition-colors">Hệ Sinh Thái & API</div>
+              <div class="text-[11px] text-apple-secondary mt-1 line-clamp-2">6 nhóm mô hình AI nền tảng và giao thức tích hợp API vào hệ thống nhãn hàng.</div>
             </button>
+
+            <!-- Branch 2 -->
+            <button onclick="selectMindmapNode('image')" id="node-image" class="mindmap-node text-left p-3.5 rounded-xl border border-apple-border bg-apple-surface hover:border-emerald-400/60 transition-all group">
+              <div class="flex items-center justify-between mb-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                <span class="text-[10px] font-mono text-apple-tertiary">02</span>
+              </div>
+              <div class="text-xs font-semibold text-white group-hover:text-emerald-300 transition-colors">Image Deployment</div>
+              <div class="text-[11px] text-apple-secondary mt-1 line-clamp-2">Face Swap, Inpainting và 3 nhóm Fine-Tuning (Product, Style, Consistency).</div>
+            </button>
+
+            <!-- Branch 3 -->
+            <button onclick="selectMindmapNode('llm')" id="node-llm" class="mindmap-node text-left p-3.5 rounded-xl border border-apple-border bg-apple-surface hover:border-amber-400/60 transition-all group">
+              <div class="flex items-center justify-between mb-2">
+                <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                <span class="text-[10px] font-mono text-apple-tertiary">03</span>
+              </div>
+              <div class="text-xs font-semibold text-white group-hover:text-amber-300 transition-colors">Cấu Trúc LLM & RAG</div>
+              <div class="text-[11px] text-apple-secondary mt-1 line-clamp-2">Phân tầng Base, Instruct (System Prompt) và RAG truy xuất Vector Database.</div>
+            </button>
+
+            <!-- Branch 4 -->
+            <button onclick="selectMindmapNode('vision')" id="node-vision" class="mindmap-node text-left p-3.5 rounded-xl border border-apple-border bg-apple-surface hover:border-sky-400/60 transition-all group">
+              <div class="flex items-center justify-between mb-2">
+                <span class="w-2 h-2 rounded-full bg-sky-400"></span>
+                <span class="text-[10px] font-mono text-apple-tertiary">04</span>
+              </div>
+              <div class="text-xs font-semibold text-white group-hover:text-sky-300 transition-colors">Vision, Speech & Audio</div>
+              <div class="text-[11px] text-apple-secondary mt-1 line-clamp-2">Quy trình 2 lớp Vision+LLM, ElevenLabs voice cloning và giới hạn API âm nhạc.</div>
+            </button>
+
+            <!-- Branch 5 -->
+            <button onclick="selectMindmapNode('safety')" id="node-safety" class="mindmap-node text-left p-3.5 rounded-xl border border-apple-border bg-apple-surface hover:border-rose-400/60 transition-all group">
+              <div class="flex items-center justify-between mb-2">
+                <span class="w-2 h-2 rounded-full bg-rose-400"></span>
+                <span class="text-[10px] font-mono text-apple-tertiary">05</span>
+              </div>
+              <div class="text-xs font-semibold text-white group-hover:text-rose-300 transition-colors">Brand Safety</div>
+              <div class="text-[11px] text-apple-secondary mt-1 line-clamp-2">Bộ tiêu chuẩn kiểm duyệt nhiều lớp, Pre-Approved Library và phòng chống rủi ro.</div>
+            </button>
+
           </div>
+
+          <!-- Selected Node Deep-dive Panel -->
+          <div id="mindmap-detail-panel" class="bg-black/50 rounded-xl p-5 sm:p-6 border border-apple-border">
+            <!-- Dynamically populated via JS -->
+          </div>
+
         </div>
 
       </div>
 
-      <!-- ASSESSMENT RESULT PANEL -->
-      <div id="quiz-result-screen" class="hidden max-w-xl mx-auto py-10 px-6 sm:px-8 card-surface rounded-2xl border border-apple-border text-center">
-        <div class="font-mono text-xs text-apple-accent uppercase tracking-wider mb-2">Báo cáo kết quả</div>
-        <h2 class="text-2xl font-semibold text-white tracking-tight mb-2" id="result-user-headline">Hoàn thành bài kiểm tra</h2>
-        <p class="text-apple-secondary text-xs sm:text-sm mb-6 max-w-md mx-auto" id="result-summary-text">
-          Dưới đây là thống kê chi tiết mức độ lĩnh hội các khái niệm cốt lõi theo giáo trình.
-        </p>
+      <!-- BENTO REFERENCE VIEW CONTAINER (Hidden by default) -->
+      <div id="bento-container" class="hidden grid grid-cols-1 md:grid-cols-2 gap-5">
 
-        <!-- Metric Cards -->
-        <div class="grid grid-cols-3 gap-3 mb-8">
-          <div class="bg-apple-surface p-3.5 rounded-xl border border-apple-border text-left">
-            <div class="text-[11px] text-apple-secondary mb-1">Số câu chính xác</div>
-            <div id="metric-accuracy" class="text-xl font-semibold font-mono text-apple-text">0 / 15</div>
+        <!-- Block 1: Model Ecosystem & API -->
+        <article class="card-surface rounded-2xl p-6 border border-apple-border">
+          <div class="flex items-center justify-between mb-4 pb-3 border-b border-apple-border/60">
+            <h3 class="text-sm font-semibold text-white tracking-tight flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-apple-accent"></span>
+              <span>1. Hệ Sinh Thái Mô Hình & Sức Mạnh API</span>
+            </h3>
+            <span class="text-[11px] font-mono text-apple-secondary">Foundation</span>
           </div>
-          <div class="bg-apple-surface p-3.5 rounded-xl border border-apple-border text-left">
-            <div class="text-[11px] text-apple-secondary mb-1">Tỷ lệ hoàn thành</div>
-            <div id="metric-percentage" class="text-xl font-semibold font-mono text-apple-text">0%</div>
-          </div>
-          <div class="bg-apple-surface p-3.5 rounded-xl border border-apple-border text-left">
-            <div class="text-[11px] text-apple-secondary mb-1">Đánh giá chung</div>
-            <div id="metric-rank" class="text-sm font-semibold font-mono text-apple-accent pt-1">Đạt</div>
-          </div>
-        </div>
 
-        <div class="flex flex-col sm:flex-row gap-3 justify-center">
-          <button onclick="startAssessment()" class="px-5 py-2.5 rounded-lg bg-apple-text text-black hover:bg-white text-xs sm:text-sm font-medium transition-colors">
-            Thực hiện lại bài kiểm tra
-          </button>
-          <button onclick="switchTab('flashcards')" class="px-5 py-2.5 rounded-lg border border-apple-border bg-apple-surface hover:bg-apple-elevated text-apple-text text-xs sm:text-sm font-medium transition-colors">
-            Chuyển qua Flashcard ôn tập
+          <div class="space-y-3 text-xs sm:text-sm text-apple-secondary leading-relaxed">
+            <div>
+              <strong class="text-apple-text block font-medium">Sáu phân nhóm mô hình thông dụng:</strong>
+              <ul class="list-disc pl-4 mt-1 space-y-1 text-xs">
+                <li><b class="text-apple-text">LLM (Large Language Model):</b> Xử lý, thấu hiểu ngữ cảnh và tạo sinh văn bản (OpenAI GPT, Anthropic Claude, Google Gemini).</li>
+                <li><b class="text-apple-text">Image Models:</b> Tạo ảnh từ mô tả văn bản (Stable Diffusion, Midjourney, DALL-E 3).</li>
+                <li><b class="text-apple-text">Vision-Language Models:</b> Nhận diện đối tượng, bối cảnh và trích xuất dữ liệu từ hình ảnh.</li>
+                <li><b class="text-apple-text">Speech Recognition:</b> Chuyển đổi giọng nói thành văn bản (Whisper AI, phục vụ ghi nhận họp, phân tích call center).</li>
+                <li><b class="text-apple-text">Generative Audio:</b> Tạo âm thanh môi trường, clone giọng đọc (ElevenLabs), hòa âm tạo nhạc (Suno).</li>
+                <li><b class="text-apple-text">Video Models:</b> Text-to-Video (OpenAI Sora, Runway).</li>
+              </ul>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-apple-surface border border-apple-border text-xs">
+              <span class="font-semibold text-apple-text block mb-1">Bản chất của API (Application Programming Interface):</span>
+              Là giao thức kết nối cho phép Agency mang toàn bộ trí thông minh nhân tạo tích hợp trực tiếp vào Microsite, Zalo Mini App, Web App hoặc hệ thống nội bộ của nhãn hàng, không buộc người dùng cuối phải thao tác trên website của nhà cung cấp mô hình.
+            </div>
+          </div>
+        </article>
+
+        <!-- Block 2: Image Deployment Approaches -->
+        <article class="card-surface rounded-2xl p-6 border border-apple-border">
+          <div class="flex items-center justify-between mb-4 pb-3 border-b border-apple-border/60">
+            <h3 class="text-sm font-semibold text-white tracking-tight flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              <span>2. Ba Hướng Triển Khai Image Model</span>
+            </h3>
+            <span class="text-[11px] font-mono text-apple-secondary">Computer Vision</span>
+          </div>
+
+          <div class="space-y-3.5 text-xs sm:text-sm text-apple-secondary leading-relaxed">
+            <div>
+              <strong class="text-apple-text font-medium">A. Face Swap (Hoán đổi khuôn mặt):</strong>
+              <p class="text-xs mt-0.5">Ghép khuôn mặt người dùng vào ảnh mẫu cơ sở (Base image) đã được thiết kế sẵn. Áp dụng hiệu quả trong các campaign tương tác nhanh (Momo lì xì QR, Zalo Tết). <em class="text-apple-text">Điều kiện kỹ thuật:</em> Ảnh base chỉ chứa duy nhất 1 khuôn mặt chuẩn góc nhìn.</p>
+            </div>
+
+            <div>
+              <strong class="text-apple-text font-medium">B. Inpainting / Add-painting:</strong>
+              <p class="text-xs mt-0.5">Giữ nguyên cấu trúc sản phẩm thực tế (chai serum, đôi giày Biti's Hunter) và vẽ hòa quyện background mới xung quanh, hoặc vẽ đè trang phục lên người mẫu ảo.</p>
+            </div>
+
+            <div>
+              <strong class="text-apple-text font-medium">C. Fine-Tuning (Huấn luyện tùy biến mô hình):</strong>
+              <ul class="list-disc pl-4 mt-1 space-y-1 text-xs">
+                <li><strong>Product Fine-Tune:</strong> Nạp tập dữ liệu 20–30 ảnh đa góc độ để AI học sản phẩm đặc thù chưa có trong tập dữ liệu toàn cầu (như tương ớt Chin-su, Apple Vision Pro).</li>
+                <li><strong>Style Fine-Tune:</strong> Định hình một phong cách thẩm mỹ riêng (retro Sài Gòn, visual phim chiếu rạp) với tập mẫu 100–200 hình.</li>
+                <li><strong>Character Consistency:</strong> Xây dựng đại sứ ảo (Virtual Influencer) giữ đồng nhất nhân diện qua nhiều bối cảnh khác nhau.</li>
+              </ul>
+            </div>
+
+            <div class="p-2.5 rounded-lg bg-apple-surface border border-apple-border text-xs text-apple-text">
+              <strong>Nguồn tài nguyên Replicate.com:</strong> Nền tảng lưu trữ hàng nghìn Open-Source Models đã tích hợp sẵn API gọi dùng ngay, giảm thiểu tối đa chi phí đầu tư máy chủ GPU riêng.
+            </div>
+          </div>
+        </article>
+
+        <!-- Block 3: LLM Architecture: Base vs Instruct vs RAG -->
+        <article class="card-surface rounded-2xl p-6 border border-apple-border">
+          <div class="flex items-center justify-between mb-4 pb-3 border-b border-apple-border/60">
+            <h3 class="text-sm font-semibold text-white tracking-tight flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+              <span>3. Cấu Trúc Vận Hành LLM & Token</span>
+            </h3>
+            <span class="text-[11px] font-mono text-apple-secondary">Natural Language</span>
+          </div>
+
+          <div class="space-y-3 text-xs sm:text-sm text-apple-secondary leading-relaxed">
+            <div class="space-y-2">
+              <div>
+                <strong class="text-apple-text font-medium">Cấp độ 1 — Base Model:</strong> Gọi trực tiếp API nguyên bản, văn bản phản hồi chưa qua định hướng luồng hay persona.
+              </div>
+              <div>
+                <strong class="text-apple-text font-medium">Cấp độ 2 — Instruct (System Prompting):</strong> Đóng vai và kiểm soát luật phản hồi theo kịch bản nhãn hàng (ví dụ: bói toán LaVie, Tarot Coca-Cola). Phù hợp dữ liệu nhỏ (&lt; 16.000 từ / ~10 trang A4), chi phí thấp, tốc độ nhanh.
+              </div>
+              <div>
+                <strong class="text-apple-text font-medium">Cấp độ 3 — RAG (Retrieval-Augmented Generation):</strong> Truy xuất dữ liệu từ Vector Database đối với kho tài liệu khổng lồ (bộ luật giao thông, tài liệu y khoa 1.000 trang). Ngăn ngừa triệt để tình trạng AI bịa đặt (hallucination).
+              </div>
+            </div>
+
+            <div class="p-3 rounded-xl bg-apple-surface border border-apple-border text-xs">
+              <strong class="text-apple-text block mb-1">Hiểu đúng về Context Window 128K Tokens:</strong>
+              Mô hình có khả năng tiếp nhận khối lượng đầu vào (Input) lên tới ~300 trang A4 (như tổng hợp 10.000 bình luận để phân tích tình cảm - Sentiment Analysis), tuy nhiên độ dài phản hồi đầu ra (Output) bị giới hạn ở quy mô văn bản ngắn gọn.
+            </div>
+          </div>
+        </article>
+
+        <!-- Block 4: Vision Pipeline & Brand Safety Protocols -->
+        <article class="card-surface rounded-2xl p-6 border border-apple-border">
+          <div class="flex items-center justify-between mb-4 pb-3 border-b border-apple-border/60">
+            <h3 class="text-sm font-semibold text-white tracking-tight flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-rose-400"></span>
+              <span>4. Quy Trình Phối Hợp & Brand Safety</span>
+            </h3>
+            <span class="text-[11px] font-mono text-apple-secondary">Governance</span>
+          </div>
+
+          <div class="space-y-3 text-xs sm:text-sm text-apple-secondary leading-relaxed">
+            <div>
+              <strong class="text-apple-text font-medium">Quy trình 2 bước chuẩn kỹ thuật:</strong>
+              <p class="text-xs mt-0.5">Sử dụng mô hình thị giác (Vision) độc quyền cho bước <span class="text-apple-text font-medium underline">nhận diện đối tượng/độ tuổi</span>, sau đó chuyển giao thông số sang LLM đã cài đặt hướng dẫn (Instruct) để <span class="text-apple-text font-medium underline">sáng tạo thông điệp</span>. Không để Vision tự ý suy diễn nội dung.</p>
+            </div>
+
+            <div>
+              <strong class="text-apple-text font-medium">Bộ 6 tiêu chuẩn Brand Safety trong chiến dịch:</strong>
+              <ol class="list-decimal pl-4 mt-1 space-y-1 text-xs">
+                <li><strong>Minh bạch (Transparency):</strong> Công bố rõ nội dung do AI hỗ trợ tạo lập.</li>
+                <li><strong>System Prompt Safeguards:</strong> Đặt quy định loại trừ đối thủ, chính trị, tôn giáo.</li>
+                <li><strong>Mô hình kiểm duyệt 2 lớp (Moderation Model):</strong> Lọc từ khóa độc hại trước khi chuyển lệnh tới mô hình chính.</li>
+                <li><strong>Thư viện phê duyệt trước (Pre-Approved Library):</strong> Giới hạn người dùng chọn các option định sẵn thay vì nhập văn bản tự do nhằm chặn đứng Prompt Injection.</li>
+                <li><strong>Không tư vấn sức khỏe/tài chính độc lập:</strong> Bắt buộc phải có RAG và chuyên gia phê duyệt nguồn.</li>
+                <li><strong>Thu thập phản hồi (Feedback Mechanism):</strong> Tích hợp nút đánh giá để ghi nhận và hiệu chỉnh thuật toán.</li>
+              </ol>
+            </div>
+          </div>
+        </article>
+
+      </div>
+
+      <!-- Quick Step Actions -->
+      <div class="mt-8 pt-6 border-t border-apple-border flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-apple-secondary">
+        <span>Bước tiếp theo trong lộ trình ôn tập:</span>
+        <div class="flex items-center gap-2">
+          <button onclick="switchTab('flashcards')" class="px-4 py-2 rounded-lg bg-apple-surface hover:bg-apple-elevated border border-apple-border text-apple-text font-medium transition-colors">
+            Chuyển sang Flashcard ghi nhớ →
           </button>
         </div>
       </div>
@@ -397,18 +503,26 @@
         </button>
       </div>
 
+      <div class="mt-8 pt-4 border-t border-apple-border text-center">
+        <button onclick="switchTab('assessment')" class="text-xs text-apple-secondary hover:text-apple-text underline">
+          Đã sẵn sàng? Chuyển sang bài kiểm tra trắc nghiệm 15 câu →
+        </button>
+      </div>
+
     </section>
 
     <!-- ============================================================== -->
-    <!-- MODULE 3: COMPREHENSIVE CURRICULUM REFERENCE                   -->
+    <!-- MODULE 3: MULTIPLE CHOICE ASSESSMENT (FORMER KAHOOT)           -->
     <!-- ============================================================== -->
-    <section id="view-reference" class="hidden w-full max-w-5xl mx-auto">
+    <section id="view-assessment" class="hidden w-full">
       
-      <!-- Section Header -->
-      <div class="mb-8 pb-5 border-b border-apple-border">
-        <div class="text-xs font-mono text-apple-accent mb-1 uppercase tracking-wider">Hệ thống hóa kiến thức</div>
-        <h2 class="text-2xl sm:text-3xl font-semibold text-white tracking-tight">
-          Cẩm Nang Nền Tảng AI Cho Creative Agency
+      <!-- START PANEL -->
+      <div id="quiz-start-screen" class="max-w-2xl mx-auto py-12 px-6 sm:px-8 card-surface rounded-2xl border border-apple-border text-center">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-apple-accent/10 border border-apple-accent/20 text-apple-accent text-xs font-mono mb-4">
+          Phần 3: Bài đánh giá hiểu biết thực tế
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-white mb-3">
+          Kiểm Tra Năng Lực Ứng Dụng AI Agency
         </h2>
         <p class="text-apple-secondary text-xs sm:text-sm mt-1 max-w-2xl">
           Đúc kết toàn bộ các nguyên lý kỹ thuật trọng tâm theo bài giảng của Trainer Trung Nguyễn, hỗ trợ xây dựng Proposal, định hướng khả thi cho chiến dịch và brief chuẩn xác với đội ngũ Lập trình / Production House.
@@ -544,14 +658,14 @@
           </div>
         </article>
 
-      </div>
-
-      <!-- Action Footer -->
-      <div class="mt-8 pt-6 border-t border-apple-border flex justify-between items-center text-xs text-apple-secondary">
-        <span>Tài liệu tham chiếu nội bộ</span>
-        <button onclick="switchTab('assessment')" class="px-4 py-2 rounded-lg bg-apple-surface hover:bg-apple-elevated border border-apple-border text-apple-text font-medium transition-colors">
-          Thực hiện bài kiểm tra trắc nghiệm →
-        </button>
+        <div class="flex flex-col sm:flex-row gap-3 justify-center">
+          <button onclick="startAssessment()" class="px-5 py-2.5 rounded-lg bg-apple-text text-black hover:bg-white text-xs sm:text-sm font-medium transition-colors">
+            Thực hiện lại bài kiểm tra
+          </button>
+          <button onclick="switchTab('reference')" class="px-5 py-2.5 rounded-lg border border-apple-border bg-apple-surface hover:bg-apple-elevated text-apple-text text-xs sm:text-sm font-medium transition-colors">
+            Quay lại sơ đồ kiến thức
+          </button>
+        </div>
       </div>
 
     </section>
@@ -613,6 +727,198 @@
     function soundNegative() {
       playTone(260, 'sine', 0.12, 0.06);
       setTimeout(() => playTone(220, 'sine', 0.16, 0.06), 90);
+    }
+
+    /* ==============================================================
+       1.5. INTERACTIVE MINDMAP KNOWLEDGE REPOSITORY
+       ============================================================== */
+    const mindmapData = {
+      ecosystem: {
+        badgeColor: "bg-apple-accent",
+        category: "Khối 01: Hệ Sinh Thái & Sức Mạnh API",
+        headline: "Nền tảng kết nối và 6 phân nhóm mô hình trọng tâm",
+        principles: [
+          {
+            term: "Bản chất cốt lõi của API",
+            desc: "Application Programming Interface là cầu nối mã lệnh cho phép Agency mang toàn bộ trí tuệ nhân tạo của OpenAI, Claude hay Stable Diffusion tích hợp thẳng vào Microsite, Zalo Mini App, Web Game hoặc hệ thống CRM của nhãn hàng. Người dùng cuối tham gia campaign không bao giờ phải truy cập chat.openai.com."
+          },
+          {
+            term: "Sáu phân nhóm mô hình thông dụng",
+            desc: "1. LLM (Text generation) — 2. Image Model (Tạo ảnh) — 3. Vision-Language (Hiểu thị giác) — 4. Speech Recognition (Whisper gỡ băng) — 5. Generative Audio (TTS & Voice clone) — 6. Text-to-Video (Sora, Runway)."
+          },
+          {
+            term: "Mô hình đóng (Closed) vs Mở (Open-Source)",
+            desc: "Closed-source (DALL-E 3, Midjourney): Trả phí, không thể can thiệp sâu vào trọng số hoặc huấn luyện lại cho sản phẩm nội địa. Open-source (Stable Diffusion): Cho phép tùy biến hoàn toàn, tự do huấn luyện và lưu trữ linh hoạt trên Replicate.com."
+          }
+        ],
+        agencyTakeaway: "Strategic Planner và Account cần xác định ngay từ buổi họp khách hàng đầu tiên: Campaign cần tích hợp vào đâu? Nếu cần web app tự động, bắt buộc giải pháp phải có API mở; không đề xuất các công cụ chỉ thao tác được trên giao diện web độc quyền."
+      },
+      image: {
+        badgeColor: "bg-emerald-400",
+        category: "Khối 02: Ba Hướng Triển Khai Image Model",
+        headline: "Face Swap, Inpainting và Huấn luyện tùy biến (Fine-Tuning)",
+        principles: [
+          {
+            term: "1. Face Swap (Hoán đổi khuôn mặt)",
+            desc: "Ghép mặt người dùng vào ảnh mẫu cơ sở (Base image) được vẽ sẵn. Rất phổ biến cho Momo QR lì xì, Zalo Tết. Giới hạn bắt buộc: Ảnh base chỉ chứa đúng 1 khuôn mặt rõ nét và cùng góc nhìn."
+          },
+          {
+            term: "2. Inpainting / Add-painting (Vẽ cục bộ)",
+            desc: "Giữ nguyên cấu trúc hình học sản phẩm thực tế (chai serum It'S SKIN, đôi giày Biti's Hunter) và vẽ hòa quyện background mới xung quanh, hoặc dùng mask chọn áo quần để thay đổi trang phục trên người mẫu ảo."
+          },
+          {
+            term: "3. Fine-Tuning (Huấn luyện bổ sung)",
+            desc: "• Product Fine-Tune: Chụp 20–30 góc để AI học sản phẩm chưa có trong dữ liệu toàn cầu (Chin-su, Vision Pro).<br>• Style Fine-Tune: Dạy AI nhận diện 1 phong cách mỹ thuật riêng với 100–200 hình mẫu.<br>• Character Consistency: Tạo đại sứ ảo (như Tami) giữ diện mạo bất biến qua mọi hoạt động."
+          }
+        ],
+        agencyTakeaway: "Không hứa hẹn với khách hàng rằng Midjourney hay ChatGPT có thể tạo ra sản phẩm nội địa nếu chưa qua bước Fine-Tuning. Hãy tận dụng kho mô hình mã nguồn mở trên Replicate.com để giảm thiểu chi phí máy chủ."
+      },
+      llm: {
+        badgeColor: "bg-amber-400",
+        category: "Khối 03: Ba Cấp Độ Vận Hành LLM & Context Window",
+        headline: "Từ API nguyên bản, System Prompting đến kiến trúc RAG",
+        principles: [
+          {
+            term: "Cấp độ 1 — Base Model",
+            desc: "Gọi trực tiếp trí thông minh ngôn ngữ nguyên bản. Phản hồi tự do, không kiểm soát được giọng điệu hay vai trò theo kịch bản nhãn hàng."
+          },
+          {
+            term: "Cấp độ 2 — Instruct (System Prompting)",
+            desc: "Quy định vai trò và nguyên tắc phản hồi nghiêm ngặt (Ví dụ: 'Bạn là Viv - Tarot của Coca-Cola...'). Nhanh, chuẩn xác, tiết kiệm chi phí cho tài liệu dưới 16.000 từ (~10 trang A4)."
+          },
+          {
+            term: "Cấp độ 3 — RAG (Retrieval-Augmented Generation)",
+            desc: "Truy xuất thông tin từ cơ sở dữ liệu Vector Database đối với kho tài liệu khổng lồ (bộ luật giao thông, cẩm nang y khoa 1.000 trang). Chống triệt để hiện tượng AI bịa đặt thông tin (hallucination)."
+          },
+          {
+            term: "Quy luật Context Window 128K Tokens",
+            desc: "Đầu vào (Input) có thể đọc hiểu tới 300 trang A4 (như phân tích 10.000 comment Facebook), nhưng đầu ra (Output) bị giới hạn độ dài ngắn. Cần ghi nhớ điều này khi xây dựng tính năng báo cáo tự động."
+          }
+        ],
+        agencyTakeaway: "Chiến dịch minigame ngắn hạn hãy dùng Instruct; dịch vụ chăm sóc khách hàng hoặc cổng tri thức doanh nghiệp bắt buộc phải dùng kiến trúc RAG."
+      },
+      vision: {
+        badgeColor: "bg-sky-400",
+        category: "Khối 04: Vision Pipeline, Speech & Generative Audio",
+        headline: "Nhận thức thị giác, chuyển hóa văn bản thành âm thanh và âm nhạc",
+        principles: [
+          {
+            term: "Quy tắc 2 bước (Vision + LLM Pipeline)",
+            desc: "Bước 1: Mô hình Vision chỉ làm nhiệm vụ nhận diện khách quan (Ví dụ: đoán em bé 6–12 tháng tuổi).<br>Bước 2: Truyền thông số tuổi sang mô hình LLM đã cài đặt Instruct chuẩn để sáng tạo thực đơn. Không để Vision tự ý suy diễn nội dung y tế."
+          },
+          {
+            term: "Speech Recognition (Whisper)",
+            desc: "Chuyển giọng nói cuộc họp hay cuộc gọi tổng đài thành văn bản, sau đó dùng LLM phân tích cảm xúc (Sentiment Analysis) xem khách hàng vui hay giận dữ."
+          },
+          {
+            term: "ElevenLabs & Voice Cloning",
+            desc: "Công nghệ TTS hàng đầu đạt độ tự nhiên 98%, hỗ trợ tiếng Việt có ngữ điệu và cho phép nhân bản giọng nói (Voice Cloning) của KOL hoặc diễn viên lồng tiếng có bản quyền."
+          },
+          {
+            term: "Suno AI Music Generation",
+            desc: "Sáng tác hoàn chỉnh bài hát cả lời và nhạc theo phong cách Pop, Rock, Rap. Giới hạn thương mại: Hiện chưa cung cấp API chính thức để nhúng vào web app của chiến dịch."
+          }
+        ],
+        agencyTakeaway: "Tách bạch rõ ràng giữa nhận thức (Vision/Speech) và tạo tác (LLM/Audio). Tránh đề xuất tính năng tự động tạo bài hát trực tiếp trên web cho người dùng do hạn chế API của bên thứ ba."
+      },
+      safety: {
+        badgeColor: "bg-rose-400",
+        category: "Khối 05: Brand Safety & Tiêu Chuẩn Bảo Vệ Thương Hiệu",
+        headline: "Bộ 6 nguyên tắc quản trị rủi ro tối cao trong chiến dịch",
+        principles: [
+          {
+            term: "1. Minh bạch (Transparency)",
+            desc: "Thông báo rõ cho người dùng nội dung được hỗ trợ tạo sinh bởi trí tuệ nhân tạo."
+          },
+          {
+            term: "2. System Prompt Safeguards",
+            desc: "Cài đặt câu lệnh hệ thống cấm nhắc đến đối thủ, nội dung bạo lực, chính trị, tôn giáo."
+          },
+          {
+            term: "3. Pre-Approved Content Library",
+            desc: "Giới hạn người dùng chọn các option định sẵn (dạng nút bấm/dropdown) thay vì ô nhập chữ tự do, ngăn chặn 100% tấn công chiếm quyền câu lệnh (Prompt Injection)."
+          },
+          {
+            term: "4. Multi-layer Moderation Filtering",
+            desc: "Sử dụng mô hình kiểm duyệt từ khóa nhạy cảm lọc trước khi dữ liệu đi vào mô hình tạo sinh chính."
+          },
+          {
+            term: "5. Tuyệt đối không tư vấn Y tế / Sức khỏe độc lập",
+            desc: "Các lĩnh vực liên quan sinh mạng con người bắt buộc phải có chuyên gia thẩm định và cấu trúc RAG chuẩn mực."
+          },
+          {
+            term: "6. Cơ chế thu thập phản hồi (Feedback Loop)",
+            desc: "Cung cấp nút Like/Dislike để người dùng phản ánh và đội ngũ kỹ thuật hiệu chỉnh thuật toán."
+          }
+        ],
+        agencyTakeaway: "Đối với minigame diện rộng của nhãn hàng lớn, phương án an toàn nhất luôn là Pre-Approved Library để loại bỏ mọi nguy cơ người dùng cố ý phá hoại thương hiệu."
+      }
+    };
+
+    function selectMindmapNode(nodeKey) {
+      playTone(500, 'sine', 0.05, 0.03);
+      const data = mindmapData[nodeKey];
+      if (!data) return;
+
+      // Update active button state
+      document.querySelectorAll('.mindmap-node').forEach(btn => {
+        btn.classList.remove('border-white', 'bg-white/10', 'shadow-md');
+        btn.classList.add('border-apple-border', 'bg-apple-surface');
+      });
+      const activeBtn = document.getElementById(`node-${nodeKey}`);
+      if (activeBtn) {
+        activeBtn.classList.remove('border-apple-border', 'bg-apple-surface');
+        activeBtn.classList.add('border-white', 'bg-white/10', 'shadow-md');
+      }
+
+      // Render deep dive details
+      const panel = document.getElementById('mindmap-detail-panel');
+      let principlesHtml = data.principles.map(p => `
+        <div class="p-3.5 rounded-xl bg-apple-surface/80 border border-apple-border">
+          <div class="font-medium text-apple-text text-xs sm:text-sm mb-1">${p.term}</div>
+          <div class="text-xs text-apple-secondary leading-relaxed">${p.desc}</div>
+        </div>
+      `).join('');
+
+      panel.innerHTML = `
+        <div class="flex items-center justify-between pb-3 mb-4 border-b border-apple-border/60">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full ${data.badgeColor}"></span>
+            <span class="text-xs font-mono font-medium text-apple-text uppercase tracking-wide">${data.category}</span>
+          </div>
+          <span class="text-[11px] text-apple-tertiary">Chi tiết phân tích</span>
+        </div>
+        <h4 class="text-base sm:text-lg font-semibold text-white tracking-tight mb-4">${data.headline}</h4>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+          ${principlesHtml}
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-apple-accent/10 border border-apple-accent/20 text-xs">
+          <strong class="text-apple-accent block mb-1">Góc nhìn Strategic Planner & Account:</strong>
+          <span class="text-apple-secondary">${data.agencyTakeaway}</span>
+        </div>
+      `;
+    }
+
+    function setReferenceView(mode) {
+      playTone(600, 'sine', 0.04, 0.03);
+      const mindmapSection = document.getElementById('mindmap-container');
+      const bentoSection = document.getElementById('bento-container');
+      const btnMindmap = document.getElementById('btn-view-mindmap');
+      const btnBento = document.getElementById('btn-view-bento');
+
+      if (mode === 'mindmap') {
+        mindmapSection.classList.remove('hidden');
+        bentoSection.classList.add('hidden');
+        btnMindmap.className = "px-3 py-1.5 rounded-md bg-white text-black font-semibold transition-all";
+        btnBento.className = "px-3 py-1.5 rounded-md text-apple-secondary hover:text-apple-text transition-all";
+      } else {
+        mindmapSection.classList.add('hidden');
+        bentoSection.classList.remove('hidden');
+        btnBento.className = "px-3 py-1.5 rounded-md bg-white text-black font-semibold transition-all";
+        btnMindmap.className = "px-3 py-1.5 rounded-md text-apple-secondary hover:text-apple-text transition-all";
+      }
     }
 
     /* ==============================================================
@@ -1279,7 +1585,7 @@
        ============================================================== */
     function switchTab(target) {
       playTone(600, 'sine', 0.04, 0.03);
-      const views = ['assessment', 'flashcards', 'reference'];
+      const views = ['reference', 'flashcards', 'assessment'];
       views.forEach(v => {
         document.getElementById(`view-${v}`).classList.add('hidden');
         document.getElementById(`nav-${v}`).className = "segmented-item px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 text-apple-secondary hover:text-apple-text";
@@ -1293,7 +1599,8 @@
       }
     }
 
-    // Initial mount
+    // Initial mount: Default to Reference Mindmap
+    selectMindmapNode('ecosystem');
     renderStudyCard();
   </script>
 </body>
