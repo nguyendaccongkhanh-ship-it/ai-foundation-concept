@@ -1,334 +1,380 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" class="h-full">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI for Creative Agency - Kahoot & Flashcard Mastery</title>
+  <title>AI for Creative Approach — Knowledge Assessment & Reference</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Canvas Confetti CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Google Fonts: Inter with comprehensive Vietnamese sub-setting -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', '"SF Pro Display"', 'Inter', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'SFMono-Regular', 'Menlo', 'Consolas', 'monospace']
+          },
+          colors: {
+            apple: {
+              bg: '#000000',
+              surface: '#121214',
+              elevated: '#1c1c1e',
+              border: 'rgba(255, 255, 255, 0.08)',
+              subtle: 'rgba(255, 255, 255, 0.04)',
+              accent: '#2997ff',
+              text: '#f5f5f7',
+              secondary: '#86868b',
+              tertiary: '#515154'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
   <style>
     body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background: radial-gradient(circle at 50% 10%, #2f0743 0%, #15002b 100%);
-      min-height: 100vh;
-      color: #fff;
+      background-color: #000000;
+      color: #f5f5f7;
+      font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
-    .font-fun {
-      font-family: 'Fredoka', cursive, sans-serif;
+
+    /* Apple-grade glassmorphism */
+    .glass-panel {
+      background: rgba(18, 18, 20, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
     }
-    /* Perspective for 3D Flashcard */
-    .perspective-1000 {
-      perspective: 1000px;
+
+    .card-surface {
+      background: #161618;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: border-color 0.2s ease, transform 0.2s ease;
     }
-    .transform-style-3d {
+
+    .card-surface:hover {
+      border-color: rgba(255, 255, 255, 0.16);
+    }
+
+    /* 3D Flashcard mechanics */
+    .perspective-container {
+      perspective: 1400px;
+    }
+
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
       transform-style: preserve-3d;
     }
-    .backface-hidden {
+
+    .flip-card-inner.is-flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
     }
-    .rotate-y-180 {
+
+    .card-back {
       transform: rotateY(180deg);
     }
-    /* Kahoot Tile Pulsing */
-    .kahoot-tile:active {
-      transform: scale(0.96);
+
+    /* Segmented pill control */
+    .segmented-item {
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    /* Custom Scrollbar */
+
+    /* Custom subtle scrollbar */
     ::-webkit-scrollbar {
-      width: 8px;
+      width: 5px;
+      height: 5px;
     }
     ::-webkit-scrollbar-track {
-      background: rgba(255, 255, 255, 0.05);
+      background: transparent;
     }
     ::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.14);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.24);
     }
   </style>
 </head>
-<body class="p-3 md:p-6 flex flex-col justify-between selection:bg-pink-500 selection:text-white">
+<body class="min-h-screen flex flex-col justify-between selection:bg-[#2997ff] selection:text-white">
 
-  <!-- TOP NAVIGATION & STATUS -->
-  <header class="max-w-6xl w-full mx-auto flex flex-wrap items-center justify-between gap-4 py-3 px-5 bg-white/10 backdrop-blur-md rounded-2xl border border-white/10 shadow-2xl mb-6">
-    <div class="flex items-center gap-3">
-      <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-pink-500 to-yellow-400 flex items-center justify-center font-fun text-2xl font-bold shadow-lg shadow-pink-500/30">
-        AI
+  <!-- HEADER & NAVIGATION -->
+  <header class="border-b border-apple-border/70 sticky top-0 z-30 bg-black/80 backdrop-blur-xl">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+      
+      <!-- Brand & Document Meta -->
+      <div class="flex items-center gap-3">
+        <div class="h-8 w-8 rounded-lg bg-apple-surface border border-apple-border flex items-center justify-center text-xs font-mono text-apple-accent font-semibold">
+          AI
+        </div>
+        <div>
+          <div class="text-sm font-semibold text-apple-text tracking-tight flex items-center gap-2">
+            <span>AI for Creative Approach</span>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-white/10 text-apple-secondary uppercase">Syllabus Review</span>
+          </div>
+          <p class="text-[11px] text-apple-secondary hidden sm:block">Chuyên đề ứng dụng AI trong hoạch định chiến dịch & sản xuất truyền thông</p>
+        </div>
       </div>
-      <div>
-        <h1 class="font-fun text-xl md:text-2xl font-bold tracking-wide bg-gradient-to-r from-yellow-300 via-pink-300 to-purple-200 bg-clip-text text-transparent">
-          AI for Agency Arena
-        </h1>
-        <p class="text-xs text-purple-200/70">Creative Approach by Trung Nguyen</p>
-      </div>
-    </div>
 
-    <!-- Mode Selector Tabs -->
-    <div class="flex items-center bg-black/40 p-1.5 rounded-xl border border-white/10 text-sm font-semibold">
-      <button onclick="switchTab('kahoot')" id="tab-kahoot" class="px-4 py-2 rounded-lg transition-all flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-md">
-        <span>🎮</span> Kahoot Arena
-      </button>
-      <button onclick="switchTab('flashcards')" id="tab-flashcards" class="px-4 py-2 rounded-lg transition-all flex items-center gap-2 text-purple-200 hover:text-white">
-        <span>🎴</span> Flashcards
-      </button>
-      <button onclick="switchTab('cheatsheet')" id="tab-cheatsheet" class="px-4 py-2 rounded-lg transition-all flex items-center gap-2 text-purple-200 hover:text-white">
-        <span>📑</span> Bí Kíp Agency
-      </button>
-    </div>
+      <!-- Segmented Control Navigation -->
+      <nav class="flex items-center bg-apple-surface p-1 rounded-xl border border-apple-border text-xs font-medium">
+        <button onclick="switchTab('assessment')" id="nav-assessment" class="segmented-item px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 bg-white text-black font-semibold shadow-sm">
+          <span>Kiểm tra trắc nghiệm</span>
+        </button>
+        <button onclick="switchTab('flashcards')" id="nav-flashcards" class="segmented-item px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 text-apple-secondary hover:text-apple-text">
+          <span>Flashcard ghi nhớ</span>
+        </button>
+        <button onclick="switchTab('reference')" id="nav-reference" class="segmented-item px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 text-apple-secondary hover:text-apple-text">
+          <span>Tài liệu tổng hợp</span>
+        </button>
+      </nav>
 
-    <!-- Audio Mute Toggle -->
-    <button onclick="toggleAudio()" id="btn-sound" class="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 transition-all border border-white/10 text-lg flex items-center justify-center" title="Bật/Tắt Âm Thanh">
-      🔊
-    </button>
+      <!-- Audio Setting Toggle -->
+      <button onclick="toggleAudio()" id="btn-audio" class="h-8 w-8 rounded-lg border border-apple-border bg-apple-surface/60 hover:bg-apple-surface text-apple-secondary hover:text-apple-text flex items-center justify-center transition-colors text-xs" title="Bật/Tắt âm báo phản hồi">
+        <span id="audio-icon">🔊</span>
+      </button>
+
+    </div>
   </header>
 
-  <!-- MAIN CONTAINER -->
-  <main class="max-w-6xl w-full mx-auto flex-grow flex flex-col justify-center">
+  <!-- MAIN WORKSPACE -->
+  <main class="max-w-6xl w-full mx-auto px-4 sm:px-6 py-8 flex-grow flex flex-col justify-start">
 
-    <!-- ============================================== -->
-    <!-- 1. KAHOOT QUIZ ARENA MODE                      -->
-    <!-- ============================================== -->
-    <section id="view-kahoot" class="w-full">
-
-      <!-- START SCREEN -->
-      <div id="kahoot-start" class="text-center py-12 px-6 max-w-2xl mx-auto bg-white/5 border border-white/10 rounded-3xl backdrop-blur-xl shadow-2xl">
-        <div class="inline-block p-4 rounded-3xl bg-gradient-to-tr from-pink-500/20 to-purple-500/20 border border-pink-500/30 mb-5 animate-bounce">
-          <span class="text-6xl">🏆</span>
+    <!-- ============================================================== -->
+    <!-- MODULE 1: MULTIPLE CHOICE ASSESSMENT (FORMER KAHOOT)           -->
+    <!-- ============================================================== -->
+    <section id="view-assessment" class="w-full">
+      
+      <!-- START PANEL -->
+      <div id="quiz-start-screen" class="max-w-2xl mx-auto py-12 px-6 sm:px-8 card-surface rounded-2xl border border-apple-border text-center">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-apple-accent/10 border border-apple-accent/20 text-apple-accent text-xs font-mono mb-4">
+          Phần 1: Bài đánh giá hiểu biết thực tế
         </div>
-        <h2 class="font-fun text-4xl md:text-5xl font-extrabold text-white mb-3">
-          Sẵn Sàng Chiến Đấu!
+        <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-white mb-3">
+          Kiểm Tra Năng Lực Ứng Dụng AI Agency
         </h2>
-        <p class="text-purple-200 text-base md:text-lg mb-8 leading-relaxed">
-          15 câu hỏi tình huống thực chiến cho Planner, Creative & Account: Face Swap, Inpainting, Fine-Tune, LLM vs RAG, Vision Model, Audio & Brand Safety.
+        <p class="text-apple-secondary text-sm leading-relaxed mb-8 max-w-lg mx-auto">
+          Bộ đề gồm 15 câu hỏi tình huống thực tế dành cho Planner, Account và Creative. Nội dung bao quát các giới hạn kỹ thuật của Image Models, LLM, RAG, Vision-Language, Audio và Tiêu chuẩn an toàn thương hiệu (Brand Safety).
         </p>
 
-        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <div class="relative w-full sm:w-64">
-            <input type="text" id="player-nickname" value="Creative Planner" placeholder="Nhập Nickname của bạn..." maxlength="18" 
-              class="w-full px-5 py-3.5 rounded-2xl bg-black/50 border border-purple-400/40 text-white placeholder-purple-300/40 font-bold focus:outline-none focus:ring-2 focus:ring-pink-500 text-center text-lg">
+        <div class="bg-apple-surface border border-apple-border rounded-xl p-4 mb-6 text-left max-w-md mx-auto text-xs text-apple-secondary space-y-2">
+          <div class="flex items-center justify-between text-apple-text font-medium border-b border-apple-border/50 pb-2">
+            <span>Cấu trúc bài kiểm tra</span>
+            <span class="font-mono">15 câu hỏi</span>
           </div>
-          <button onclick="startQuiz()" class="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 font-fun font-bold text-xl text-white shadow-xl shadow-green-500/30 transition-all hover:scale-105 active:scale-95">
-            BẮT ĐẦU CHƠI NGAY 🚀
-          </button>
+          <div class="flex items-center justify-between">
+            <span>Thời gian trả lời mỗi câu</span>
+            <span class="font-mono text-apple-text">30 giây</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span>Hình thức đánh giá</span>
+            <span class="text-apple-text">Trắc nghiệm 4 lựa chọn có phản hồi học thuật</span>
+          </div>
         </div>
 
-        <div class="mt-8 flex items-center justify-center gap-6 text-xs text-purple-300/70">
-          <span>⏱ 20 Giây / Câu</span>
-          <span>⚡ Điểm thưởng tốc độ</span>
-          <span>🔥 Streak Combos</span>
+        <div class="flex flex-col sm:flex-row gap-3 justify-center max-w-md mx-auto">
+          <input type="text" id="candidate-name" value="Học viên Agency" placeholder="Nhập tên hoặc bộ phận..." 
+            class="px-4 py-2.5 rounded-lg bg-black/60 border border-apple-border text-apple-text text-sm focus:outline-none focus:border-apple-accent focus:ring-1 focus:ring-apple-accent text-center font-medium">
+          <button onclick="startAssessment()" class="px-6 py-2.5 rounded-lg bg-apple-text text-black font-semibold text-sm hover:bg-white active:scale-[0.99] transition-all">
+            Bắt đầu làm bài
+          </button>
         </div>
       </div>
 
-      <!-- QUIZ GAMEPLAY SCREEN -->
-      <div id="kahoot-play" class="hidden">
-        <!-- Status Bar -->
-        <div class="flex items-center justify-between mb-4 bg-white/5 border border-white/10 px-5 py-3 rounded-2xl backdrop-blur-md">
+      <!-- ACTIVE ASSESSMENT PANEL -->
+      <div id="quiz-active-screen" class="hidden max-w-3xl mx-auto w-full">
+        
+        <!-- Header Info Bar -->
+        <div class="flex items-center justify-between gap-4 mb-4 text-xs">
           <div class="flex items-center gap-3">
-            <span class="px-3 py-1 rounded-xl bg-purple-500/30 text-purple-300 font-bold text-sm" id="question-progress">
-              Câu 1 / 15
+            <span id="question-index-badge" class="font-mono px-2.5 py-1 rounded-md bg-apple-surface border border-apple-border text-apple-text font-medium">
+              Câu 01 / 15
             </span>
-            <span class="text-sm font-semibold text-pink-300 hidden md:inline" id="question-category">
-              Tag: Image Model
+            <span id="question-domain-badge" class="text-apple-secondary font-medium tracking-wide">
+              Image Model Architecture
             </span>
           </div>
 
-          <!-- Timer Bar & Counter -->
-          <div class="flex items-center gap-3">
-            <div class="w-24 sm:w-44 h-3 bg-black/40 rounded-full overflow-hidden border border-white/10 p-0.5">
-              <div id="timer-bar" class="h-full bg-gradient-to-r from-green-400 via-yellow-400 to-red-500 rounded-full transition-all duration-100 ease-linear" style="width: 100%"></div>
-            </div>
-            <span id="timer-text" class="font-fun text-2xl font-bold text-yellow-300 w-8 text-right">20</span>
-          </div>
-
-          <!-- Score & Streak -->
-          <div class="flex items-center gap-4">
-            <div class="flex items-center gap-1.5 text-orange-400 font-bold text-sm bg-orange-500/10 border border-orange-500/20 px-3 py-1 rounded-xl">
-              <span>🔥</span>
-              <span id="streak-counter">0 Streak</span>
-            </div>
-            <div class="font-fun text-lg md:text-xl font-bold text-emerald-400" id="current-score">
-              0 pts
-            </div>
+          <!-- Timer Bar & Value -->
+          <div class="flex items-center gap-2 font-mono">
+            <span class="text-apple-secondary">Thời gian:</span>
+            <span id="timer-display" class="font-semibold text-apple-text w-6 text-right">30s</span>
           </div>
         </div>
 
-        <!-- Question Box -->
-        <div class="bg-gradient-to-b from-white/15 to-white/5 border border-white/20 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-2xl mb-6 text-center relative overflow-hidden min-h-[140px] flex items-center justify-center">
-          <h3 id="question-text" class="text-xl md:text-2xl font-bold text-white leading-relaxed max-w-4xl mx-auto">
-            Nội dung câu hỏi sẽ hiển thị ở đây...
+        <!-- Timer progress rail -->
+        <div class="w-full h-1 bg-white/10 rounded-full overflow-hidden mb-6">
+          <div id="timer-progress-bar" class="h-full bg-apple-accent transition-all duration-100 ease-linear" style="width: 100%;"></div>
+        </div>
+
+        <!-- Question Stem -->
+        <div class="card-surface rounded-2xl p-6 sm:p-8 mb-4 border border-apple-border">
+          <h3 id="question-stem" class="text-base sm:text-lg font-medium text-apple-text leading-relaxed tracking-tight">
+            Đang tải dữ liệu câu hỏi...
           </h3>
         </div>
 
-        <!-- 4 Kahoot Answer Tiles -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="answer-grid">
-          <!-- Button 1 (Red / Triangle) -->
-          <button onclick="handleAnswer(0)" class="kahoot-tile bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white rounded-2xl p-5 md:p-6 shadow-xl shadow-red-950/40 flex items-center gap-4 transition-all duration-150 border-b-4 border-red-900 group">
-            <div class="w-12 h-12 rounded-xl bg-black/20 flex items-center justify-center text-2xl shrink-0 group-hover:scale-110 transition-transform">
-              🔺
-            </div>
-            <span id="opt-0" class="text-left font-semibold text-base md:text-lg flex-grow leading-snug">Lựa chọn A</span>
-          </button>
-
-          <!-- Button 2 (Blue / Diamond) -->
-          <button onclick="handleAnswer(1)" class="kahoot-tile bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white rounded-2xl p-5 md:p-6 shadow-xl shadow-blue-950/40 flex items-center gap-4 transition-all duration-150 border-b-4 border-blue-900 group">
-            <div class="w-12 h-12 rounded-xl bg-black/20 flex items-center justify-center text-2xl shrink-0 group-hover:scale-110 transition-transform">
-              🔷
-            </div>
-            <span id="opt-1" class="text-left font-semibold text-base md:text-lg flex-grow leading-snug">Lựa chọn B</span>
-          </button>
-
-          <!-- Button 3 (Yellow / Circle) -->
-          <button onclick="handleAnswer(2)" class="kahoot-tile bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-white rounded-2xl p-5 md:p-6 shadow-xl shadow-yellow-950/40 flex items-center gap-4 transition-all duration-150 border-b-4 border-amber-800 group">
-            <div class="w-12 h-12 rounded-xl bg-black/20 flex items-center justify-center text-2xl shrink-0 group-hover:scale-110 transition-transform">
-              🟡
-            </div>
-            <span id="opt-2" class="text-left font-semibold text-base md:text-lg flex-grow leading-snug">Lựa chọn C</span>
-          </button>
-
-          <!-- Button 4 (Green / Square) -->
-          <button onclick="handleAnswer(3)" class="kahoot-tile bg-gradient-to-r from-emerald-600 to-green-700 hover:from-emerald-500 hover:to-green-600 text-white rounded-2xl p-5 md:p-6 shadow-xl shadow-green-950/40 flex items-center gap-4 transition-all duration-150 border-b-4 border-emerald-900 group">
-            <div class="w-12 h-12 rounded-xl bg-black/20 flex items-center justify-center text-2xl shrink-0 group-hover:scale-110 transition-transform">
-              🟩
-            </div>
-            <span id="opt-3" class="text-left font-semibold text-base md:text-lg flex-grow leading-snug">Lựa chọn D</span>
-          </button>
+        <!-- 4 Options Grid -->
+        <div class="grid grid-cols-1 gap-2.5 mb-5" id="options-container">
+          <!-- Dynamically populated via script -->
         </div>
 
-        <!-- REVEAL & EXPLANATION OVERLAY -->
-        <div id="explanation-modal" class="hidden mt-6 bg-black/80 border border-white/20 rounded-2xl p-6 backdrop-blur-xl animate-fade-in">
-          <div class="flex items-center gap-3 mb-2">
-            <span id="feedback-icon" class="text-3xl">🎉</span>
-            <h4 id="feedback-title" class="font-fun text-2xl font-bold text-white">Chính Xác!</h4>
-            <span id="points-earned" class="ml-auto font-fun font-bold text-yellow-300 text-lg">+950 pts</span>
+        <!-- Academic Explanatory Rationale -->
+        <div id="explanation-box" class="hidden card-surface rounded-2xl p-5 border border-apple-border">
+          <div class="flex items-center justify-between pb-3 mb-3 border-b border-apple-border/60">
+            <div class="flex items-center gap-2">
+              <span id="eval-status-icon" class="text-sm font-semibold font-mono"></span>
+              <span id="eval-status-text" class="text-sm font-medium"></span>
+            </div>
+            <span id="eval-score-delta" class="font-mono text-xs text-apple-secondary"></span>
           </div>
-          <p id="feedback-rationale" class="text-purple-100 text-sm md:text-base leading-relaxed bg-white/5 p-4 rounded-xl border border-white/10">
-            Giải thích chi tiết từ góc nhìn agency...
-          </p>
-          <div class="mt-4 flex justify-end">
-            <button onclick="nextQuestion()" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 font-bold text-white shadow-lg transition-all">
-              Câu Tiếp Theo ➔
+          
+          <div class="text-xs sm:text-sm text-apple-secondary leading-relaxed space-y-1.5" id="eval-rationale-content">
+            <!-- Content inserted via script -->
+          </div>
+
+          <div class="mt-5 flex justify-end">
+            <button onclick="advanceNextQuestion()" class="px-5 py-2 rounded-lg bg-apple-text text-black hover:bg-white font-medium text-xs sm:text-sm transition-colors flex items-center gap-2">
+              <span>Chuyển sang câu tiếp theo</span>
+              <span>→</span>
             </button>
           </div>
         </div>
 
       </div>
 
-      <!-- RESULTS LEADERBOARD SCREEN -->
-      <div id="kahoot-result" class="hidden text-center py-10 px-6 max-w-2xl mx-auto bg-white/10 border border-white/15 rounded-3xl backdrop-blur-xl shadow-2xl">
-        <span class="text-7xl mb-4 block" id="result-trophy">👑</span>
-        <h2 class="font-fun text-4xl font-extrabold text-white mb-2" id="result-title">Hoàn Thành Xuất Sắc!</h2>
-        <p class="text-purple-200 mb-6" id="result-subtitle">Bạn đã nắm chắc nền tảng AI cho Creative Agency.</p>
+      <!-- ASSESSMENT RESULT PANEL -->
+      <div id="quiz-result-screen" class="hidden max-w-xl mx-auto py-10 px-6 sm:px-8 card-surface rounded-2xl border border-apple-border text-center">
+        <div class="font-mono text-xs text-apple-accent uppercase tracking-wider mb-2">Báo cáo kết quả</div>
+        <h2 class="text-2xl font-semibold text-white tracking-tight mb-2" id="result-user-headline">Hoàn thành bài kiểm tra</h2>
+        <p class="text-apple-secondary text-xs sm:text-sm mb-6 max-w-md mx-auto" id="result-summary-text">
+          Dưới đây là thống kê chi tiết mức độ lĩnh hội các khái niệm cốt lõi theo giáo trình.
+        </p>
 
+        <!-- Metric Cards -->
         <div class="grid grid-cols-3 gap-3 mb-8">
-          <div class="bg-black/40 p-4 rounded-2xl border border-white/10">
-            <div class="text-xs text-purple-300 font-semibold mb-1">TỔNG ĐIỂM</div>
-            <div id="final-score" class="font-fun text-2xl md:text-3xl font-bold text-yellow-400">12,450</div>
+          <div class="bg-apple-surface p-3.5 rounded-xl border border-apple-border text-left">
+            <div class="text-[11px] text-apple-secondary mb-1">Số câu chính xác</div>
+            <div id="metric-accuracy" class="text-xl font-semibold font-mono text-apple-text">0 / 15</div>
           </div>
-          <div class="bg-black/40 p-4 rounded-2xl border border-white/10">
-            <div class="text-xs text-purple-300 font-semibold mb-1">ĐÚNG / TỔNG</div>
-            <div id="final-correct" class="font-fun text-2xl md:text-3xl font-bold text-green-400">14/15</div>
+          <div class="bg-apple-surface p-3.5 rounded-xl border border-apple-border text-left">
+            <div class="text-[11px] text-apple-secondary mb-1">Tỷ lệ hoàn thành</div>
+            <div id="metric-percentage" class="text-xl font-semibold font-mono text-apple-text">0%</div>
           </div>
-          <div class="bg-black/40 p-4 rounded-2xl border border-white/10">
-            <div class="text-xs text-purple-300 font-semibold mb-1">STREAK CAO NHẤT</div>
-            <div id="final-streak" class="font-fun text-2xl md:text-3xl font-bold text-orange-400">🔥 9</div>
+          <div class="bg-apple-surface p-3.5 rounded-xl border border-apple-border text-left">
+            <div class="text-[11px] text-apple-secondary mb-1">Đánh giá chung</div>
+            <div id="metric-rank" class="text-sm font-semibold font-mono text-apple-accent pt-1">Đạt</div>
           </div>
         </div>
 
-        <div class="flex flex-col sm:flex-row gap-4 justify-center">
-          <button onclick="startQuiz()" class="px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 font-bold text-white shadow-xl transition-all">
-            🔄 Chơi Lại Lần Nữa
+        <div class="flex flex-col sm:flex-row gap-3 justify-center">
+          <button onclick="startAssessment()" class="px-5 py-2.5 rounded-lg bg-apple-text text-black hover:bg-white text-xs sm:text-sm font-medium transition-colors">
+            Thực hiện lại bài kiểm tra
           </button>
-          <button onclick="switchTab('flashcards')" class="px-6 py-3 rounded-2xl bg-white/20 hover:bg-white/30 border border-white/20 font-bold text-white transition-all">
-            🎴 Ôn Luyện Bằng Flashcard
+          <button onclick="switchTab('flashcards')" class="px-5 py-2.5 rounded-lg border border-apple-border bg-apple-surface hover:bg-apple-elevated text-apple-text text-xs sm:text-sm font-medium transition-colors">
+            Chuyển qua Flashcard ôn tập
           </button>
         </div>
       </div>
 
     </section>
 
-    <!-- ============================================== -->
-    <!-- 2. FLASHCARD MASTERY MODE                      -->
-    <!-- ============================================== -->
-    <section id="view-flashcards" class="hidden w-full max-w-4xl mx-auto py-4">
+    <!-- ============================================================== -->
+    <!-- MODULE 2: FLASHCARD STUDY CARDS                                -->
+    <!-- ============================================================== -->
+    <section id="view-flashcards" class="hidden w-full max-w-3xl mx-auto">
       
-      <!-- Filter Bar -->
-      <div class="flex flex-wrap items-center justify-between gap-3 mb-6 bg-white/5 border border-white/10 p-3 rounded-2xl backdrop-blur-md">
-        <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs md:text-sm font-semibold">
-          <button onclick="filterFlashcards('all')" class="fc-filter-btn px-3 py-1.5 rounded-xl bg-pink-500 text-white shadow-md" data-filter="all">Tất cả (16)</button>
-          <button onclick="filterFlashcards('image')" class="fc-filter-btn px-3 py-1.5 rounded-xl bg-white/10 text-purple-200 hover:text-white" data-filter="image">Image & Fine-Tune</button>
-          <button onclick="filterFlashcards('llm')" class="fc-filter-btn px-3 py-1.5 rounded-xl bg-white/10 text-purple-200 hover:text-white" data-filter="llm">LLM & RAG</button>
-          <button onclick="filterFlashcards('vision')" class="fc-filter-btn px-3 py-1.5 rounded-xl bg-white/10 text-purple-200 hover:text-white" data-filter="vision">Vision & Audio</button>
-          <button onclick="filterFlashcards('safety')" class="fc-filter-btn px-3 py-1.5 rounded-xl bg-white/10 text-purple-200 hover:text-white" data-filter="safety">Brand Safety</button>
+      <!-- Toolbar & Category Filter -->
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-apple-border">
+        
+        <!-- Filter Tabs -->
+        <div class="flex items-center gap-1.5 flex-wrap text-xs">
+          <button onclick="setCardFilter('all')" class="fc-filter px-3 py-1.5 rounded-md bg-white text-black font-semibold" data-filter="all">Tất cả (16)</button>
+          <button onclick="setCardFilter('image')" class="fc-filter px-3 py-1.5 rounded-md text-apple-secondary hover:text-apple-text" data-filter="image">Image & Fine-Tune</button>
+          <button onclick="setCardFilter('llm')" class="fc-filter px-3 py-1.5 rounded-md text-apple-secondary hover:text-apple-text" data-filter="llm">LLM & RAG</button>
+          <button onclick="setCardFilter('vision')" class="fc-filter px-3 py-1.5 rounded-md text-apple-secondary hover:text-apple-text" data-filter="vision">Vision & Audio</button>
+          <button onclick="setCardFilter('safety')" class="fc-filter px-3 py-1.5 rounded-md text-apple-secondary hover:text-apple-text" data-filter="safety">Brand Safety</button>
         </div>
 
-        <div class="text-xs text-purple-300 font-bold flex items-center gap-2">
-          <span id="fc-progress-counter">1 / 16</span>
-          <button onclick="shuffleFlashcards()" class="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 transition-all text-xs" title="Trộn ngẫu nhiên thẻ">
-            🎲 Xáo Thẻ
+        <!-- Utility Counter & Shuffle -->
+        <div class="flex items-center gap-3 text-xs text-apple-secondary self-end sm:self-center">
+          <span id="fc-counter" class="font-mono text-apple-text">01 / 16</span>
+          <button onclick="shuffleDeck()" class="px-2.5 py-1 rounded bg-apple-surface hover:bg-apple-elevated border border-apple-border text-apple-text transition-colors">
+            Xáo trộn thẻ
           </button>
         </div>
       </div>
 
-      <!-- Flashcard Interactive 3D Canvas -->
-      <div class="perspective-1000 w-full h-[360px] md:h-[400px] mb-6">
-        <div id="flashcard-element" onclick="flipFlashcard()" class="w-full h-full relative cursor-pointer transform-style-3d transition-transform duration-500 rounded-3xl shadow-2xl">
+      <!-- 3D Flashcard Presentation -->
+      <div class="perspective-container w-full h-[360px] sm:h-[380px] mb-6">
+        <div id="active-flashcard" onclick="flipCardAction()" class="flip-card-inner cursor-pointer rounded-2xl shadow-xl">
           
-          <!-- FRONT FACE -->
-          <div class="absolute inset-0 w-full h-full backface-hidden bg-gradient-to-br from-indigo-900/90 via-purple-900/80 to-pink-900/80 border-2 border-purple-400/40 rounded-3xl p-8 flex flex-col justify-between backdrop-blur-xl">
-            <div class="flex items-center justify-between">
-              <span id="fc-badge" class="px-3.5 py-1.5 rounded-full bg-pink-500/30 border border-pink-400/50 text-pink-200 font-bold text-xs uppercase tracking-wider">
-                Image Approach
-              </span>
-              <span class="text-xs text-purple-300/80 italic">Chạm vào thẻ để lật ↷</span>
+          <!-- FRONT SIDE (Question / Concept Definition) -->
+          <div class="card-face card-surface rounded-2xl p-7 flex flex-col justify-between">
+            <div class="flex items-center justify-between text-xs text-apple-secondary border-b border-apple-border/60 pb-3">
+              <span id="card-front-category" class="font-mono text-apple-accent uppercase tracking-wider font-medium">Image Architecture</span>
+              <span>Nhấp chuột hoặc phím [Space] để lật</span>
             </div>
 
-            <div class="text-center my-auto px-4">
-              <span id="fc-icon" class="text-5xl mb-4 block">🎨</span>
-              <h3 id="fc-front-title" class="font-fun text-2xl md:text-3xl font-bold text-white mb-2 leading-snug">
+            <div class="my-auto py-4">
+              <h3 id="card-front-title" class="text-xl sm:text-2xl font-semibold text-apple-text mb-2 tracking-tight">
                 Face Swap vs Inpainting
               </h3>
-              <p id="fc-front-sub" class="text-purple-200 text-sm md:text-base line-clamp-2">
+              <p id="card-front-sub" class="text-apple-secondary text-sm leading-relaxed">
                 Khi nào Agency nên dùng Face Swap và khi nào nên dùng Inpainting?
               </p>
             </div>
 
-            <div class="flex justify-between items-center text-xs text-purple-300/60 pt-4 border-t border-white/10">
-              <span>AI for Agency Training</span>
-              <span>Ấn Spacebar hoặc Click để lật</span>
+            <div class="text-[11px] text-apple-tertiary flex items-center justify-between border-t border-apple-border/40 pt-3">
+              <span>Học phần: AI for Creative Approach</span>
+              <span>Mặt trước: Vấn đề / Khái niệm</span>
             </div>
           </div>
 
-          <!-- BACK FACE -->
-          <div class="absolute inset-0 w-full h-full backface-hidden rotate-y-180 bg-gradient-to-br from-slate-900/95 via-purple-950/90 to-black/95 border-2 border-emerald-400/50 rounded-3xl p-8 flex flex-col justify-between backdrop-blur-xl">
-            <div class="flex items-center justify-between">
-              <span class="px-3.5 py-1.5 rounded-full bg-emerald-500/30 border border-emerald-400/50 text-emerald-200 font-bold text-xs uppercase tracking-wider">
-                💡 Lời Giải / Key Takeaway
-              </span>
-              <span class="text-xs text-emerald-300/80 italic">Chạm lại để lật về</span>
+          <!-- BACK SIDE (Technical Rationale & Practical Agency Use Case) -->
+          <div class="card-face card-back card-surface bg-[#141416] border-apple-accent/30 rounded-2xl p-7 flex flex-col justify-between">
+            <div class="flex items-center justify-between text-xs border-b border-apple-border/60 pb-3">
+              <span class="font-mono text-apple-accent font-medium">Bản chất kỹ thuật & Ứng dụng</span>
+              <span class="text-apple-secondary">Nhấp để quay lại</span>
             </div>
 
-            <div class="my-auto px-2 overflow-y-auto max-h-[220px]">
-              <h4 id="fc-back-title" class="font-bold text-lg md:text-xl text-yellow-300 mb-2">
-                Face Swap ghép mặt - Inpainting thay thế vật thể/bối cảnh
+            <div class="my-auto overflow-y-auto max-h-[220px] pr-2">
+              <h4 id="card-back-title" class="text-base font-semibold text-apple-text mb-2">
+                Face Swap ghép khuôn mặt — Inpainting chỉnh sửa chi tiết cục bộ
               </h4>
-              <p id="fc-back-detail" class="text-purple-100 text-sm md:text-base leading-relaxed">
-                • <b>Face Swap:</b> Dùng khi cần ghép khuôn mặt người dùng vào ảnh mẫu có sẵn (Momo lì xì, Dove, Sơn Tùng). Yêu cầu ảnh base rõ mặt.<br>
-                • <b>Inpainting:</b> Dùng khi cần vẽ chèn thêm vật thể (giày Biti's Hunter, son phấn) vào một background mới, hoặc thay quần áo người mẫu.
-              </p>
+              <div id="card-back-body" class="text-xs sm:text-sm text-apple-secondary leading-relaxed space-y-2">
+                <!-- Detailed explanation -->
+              </div>
             </div>
 
-            <div class="flex items-center justify-between pt-3 border-t border-white/10">
-              <span class="text-xs text-purple-300/60">Ghi nhớ thực chiến</span>
+            <div class="flex items-center justify-between border-t border-apple-border/40 pt-3">
+              <span class="text-[11px] text-apple-tertiary">Đánh giá mức độ ghi nhớ:</span>
               <div class="flex items-center gap-2">
-                <button onclick="event.stopPropagation(); markMemorized(false)" class="px-3 py-1 rounded-lg bg-red-500/20 hover:bg-red-500/40 text-red-300 text-xs font-semibold">
-                  Chưa thuộc ✖
+                <button onclick="event.stopPropagation(); setCardMastery(false)" class="px-3 py-1 rounded bg-white/5 hover:bg-red-500/10 hover:text-red-400 border border-apple-border text-xs text-apple-secondary transition-colors">
+                  Cần xem lại
                 </button>
-                <button onclick="event.stopPropagation(); markMemorized(true)" class="px-3 py-1 rounded-lg bg-green-500/20 hover:bg-green-500/40 text-green-300 text-xs font-semibold">
-                  Đã thuộc ✔
+                <button onclick="event.stopPropagation(); setCardMastery(true)" class="px-3 py-1 rounded bg-white/5 hover:bg-emerald-500/10 hover:text-emerald-400 border border-apple-border text-xs text-apple-secondary transition-colors">
+                  Đã ghi nhớ
                 </button>
               </div>
             </div>
@@ -338,912 +384,917 @@
         </div>
       </div>
 
-      <!-- Controls -->
-      <div class="flex items-center justify-center gap-4">
-        <button onclick="prevFlashcard()" class="px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/10 font-bold text-white transition-all flex items-center gap-2">
-          ⬅ Trước
+      <!-- Navigation Arrows -->
+      <div class="flex items-center justify-center gap-3">
+        <button onclick="prevCard()" class="px-4 py-2 rounded-lg bg-apple-surface hover:bg-apple-elevated border border-apple-border text-xs font-medium text-apple-text transition-colors">
+          ← Thẻ trước
         </button>
-        <button onclick="flipFlashcard()" class="px-6 py-3 rounded-2xl bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 font-bold text-white shadow-lg shadow-pink-500/20 transition-all flex items-center gap-2">
-          🔄 Lật Thẻ
+        <button onclick="flipCardAction()" class="px-6 py-2 rounded-lg bg-apple-text text-black hover:bg-white font-medium text-xs transition-colors">
+          Lật thẻ [Space]
         </button>
-        <button onclick="nextFlashcard()" class="px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/10 font-bold text-white transition-all flex items-center gap-2">
-          Tiếp ➔
+        <button onclick="nextCard()" class="px-4 py-2 rounded-lg bg-apple-surface hover:bg-apple-elevated border border-apple-border text-xs font-medium text-apple-text transition-colors">
+          Thẻ tiếp theo →
         </button>
       </div>
 
     </section>
 
-    <!-- ============================================== -->
-    <!-- 3. CHEAT SHEET / MINDMAP SUMMARY               -->
-    <!-- ============================================== -->
-    <section id="view-cheatsheet" class="hidden w-full max-w-5xl mx-auto py-2">
-      <div class="bg-white/5 border border-white/10 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-2xl mb-8">
-        
-        <div class="border-b border-white/10 pb-5 mb-6 flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h2 class="font-fun text-3xl font-extrabold text-yellow-300">
-              Sổ Tay Kiến Thức AI Cho Creative Agency
-            </h2>
-            <p class="text-sm text-purple-200 mt-1">
-              Đúc kết toàn diện 45 trang slide đào tạo của Trainer Trung Nguyễn
-            </p>
-          </div>
-          <span class="px-4 py-1.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-400/30 text-xs font-bold">
-            100% Thực Chiến Không Hàn Lâm
-          </span>
-        </div>
+    <!-- ============================================================== -->
+    <!-- MODULE 3: COMPREHENSIVE CURRICULUM REFERENCE                   -->
+    <!-- ============================================================== -->
+    <section id="view-reference" class="hidden w-full max-w-5xl mx-auto">
+      
+      <!-- Section Header -->
+      <div class="mb-8 pb-5 border-b border-apple-border">
+        <div class="text-xs font-mono text-apple-accent mb-1 uppercase tracking-wider">Hệ thống hóa kiến thức</div>
+        <h2 class="text-2xl sm:text-3xl font-semibold text-white tracking-tight">
+          Cẩm Nang Nền Tảng AI Cho Creative Agency
+        </h2>
+        <p class="text-apple-secondary text-xs sm:text-sm mt-1 max-w-2xl">
+          Đúc kết toàn bộ các nguyên lý kỹ thuật trọng tâm theo bài giảng của Trainer Trung Nguyễn, hỗ trợ xây dựng Proposal, định hướng khả thi cho chiến dịch và brief chuẩn xác với đội ngũ Lập trình / Production House.
+        </p>
+      </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- 4 Structured Bento Sections -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-          <!-- Block 1: 6 AI Models & API -->
-          <div class="bg-black/30 border border-purple-500/20 p-5 rounded-2xl">
-            <h3 class="font-fun text-xl font-bold text-pink-400 mb-3 flex items-center gap-2">
-              <span>🧠</span> 6 Mô Hình AI & Sức Mạnh API
+        <!-- Block 1: Model Ecosystem & API -->
+        <article class="card-surface rounded-2xl p-6 border border-apple-border">
+          <div class="flex items-center justify-between mb-4 pb-3 border-b border-apple-border/60">
+            <h3 class="text-sm font-semibold text-white tracking-tight flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-apple-accent"></span>
+              <span>1. Hệ Sinh Thái Mô Hình & Sức Mạnh API</span>
             </h3>
-            <ul class="text-sm space-y-2 text-purple-100 leading-relaxed">
-              <li>• <b>LLM:</b> Đọc, hiểu và tạo văn bản (ChatGPT, Claude, Gemini).</li>
-              <li>• <b>Image Model:</b> Tạo hình ảnh nghệ thuật, quảng cáo (Stable Diffusion, Midjourney, DALL-E 3).</li>
-              <li>• <b>Vision-Language:</b> Nhìn và hiểu nội dung ảnh (nhận diện tuổi bé, địa danh du lịch, món ăn).</li>
-              <li>• <b>Speech Recognition:</b> Giọng nói ➔ Văn bản (Whisper, gỡ băng cuộc họp, phân tích sentiment call center).</li>
-              <li>• <b>Generative Audio:</b> TTS, Clone giọng nói (ElevenLabs), Sound FX, Tạo bài hát (Suno AI).</li>
-              <li>• <b>Video Models:</b> Text-to-video (Sora, Runway).</li>
-              <li class="bg-pink-500/10 p-2.5 rounded-xl border border-pink-500/20 text-xs text-pink-200 mt-2">
-                <b>📌 API là gì?</b> Cầu nối cho phép mang toàn bộ trí tuệ của AI nhúng trực tiếp vào Microsite, App, Zalo Mini App, Game của Agency thay vì bắt người dùng vào chatgpt.com.
-              </li>
-            </ul>
+            <span class="text-[11px] font-mono text-apple-secondary">Foundation</span>
           </div>
 
-          <!-- Block 2: Image Model Approaches -->
-          <div class="bg-black/30 border border-blue-500/20 p-5 rounded-2xl">
-            <h3 class="font-fun text-xl font-bold text-cyan-400 mb-3 flex items-center gap-2">
-              <span>🎨</span> 3 Hướng Triển Khai Image Model
-            </h3>
-            <ul class="text-sm space-y-2.5 text-purple-100 leading-relaxed">
-              <li>
-                <span class="text-yellow-300 font-bold">1. Face Swap:</span> Ghép mặt user vào hình mẫu cơ sở (Base image). Campaign tiêu biểu: Momo QR lì xì, Dove, Zalo Tết. Yêu cầu base image rõ 1 mặt.
-              </li>
-              <li>
-                <span class="text-yellow-300 font-bold">2. Inpainting (Add-painting):</span> Thay thế/vẽ thêm sản phẩm (chai serum, giày Biti's Hunter) vào background mới hoặc thay trang phục cho người mẫu.
-              </li>
-              <li>
-                <span class="text-yellow-300 font-bold">3. Fine-Tune (Huấn Luyện Riêng):</span>
-                <div class="text-xs text-purple-200 pl-3 mt-1 space-y-1">
-                  <div>- <b>Product:</b> Chụp dataset 20-30 góc chai tương ớt Chin-su, Apple Vision Pro để AI học sản phẩm chưa có trong dữ liệu gốc.</div>
-                  <div>- <b>Style:</b> Học phong cách hình ảnh (Theme Sài Gòn xưa, Barbie, phim Hai Phượng).</div>
-                  <div>- <b>Character Consistency:</b> Tạo nhân vật ảo đồng nhất đa góc độ (Virtual Influencer Tami 100k fl).</div>
-                </div>
-              </li>
-              <li class="text-xs text-cyan-200 bg-cyan-500/10 p-2 rounded-lg border border-cyan-500/20">
-                <b>Kho Replicate.com:</b> Đã có sẵn hàng ngàn AI model mở (face swap, anime, anime-to-photo, restore image). Agency gọi API dùng luôn không cần tự build từ số 0.
-              </li>
-            </ul>
-          </div>
+          <div class="space-y-3 text-xs sm:text-sm text-apple-secondary leading-relaxed">
+            <div>
+              <strong class="text-apple-text block font-medium">Sáu phân nhóm mô hình thông dụng:</strong>
+              <ul class="list-disc pl-4 mt-1 space-y-1 text-xs">
+                <li><b class="text-apple-text">LLM (Large Language Model):</b> Xử lý, thấu hiểu ngữ cảnh và tạo sinh văn bản (OpenAI GPT, Anthropic Claude, Google Gemini).</li>
+                <li><b class="text-apple-text">Image Models:</b> Tạo ảnh từ mô tả văn bản (Stable Diffusion, Midjourney, DALL-E 3).</li>
+                <li><b class="text-apple-text">Vision-Language Models:</b> Nhận diện đối tượng, bối cảnh và trích xuất dữ liệu từ hình ảnh.</li>
+                <li><b class="text-apple-text">Speech Recognition:</b> Chuyển đổi giọng nói thành văn bản (Whisper AI, phục vụ ghi nhận họp, phân tích call center).</li>
+                <li><b class="text-apple-text">Generative Audio:</b> Tạo âm thanh môi trường, clone giọng đọc (ElevenLabs), hòa âm tạo nhạc (Suno).</li>
+                <li><b class="text-apple-text">Video Models:</b> Text-to-Video (OpenAI Sora, Runway).</li>
+              </ul>
+            </div>
 
-          <!-- Block 3: LLM 3 Levels & Tokens -->
-          <div class="bg-black/30 border border-amber-500/20 p-5 rounded-2xl">
-            <h3 class="font-fun text-xl font-bold text-amber-400 mb-3 flex items-center gap-2">
-              <span>💬</span> LLM: Base vs Instruct vs RAG
-            </h3>
-            <div class="space-y-3 text-sm text-purple-100">
-              <div>
-                <b class="text-white">Level 1 - Base:</b> Gọi API nguyên bản của mô hình, không định hướng flow.
-              </div>
-              <div>
-                <b class="text-yellow-300">Level 2 - Instruct (System Prompt):</b> Cầm tay chỉ việc cho AI. Định nghĩa vai trò (chuyên gia bói toán Viv từ Coca-Cola, thông điệp vũ trụ Lavie), ép kịch bản (chọn 1 ra tiền, chọn 2 ra tình). Phù hợp data &lt; 16.000 từ (~10 trang A4). Nhanh, chính xác.
-              </div>
-              <div>
-                <b class="text-green-300">Level 3 - RAG (Retrieval-Augmented Generation):</b> Khi data quá khổng lồ (bộ luật giao thông 500 trang, cẩm nang y khoa mẹ & bé 1.000 trang). AI sẽ tìm đúng đoạn văn bản trong cơ sở dữ liệu rồi trả lời chuẩn xác, không bị ảo giác bịa đặt.
-              </div>
-              <div class="bg-amber-500/10 p-2.5 rounded-xl border border-amber-500/20 text-xs text-amber-200">
-                <b>📌 Context Window:</b> 128k tokens (~300 trang A4 đọc đầu vào), nhưng đầu ra output chỉ vài trang. Ứng dụng đỉnh cao: Đọc 10.000 comment fanpage để phân loại sentiment (tích cực/tiêu cực/trung lập).
-              </div>
+            <div class="p-3.5 rounded-xl bg-apple-surface border border-apple-border text-xs">
+              <span class="font-semibold text-apple-text block mb-1">Bản chất của API (Application Programming Interface):</span>
+              Là giao thức kết nối cho phép Agency mang toàn bộ trí thông minh nhân tạo tích hợp trực tiếp vào Microsite, Zalo Mini App, Web App hoặc hệ thống nội bộ của nhãn hàng, không buộc người dùng cuối phải thao tác trên website của nhà cung cấp mô hình.
             </div>
           </div>
+        </article>
 
-          <!-- Block 4: Vision, Audio & Brand Safety -->
-          <div class="bg-black/30 border border-emerald-500/20 p-5 rounded-2xl">
-            <h3 class="font-fun text-xl font-bold text-emerald-400 mb-3 flex items-center gap-2">
-              <span>🛡</span> Vision, Audio & Brand Safety
+        <!-- Block 2: Image Deployment Approaches -->
+        <article class="card-surface rounded-2xl p-6 border border-apple-border">
+          <div class="flex items-center justify-between mb-4 pb-3 border-b border-apple-border/60">
+            <h3 class="text-sm font-semibold text-white tracking-tight flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              <span>2. Ba Hướng Triển Khai Image Model</span>
             </h3>
-            <ul class="text-sm space-y-2 text-purple-100 leading-relaxed">
-              <li>
-                <b>Quy tắc 2 bước với Vision:</b> Dùng Vision Model để <span class="text-yellow-300 underline font-bold">nhận diện</span> (đoán tuổi em bé, nhận diện quả chuối), sau đó đẩy sang LLM để <span class="text-yellow-300 underline font-bold">sáng tạo kịch bản/thực đơn</span>. Không bắt Vision vừa nhìn vừa bịa chuyện.
-              </li>
-              <li>
-                <b>Audio ElevenLabs:</b> Hỗ trợ tiếng Việt tự nhiên 98%, clone giọng đọc TVC/Podcast.
-              </li>
-              <li>
-                <b>6 Nguyên Tắc Vàng Brand Safety:</b>
-                <div class="text-xs text-purple-200 pl-2 mt-1 space-y-1">
-                  <div>1. Minh bạch (Disclaimer: AI có thể có sai sót).</div>
-                  <div>2. System Prompt cấm bàn luận chính trị/tôn giáo/đối thủ.</div>
-                  <div>3. Filter AI lớp ngoài chặn từ khóa bậy trước khi vào model chính.</div>
-                  <div>4. <b>Pre-Approved Library:</b> Cho user chọn từ dropdown/menu có sẵn thay vì gõ text tự do (chống phá hoại).</div>
-                  <div>5. Cấm chuẩn đoán sức khỏe/tài chính nếu không có RAG và chuyên gia duyệt.</div>
-                  <div>6. Nút Feedback (Like/Dislike) để audit thuật toán.</div>
-                </div>
-              </li>
-            </ul>
+            <span class="text-[11px] font-mono text-apple-secondary">Computer Vision</span>
           </div>
 
-        </div>
+          <div class="space-y-3.5 text-xs sm:text-sm text-apple-secondary leading-relaxed">
+            <div>
+              <strong class="text-apple-text font-medium">A. Face Swap (Hoán đổi khuôn mặt):</strong>
+              <p class="text-xs mt-0.5">Ghép khuôn mặt người dùng vào ảnh mẫu cơ sở (Base image) đã được thiết kế sẵn. Áp dụng hiệu quả trong các campaign tương tác nhanh (Momo lì xì QR, Zalo Tết). <em class="text-apple-text">Điều kiện kỹ thuật:</em> Ảnh base chỉ chứa duy nhất 1 khuôn mặt chuẩn góc nhìn.</p>
+            </div>
 
-        <div class="mt-8 text-center">
-          <button onclick="switchTab('kahoot'); startQuiz();" class="px-8 py-3.5 rounded-2xl bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 font-fun font-bold text-lg text-white shadow-xl shadow-purple-500/30 transition-all hover:scale-105">
-            🎯 Thử Thách Đấu Trường Kahoot Ngay!
-          </button>
-        </div>
+            <div>
+              <strong class="text-apple-text font-medium">B. Inpainting / Add-painting:</strong>
+              <p class="text-xs mt-0.5">Giữ nguyên cấu trúc sản phẩm thực tế (chai serum, đôi giày Biti's Hunter) và vẽ hòa quyện background mới xung quanh, hoặc vẽ đè trang phục lên người mẫu ảo.</p>
+            </div>
+
+            <div>
+              <strong class="text-apple-text font-medium">C. Fine-Tuning (Huấn luyện tùy biến mô hình):</strong>
+              <ul class="list-disc pl-4 mt-1 space-y-1 text-xs">
+                <li><strong>Product Fine-Tune:</strong> Nạp tập dữ liệu 20–30 ảnh đa góc độ để AI học sản phẩm đặc thù chưa có trong tập dữ liệu toàn cầu (như tương ớt Chin-su, Apple Vision Pro).</li>
+                <li><strong>Style Fine-Tune:</strong> Định hình một phong cách thẩm mỹ riêng (retro Sài Gòn, visual phim chiếu rạp) với tập mẫu 100–200 hình.</li>
+                <li><strong>Character Consistency:</strong> Xây dựng đại sứ ảo (Virtual Influencer) giữ đồng nhất nhân diện qua nhiều bối cảnh khác nhau.</li>
+              </ul>
+            </div>
+
+            <div class="p-2.5 rounded-lg bg-apple-surface border border-apple-border text-xs text-apple-text">
+              <strong>Nguồn tài nguyên Replicate.com:</strong> Nền tảng lưu trữ hàng nghìn Open-Source Models đã tích hợp sẵn API gọi dùng ngay, giảm thiểu tối đa chi phí đầu tư máy chủ GPU riêng.
+            </div>
+          </div>
+        </article>
+
+        <!-- Block 3: LLM Architecture: Base vs Instruct vs RAG -->
+        <article class="card-surface rounded-2xl p-6 border border-apple-border">
+          <div class="flex items-center justify-between mb-4 pb-3 border-b border-apple-border/60">
+            <h3 class="text-sm font-semibold text-white tracking-tight flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+              <span>3. Cấu Trúc Vận Hành LLM & Token</span>
+            </h3>
+            <span class="text-[11px] font-mono text-apple-secondary">Natural Language</span>
+          </div>
+
+          <div class="space-y-3 text-xs sm:text-sm text-apple-secondary leading-relaxed">
+            <div class="space-y-2">
+              <div>
+                <strong class="text-apple-text font-medium">Cấp độ 1 — Base Model:</strong> Gọi trực tiếp API nguyên bản, văn bản phản hồi chưa qua định hướng luồng hay persona.
+              </div>
+              <div>
+                <strong class="text-apple-text font-medium">Cấp độ 2 — Instruct (System Prompting):</strong> Đóng vai và kiểm soát luật phản hồi theo kịch bản nhãn hàng (ví dụ: bói toán LaVie, Tarot Coca-Cola). Phù hợp dữ liệu nhỏ (&lt; 16.000 từ / ~10 trang A4), chi phí thấp, tốc độ nhanh.
+              </div>
+              <div>
+                <strong class="text-apple-text font-medium">Cấp độ 3 — RAG (Retrieval-Augmented Generation):</strong> Truy xuất dữ liệu từ Vector Database đối với kho tài liệu khổng lồ (bộ luật giao thông, tài liệu y khoa 1.000 trang). Ngăn ngừa triệt để tình trạng AI bịa đặt (hallucination).
+              </div>
+            </div>
+
+            <div class="p-3 rounded-xl bg-apple-surface border border-apple-border text-xs">
+              <strong class="text-apple-text block mb-1">Hiểu đúng về Context Window 128K Tokens:</strong>
+              Mô hình có khả năng tiếp nhận khối lượng đầu vào (Input) lên tới ~300 trang A4 (như tổng hợp 10.000 bình luận để phân tích tình cảm - Sentiment Analysis), tuy nhiên độ dài phản hồi đầu ra (Output) bị giới hạn ở quy mô văn bản ngắn gọn.
+            </div>
+          </div>
+        </article>
+
+        <!-- Block 4: Vision Pipeline & Brand Safety Protocols -->
+        <article class="card-surface rounded-2xl p-6 border border-apple-border">
+          <div class="flex items-center justify-between mb-4 pb-3 border-b border-apple-border/60">
+            <h3 class="text-sm font-semibold text-white tracking-tight flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-rose-400"></span>
+              <span>4. Quy Trình Phối Hợp & Brand Safety</span>
+            </h3>
+            <span class="text-[11px] font-mono text-apple-secondary">Governance</span>
+          </div>
+
+          <div class="space-y-3 text-xs sm:text-sm text-apple-secondary leading-relaxed">
+            <div>
+              <strong class="text-apple-text font-medium">Quy trình 2 bước chuẩn kỹ thuật:</strong>
+              <p class="text-xs mt-0.5">Sử dụng mô hình thị giác (Vision) độc quyền cho bước <span class="text-apple-text font-medium underline">nhận diện đối tượng/độ tuổi</span>, sau đó chuyển giao thông số sang LLM đã cài đặt hướng dẫn (Instruct) để <span class="text-apple-text font-medium underline">sáng tạo thông điệp</span>. Không để Vision tự ý suy diễn nội dung.</p>
+            </div>
+
+            <div>
+              <strong class="text-apple-text font-medium">Bộ 6 tiêu chuẩn Brand Safety trong chiến dịch:</strong>
+              <ol class="list-decimal pl-4 mt-1 space-y-1 text-xs">
+                <li><strong>Minh bạch (Transparency):</strong> Công bố rõ nội dung do AI hỗ trợ tạo lập.</li>
+                <li><strong>System Prompt Safeguards:</strong> Đặt quy định loại trừ đối thủ, chính trị, tôn giáo.</li>
+                <li><strong>Mô hình kiểm duyệt 2 lớp (Moderation Model):</strong> Lọc từ khóa độc hại trước khi chuyển lệnh tới mô hình chính.</li>
+                <li><strong>Thư viện phê duyệt trước (Pre-Approved Library):</strong> Giới hạn người dùng chọn các option định sẵn thay vì nhập văn bản tự do nhằm chặn đứng Prompt Injection.</li>
+                <li><strong>Không tư vấn sức khỏe/tài chính độc lập:</strong> Bắt buộc phải có RAG và chuyên gia phê duyệt nguồn.</li>
+                <li><strong>Thu thập phản hồi (Feedback Mechanism):</strong> Tích hợp nút đánh giá để ghi nhận và hiệu chỉnh thuật toán.</li>
+              </ol>
+            </div>
+          </div>
+        </article>
 
       </div>
+
+      <!-- Action Footer -->
+      <div class="mt-8 pt-6 border-t border-apple-border flex justify-between items-center text-xs text-apple-secondary">
+        <span>Tài liệu tham chiếu nội bộ</span>
+        <button onclick="switchTab('assessment')" class="px-4 py-2 rounded-lg bg-apple-surface hover:bg-apple-elevated border border-apple-border text-apple-text font-medium transition-colors">
+          Thực hiện bài kiểm tra trắc nghiệm →
+        </button>
+      </div>
+
     </section>
 
   </main>
 
   <!-- FOOTER -->
-  <footer class="max-w-6xl w-full mx-auto text-center py-4 text-xs text-purple-300/50 flex flex-wrap items-center justify-between gap-2 border-t border-white/5 mt-6">
-    <span>Interactive Learning Platform for Creative & Media Agencies</span>
-    <span>Dựa trên khóa huấn luyện của <b>Trung Nguyễn</b></span>
+  <footer class="border-t border-apple-border py-4 mt-8 bg-black">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-apple-secondary">
+      <div>AI for Creative Approach — Knowledge Assessment & Documentation Workspace</div>
+      <div class="font-mono text-[11px] text-apple-tertiary">Version 2.0 (Pro Academic)</div>
+    </div>
   </footer>
 
-  <!-- SCRIPT LOGIC (AUDIO SYNTHESIS, KAHOOT LOGIC, FLASHCARDS) -->
+  <!-- JAVASCRIPT ENGINE -->
   <script>
-    /* ==========================================================
-       1. SYNTHESIZED SOUND EFFECTS (Web Audio API - No external mp3)
-       ========================================================== */
-    let audioCtx = null;
-    let isSoundMuted = false;
+    /* ==============================================================
+       1. SUBTLE AUDIO NOTIFICATION SYSTEM (Web Audio API)
+       ============================================================== */
+    let audioContext = null;
+    let isAudioActive = true;
 
-    function initAudio() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function initAudioContext() {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
       }
     }
 
     function toggleAudio() {
-      isSoundMuted = !isSoundMuted;
-      document.getElementById('btn-sound').innerText = isSoundMuted ? '🔇' : '🔊';
+      isAudioActive = !isAudioActive;
+      document.getElementById('audio-icon').innerText = isAudioActive ? '🔊' : '🔇';
     }
 
-    function playTone(freq, type = 'sine', duration = 0.15, gainVal = 0.2) {
-      if (isSoundMuted) return;
+    function playTone(frequency, type = 'sine', duration = 0.12, gainVolume = 0.08) {
+      if (!isAudioActive) return;
       try {
-        initAudio();
-        if (audioCtx.state === 'suspended') {
-          audioCtx.resume();
+        initAudioContext();
+        if (audioContext.state === 'suspended') {
+          audioContext.resume();
         }
-        const osc = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
         osc.type = type;
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        gainNode.gain.setValueAtTime(gainVal, audioCtx.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
-        osc.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
+        osc.frequency.setValueAtTime(frequency, audioContext.currentTime);
+        gain.gain.setValueAtTime(gainVolume, audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
         osc.start();
-        osc.stop(audioCtx.currentTime + duration);
-      } catch (e) {
-        // audio fail-safe
-      }
+        osc.stop(audioContext.currentTime + duration);
+      } catch (err) {}
     }
 
-    function soundCorrect() {
-      playTone(523.25, 'triangle', 0.12, 0.25); // C5
-      setTimeout(() => playTone(659.25, 'triangle', 0.15, 0.25), 100); // E5
-      setTimeout(() => playTone(783.99, 'triangle', 0.25, 0.3), 200); // G5
+    function soundAffirmative() {
+      playTone(523.25, 'sine', 0.08, 0.06);
+      setTimeout(() => playTone(659.25, 'sine', 0.14, 0.07), 80);
     }
 
-    function soundWrong() {
-      playTone(220, 'sawtooth', 0.18, 0.3);
-      setTimeout(() => playTone(180, 'sawtooth', 0.3, 0.3), 150);
+    function soundNegative() {
+      playTone(260, 'sine', 0.12, 0.06);
+      setTimeout(() => playTone(220, 'sine', 0.16, 0.06), 90);
     }
 
-    function soundTick() {
-      playTone(800, 'sine', 0.04, 0.05);
-    }
-
-    function soundWin() {
-      playTone(440, 'triangle', 0.1, 0.2);
-      setTimeout(() => playTone(554, 'triangle', 0.1, 0.2), 100);
-      setTimeout(() => playTone(659, 'triangle', 0.1, 0.2), 200);
-      setTimeout(() => playTone(880, 'triangle', 0.4, 0.3), 300);
-    }
-
-    /* ==========================================================
-       2. DATABASE: 15 KAHOOT QUESTIONS (CHALLENGING & SCENARIO-BASED)
-       ========================================================== */
-    const quizQuestions = [
+    /* ==============================================================
+       2. DATABASE: 15 ACADEMIC MULTIPLE CHOICE QUESTIONS
+       ============================================================== */
+    const assessmentQuestions = [
       {
-        category: "Image Approaches",
-        question: "Agency muốn làm minigame Tết cho nhãn hàng: Người dùng chụp ảnh chân dung để ghép vào hình Thần Tài với mã QR lì xì. Kỹ thuật phù hợp và tiết kiệm nhất là gì?",
+        domain: "Image Deployment Models",
+        stem: "Agency được giao bài toán xây dựng minigame Tết cho một nhãn hàng tiêu dùng: Cho phép người dùng ghép khuôn mặt của mình vào hình ảnh nhân vật đại diện thần tài kèm mã QR nhận tiền may mắn. Giải pháp công nghệ tối ưu về chi phí và tính khả thi là gì?",
         options: [
-          "Fine-tune toàn bộ model Stable Diffusion từ đầu",
-          "Face Swap (Hoán đổi khuôn mặt vào ảnh base có sẵn)",
-          "Inpainting để xóa toàn bộ phông nền và vẽ lại",
-          "Gọi API DALL-E 3 tạo ảnh mới hoàn toàn"
+          "Huấn luyện bổ sung toàn bộ trọng số (Full Fine-Tune) của mô hình Stable Diffusion",
+          "Kỹ thuật Face Swap (Hoán đổi khuôn mặt vào ảnh mẫu cơ sở đã dựng sẵn)",
+          "Sử dụng Inpainting để xóa toàn bộ phông nền và vẽ lại bối cảnh",
+          "Gọi API mô hình DALL-E 3 để tạo lập toàn bộ bức ảnh mới từ đầu"
         ],
         correctIndex: 1,
-        rationale: "Face Swap cho phép giữ nguyên tấm ảnh gốc (base image hình Thần Tài + QR) và chỉ hoán đổi khuôn mặt người dùng vào. Đây chính là cách Momo và Zalo đã triển khai cực kỳ thành công."
+        rationale: "Kỹ thuật Face Swap cho phép cố định hoàn toàn bức ảnh gốc (Base Image) chứa thông điệp thương hiệu và mã QR, chỉ hoán đổi vị trí khuôn mặt của người dùng. Đây là phương thức tiết kiệm chi phí tính toán và bảo toàn 100% bố cục nhãn hàng mong muốn."
       },
       {
-        category: "Image Models",
-        question: "Tại sao Coca-Cola có thể dễ dàng yêu cầu OpenAI DALL-E 3 vẽ 'ông già Noel cầm chai Coca ở bãi biển' mà các nhãn hàng như Tương ớt Chin-su hay Biti's không làm được như vậy?",
+        domain: "Dataset & Training Limitations",
+        stem: "Tại sao các thương hiệu toàn cầu như Coca-Cola có thể dễ dàng yêu cầu các mô hình như DALL-E 3 tạo sinh hình ảnh chính xác về sản phẩm của họ, trong khi các nhãn hàng nội địa như tương ớt Chin-su hay giày Biti's lại không thể thực hiện tương tự?",
         options: [
-          "Vì Coca-Cola mua độc quyền toàn bộ máy chủ của OpenAI",
-          "Vì dataset toàn cầu đã có sẵn hàng triệu ảnh của Coca-Cola",
-          "Vì OpenAI cấm tuyệt đối các sản phẩm có xuất xứ từ châu Á",
-          "Vì hình ảnh chai nước ngọt có cấu tạo hình học đơn giản hơn"
+          "Vì các tập đoàn toàn cầu sở hữu độc quyền máy chủ phần cứng của các nhà phát triển AI",
+          "Vì tập dữ liệu huấn luyện mở rộng ban đầu của mô hình đã bao gồm hàng triệu hình ảnh của thương hiệu toàn cầu",
+          "Vì các mô hình tạo ảnh thương mại chủ động cấm hiển thị sản phẩm từ khu vực châu Á",
+          "Vì các sản phẩm tiêu dùng nội địa có độ phức tạp hình học vượt quá khả năng của AI"
         ],
         correctIndex: 1,
-        rationale: "Coca-Cola là thương hiệu toàn cầu với kho dữ liệu khổng lồ đã có sẵn trong tập huấn luyện ban đầu. Các brand nội địa chưa có dữ liệu trong base model thì bắt buộc phải qua bước Fine-tuning."
+        rationale: "Các mô hình nền tảng (Foundation Models) được huấn luyện trên dữ liệu Internet toàn cầu. Do đó, các thương hiệu lớn đã có sẵn dữ liệu nhận diện trong tập train gốc. Các thương hiệu địa phương bắt buộc phải trải qua bước Fine-Tuning nếu muốn AI hiểu chính xác sản phẩm của mình."
       },
       {
-        category: "Fine-Tuning",
-        question: "Khi nhãn hàng chuẩn bị ra mắt dòng điện thoại hoàn toàn mới và muốn tạo hàng loạt visual độc đáo, Agency cần làm gì để AI vẽ đúng 100% hình dáng sản phẩm mới đó?",
+        domain: "Fine-Tuning Architecture",
+        stem: "Khi một thương hiệu chuẩn bị tung ra dòng sản phẩm điện thoại thông minh hoàn toàn mới và yêu cầu Agency tạo hàng loạt visual quảng cáo, phương án kỹ thuật nào cho phép AI tạo hình ảnh chuẩn xác 100% hình dáng sản phẩm mới đó?",
         options: [
-          "Chỉ cần viết prompt miêu tả thật dài và chi tiết trong ChatGPT",
-          "Product Fine-Tune với bộ ảnh sản phẩm chụp từ nhiều góc độ",
-          "Sử dụng Vision Model để tự động suy luận kiểu dáng",
-          "Áp dụng RAG vào cơ sở dữ liệu ảnh để tự sinh vector"
+          "Soạn thảo câu lệnh mô tả (Prompt) thật dài và chi tiết trong giao diện ChatGPT",
+          "Thực hiện Product Fine-Tune với bộ dữ liệu ảnh mẫu chụp từ 20–30 góc độ khác nhau",
+          "Sử dụng mô hình Vision-Language để tự động suy luận cấu trúc",
+          "Áp dụng kiến trúc RAG cho cơ sở dữ liệu ảnh vector"
         ],
         correctIndex: 1,
-        rationale: "Để AI hiểu được một sản phẩm mới toanh (như Apple Vision Pro lúc mới ra mắt hay chai tương ớt Chin-su), ta phải chụp dataset 20-30 bức ảnh đa góc độ để Product Fine-Tune mô hình."
+        rationale: "Đối với sản phẩm hoàn toàn mới chưa từng xuất hiện trên thế giới, việc duy nhất để mô hình nắm bắt được hình dáng, chất liệu và logo là huấn luyện riêng (Product Fine-Tune) dựa trên tập dữ liệu chụp đa chiều của chính sản phẩm đó."
       },
       {
-        category: "Fine-Tuning",
-        question: "Tạo ra một Virtual Influencer (như bạn Tami 100k followers) xuất hiện đồng nhất trong nhiều bối cảnh khác nhau (đi biển, uống cafe, chụp thời trang) thuộc use-case nào?",
+        domain: "Character Consistency",
+        stem: "Mục tiêu duy trì một nhân vật ảo (Virtual Influencer) xuất hiện đồng nhất về nhận diện khuôn mặt và tỷ lệ hình thể qua nhiều bối cảnh khác nhau (sân bay, quán cà phê, phim trường) thuộc nhóm giải pháp nào?",
         options: [
           "Character Consistency Fine-Tune",
           "Style Fine-Tune",
-          "Text-to-Speech Cloning",
-          "Outpainting Background"
+          "Text-to-Speech Voice Cloning",
+          "Outpainting Background Extension"
         ],
         correctIndex: 0,
-        rationale: "Character Consistency (đồng nhất nhân vật) là kỹ thuật huấn luyện AI ghi nhớ đặc điểm khuôn mặt, vóc dáng của một nhân vật cụ thể để tạo ra cả một series hình ảnh xuyên suốt chiến dịch."
+        rationale: "Character Consistency là kỹ thuật huấn luyện mô hình ghi nhớ các đặc điểm nhân dạng cố định của một nhân vật, cho phép tái hiện nhất quán nhân vật đó trong vô số môi trường và hành động khác nhau theo kịch bản truyền thông."
       },
       {
-        category: "Image Approaches",
-        question: "Khách hàng Biti's Hunter muốn chụp 1 đôi giày mẫu rồi đưa đôi giày đó xuất hiện tự nhiên trên nhiều background kỳ vĩ (núi tuyết, đường phố Tokyo, bãi biển). Đây là kỹ thuật gì?",
+        domain: "Image Inpainting",
+        stem: "Nhãn hàng thời trang muốn chụp một đôi giày mẫu và sau đó đưa đôi giày thực tế này xuất hiện tự nhiên trên nhiều bối cảnh địa lý khác nhau (đường phố Tokyo, núi tuyết, bờ biển). Kỹ thuật nào xử lý đúng yêu cầu này?",
         options: [
           "Inpainting / Add-painting",
           "Face Swapping",
-          "Speech-to-Text Transcribe",
-          "Prompt Engineering thuần text"
+          "Speech-to-Text Transcription",
+          "Prompt Engineering thuần túy bằng văn bản"
         ],
         correctIndex: 0,
-        rationale: "Inpainting (hoặc Add-painting) cho phép đặt sản phẩm lên và AI sẽ vẽ hòa quyện phần nền xung quanh phù hợp với ánh sáng, đổ bóng của bối cảnh."
+        rationale: "Inpainting (hoặc Add-painting) cho phép đặt đối tượng sản phẩm thật vào khung hình, sau đó AI sẽ phân tích ánh sáng, góc đổ bóng để vẽ hòa nhập phần hậu cảnh xung quanh một cách tự nhiên."
       },
       {
-        category: "Ecosystem Tools",
-        question: "Trang web nào được Trainer Trung Nguyễn đặc biệt gợi ý cho Planner/Account vì chứa hàng ngàn Open-Source AI Model có sẵn API để team Dev tích hợp ngay vào microsite?",
+        domain: "Production Resources",
+        stem: "Nền tảng cộng đồng mã nguồn mở nào được khuyến nghị để Account và Planner tra cứu các mô hình AI đã đóng gói sẵn API (như Face Swap, chuyển phong cách Anime, phục chế ảnh) trước khi yêu cầu team Kỹ thuật triển khai từ đầu?",
         options: [
           "Replicate.com",
           "Canva.com",
-          "Pinterest.com",
-          "Unsplash.com"
+          "Unsplash.com",
+          "Dribbble.com"
         ],
         correctIndex: 0,
-        rationale: "Replicate.com là trung tâm cộng đồng lưu trữ các open-source model (face swap, anime filter, enhance ảnh...) đã đóng gói sẵn API cho Production House gọi về dùng ngay."
+        rationale: "Replicate.com là kho lưu trữ hàng nghìn mô hình AI mã nguồn mở đã được cấu hình sẵn API phục vụ thương mại, giúp Agency tận dụng ngay mà không phải đầu tư cơ sở hạ tầng GPU đắt đỏ."
       },
       {
-        category: "LLM Concepts",
-        question: "Trong 3 cấp độ của LLM, chiến dịch 'Thông điệp vũ trụ LaVie' hay 'Chuyên gia Tarot Viv của Coca-Cola' được định hướng theo luật (chọn số 1 ra tài chính, số 2 ra tình duyên) thuộc cấp độ nào?",
+        domain: "LLM System Instructions",
+        stem: "Trong 3 cấp độ vận hành của LLM, chiến dịch 'Thông điệp vũ trụ LaVie' hoặc 'Chuyên gia tư vấn tarot Coca-Cola' (định sẵn vai trò và điều kiện: chọn số 1 ra tài chính, số 2 ra tình duyên) thuộc cấp độ nào?",
         options: [
-          "Base Model thuần túy",
+          "Base Model nguyên bản",
           "Instruct (System Prompt Guidance)",
           "RAG với Vector Database",
-          "Fine-tune toàn bộ trọng số LLM"
+          "Full Pre-training lại toàn bộ mô hình ngôn ngữ"
         ],
         correctIndex: 1,
-        rationale: "Instruct (System Prompt) cho phép đóng vai (Persona) và ép luật phản hồi theo ý muốn agency một cách dễ dàng, nhanh chóng mà không cần code phức tạp hay data khổng lồ."
+        rationale: "Cấp độ Instruct (System Prompting) cho phép gán vai trò nhân vật (Persona) và quy định luồng phản hồi theo điều kiện logic một cách nhanh chóng, chính xác đối với khối lượng văn bản hướng dẫn dưới 10 trang A4."
       },
       {
-        category: "LLM & RAG",
-        question: "Một ngân hàng muốn làm chatbot giải đáp chính sách thẻ dựa trên tài liệu Q&A nội bộ dài hơn 500 trang. Giải pháp kiến trúc LLM tối ưu và chống bịa đặt (hallucination) là gì?",
+        domain: "RAG Architecture",
+        stem: "Một ngân hàng thương mại yêu cầu xây dựng chatbot tự động giải đáp chính sách thẻ dựa trên tập tài liệu Q&A nội bộ dài hơn 500 trang A4. Giải pháp kiến trúc nào tối ưu để ngăn ngừa hiện tượng AI tự bịa đặt câu trả lời (hallucination)?",
         options: [
-          "Copy toàn bộ 500 trang dán vào câu lệnh prompt của ChatGPT",
-          "Dùng RAG (Retrieval-Augmented Generation)",
-          "Dùng mô hình Vision Language để đọc ảnh chụp từng trang",
-          "Dùng mô hình Face Swap để chuyển tài liệu thành video"
+          "Sao chép toàn bộ 500 trang văn bản vào ô nhập lệnh của ChatGPT",
+          "Kiến trúc RAG (Retrieval-Augmented Generation) kết hợp Vector Database",
+          "Sử dụng mô hình Vision-Language để đọc ảnh chụp của từng trang sách",
+          "Sử dụng mô hình chuyển văn bản thành giọng nói để đọc tài liệu"
         ],
         correctIndex: 1,
-        rationale: "RAG chia nhỏ tài liệu vào cơ sở dữ liệu vector. Khi người dùng hỏi, hệ thống tìm đoạn trích dẫn chuẩn xác nhất trong 500 trang rồi mới đưa cho LLM tổng hợp, đảm bảo độ chính xác tuyệt đối."
+        rationale: "RAG chia nhỏ tài liệu vào cơ sở dữ liệu vector. Khi người dùng truy vấn, hệ thống sẽ trích xuất chính xác đoạn quy định liên quan nhất từ 500 trang dữ liệu rồi chuyển cho LLM tổng hợp, loại bỏ nguy cơ thông tin sai lệch."
       },
       {
-        category: "Tokens & Context Window",
-        question: "Context Window của GPT-4 là 128.000 tokens (tương đương ~300 trang A4). Điểm mấu chốt mà Planner cần nhớ khi lên ý tưởng chiến dịch là gì?",
+        domain: "LLM Context Window",
+        stem: "Nguyên lý kỹ thuật cốt lõi mà Strategic Planner cần ghi nhớ về 'Cửa sổ ngữ cảnh' (Context Window, ví dụ 128.000 tokens của GPT-4) khi xây dựng ý tưởng chiến dịch là gì?",
         options: [
-          "AI có thể vừa đọc 300 trang và vừa viết ra được một văn bản dài 300 trang",
-          "AI đọc hiểu được 300 trang đầu vào nhưng đầu ra (output) bị giới hạn ngắn hơn nhiều",
-          "Context window chỉ áp dụng cho hình ảnh, không áp dụng cho chữ",
-          "128.000 tokens tương đương với tối đa 128 từ tiếng Việt"
+          "AI có khả năng vừa đọc 300 trang tài liệu và đồng thời viết ra được một văn bản mới dài đúng 300 trang",
+          "AI tiếp nhận được khối lượng đọc đầu vào (Input) rất lớn nhưng độ dài nội dung tạo ra (Output) bị giới hạn ngắn hơn nhiều",
+          "Cửa sổ ngữ cảnh chỉ áp dụng cho pixel hình ảnh, không áp dụng cho văn bản",
+          "128.000 tokens tương đương với tối đa 128 từ tiếng Việt có dấu"
         ],
         correctIndex: 1,
-        rationale: "Context window cho phép AI đọc lượng input khổng lồ (như 10.000 comments fanpage), nhưng output trả về chỉ được khoảng vài trang A4 (như bảng tổng hợp % cảm xúc tích cực/tiêu cực)."
+        rationale: "Context Window cho phép đọc hiểu tập dữ liệu đầu vào khổng lồ (như phân tích 10.000 bình luận người dùng), tuy nhiên độ dài phản hồi (output generation) của các mô hình thương mại luôn bị giới hạn trong vài trang A4."
       },
       {
-        category: "Vision Models",
-        question: "Khi xây dựng ứng dụng gợi ý món ăn dinh dưỡng cho mẹ và bé: Người mẹ chụp ảnh em bé, hệ thống sẽ đề xuất thực đơn. Quy trình 2 bước chuẩn kỹ thuật được khuyến nghị là gì?",
+        domain: "Vision-Language Pipeline",
+        stem: "Trong quy trình đề xuất dinh dưỡng cho trẻ em: Người mẹ chụp ảnh đứa trẻ, hệ thống sẽ gợi ý thực đơn phù hợp. Quy chuẩn phối hợp kỹ thuật 2 bước được khuyến nghị là gì?",
         options: [
-          "Để mô hình Vision tự vừa nhìn ảnh em bé vừa tự sáng tạo công thức nấu ăn",
-          "Vision Model chỉ nhận diện độ tuổi, sau đó chuyển số tuổi cho LLM đã instruct để tư vấn món ăn",
-          "Dùng mô hình Text-to-Video để giả lập hoạt hình em bé đang ăn",
-          "Dùng mô hình Inpainting để xóa hình em bé đi và thay bằng đĩa thức ăn"
+          "Yêu cầu mô hình Vision vừa phân tích hình ảnh vừa trực tiếp sáng tác công thức dinh dưỡng",
+          "Mô hình Vision chỉ nhận diện độ tuổi, sau đó truyền tham số tuổi sang mô hình LLM đã cài đặt hướng dẫn chuẩn để tư vấn món ăn",
+          "Sử dụng mô hình Text-to-Video để giả lập hoạt hình em bé đang ăn",
+          "Sử dụng mô hình Inpainting để xóa hình ảnh đứa trẻ và thay bằng hình đĩa thức ăn"
         ],
         correctIndex: 1,
-        rationale: "Vision Model mạnh nhất ở khâu nhận diện/thị giác. Khâu sáng tạo nội dung hoặc đối chiếu công thức dinh dưỡng an toàn nên để LLM (đã được nạp luật) đảm nhận."
+        rationale: "Mô hình thị giác (Vision) đạt hiệu quả cao nhất ở khâu nhận diện khách quan. Việc sáng tạo thông điệp hoặc đối chiếu công thức y tế an toàn nên được phân công cho LLM đã được kiểm duyệt hướng dẫn."
       },
       {
-        category: "Audio Models",
-        question: "Khi cần tạo voice talent tiếng Việt chuẩn ngữ điệu người thật tới 98% hoặc clone lại giọng của một KOL cho chiến dịch quảng cáo, nền tảng hàng đầu hiện nay là gì?",
+        domain: "Audio Generation",
+        stem: "Nền tảng công nghệ nào hiện nay dẫn đầu về khả năng tạo giọng đọc nhân tạo (TTS) và nhân bản giọng nói (Voice Cloning) hỗ trợ tiếng Việt với độ tự nhiên đạt trên 95%?",
         options: [
           "ElevenLabs",
           "Midjourney",
-          "Replicate Anime",
-          "D-ID Studio"
+          "Runway Gen-2",
+          "Stable Audio"
         ],
         correctIndex: 0,
-        rationale: "ElevenLabs là công cụ Generative Audio dẫn đầu hiện nay, hỗ trợ tiếng Việt tự nhiên và hỗ trợ tính năng Voice Cloning với độ tương đồng giọng nói cực cao."
+        rationale: "ElevenLabs là nền tảng xử lý giọng nói hàng đầu hiện nay, cung cấp chất lượng phát âm tiếng Việt đa cảm xúc và tính năng Voice Cloning cho phép nhân bản giọng nói của diễn viên lồng tiếng hoặc KOL."
       },
       {
-        category: "Audio Models",
-        question: "Suno AI có thể tự sáng tác cả bài nhạc có giai điệu và lời hát từ text prompt. Tuy nhiên, rào cản lớn nhất đối với Agency khi muốn nhúng vào microsite là gì?",
+        domain: "Commercial Constraints",
+        stem: "Nền tảng tạo nhạc Suno AI có khả năng sáng tác bài hát hoàn chỉnh kèm lời và giai điệu từ văn bản. Rào cản lớn nhất khi Agency muốn nhúng tính năng này vào microsite tự động cho người dùng là gì?",
         options: [
-          "Suno AI không thể hát được bất kỳ thể loại nhạc nào",
-          "Suno chưa cung cấp API chính thức để tích hợp vào ứng dụng bên thứ 3",
-          "Chi phí mỗi bài hát của Suno lên tới hàng tỷ đồng",
-          "Chất lượng âm thanh của Suno chỉ đạt mức 8-bit cổ điển"
+          "Suno AI không hỗ trợ bất kỳ thể loại âm nhạc hiện đại nào",
+          "Nhà phát hành chưa cung cấp API chính thức cho các nhà phát triển bên thứ ba",
+          "Chi phí tính toán cho mỗi bản nhạc lên tới hàng chục nghìn USD",
+          "Chất lượng âm thanh xuất xưởng chỉ tương thích với định dạng MIDI cổ điển"
         ],
         correctIndex: 1,
-        rationale: "Thời điểm hiện tại, Suno là nền tảng tạo nhạc đỉnh cao nhưng chưa mở cổng API thương mại để các agency nhúng tự động vào flow microsite người dùng."
+        rationale: "Tại thời điểm đào tạo, Suno AI là giải pháp độc quyền chưa mở cổng API lập trình công khai, do đó các Production House chưa thể tự động hóa quy trình cho phép user tự tạo nhạc trực tiếp trên web app của chiến dịch."
       },
       {
-        category: "Brand Safety",
-        question: "Để ngăn ngừa tuyệt đối rủi ro người dùng nhập prompt phá hoại, quậy phá chatbot của nhãn hàng (prompt injection), giải pháp thiết kế sản phẩm hiệu quả nhất là gì?",
+        domain: "Brand Safety & Security",
+        stem: "Để loại bỏ hoàn toàn rủi ro người dùng nhập các câu lệnh phá hoại (Prompt Injection) hoặc kích động chatbot phát ngôn sai lệch tiêu chuẩn nhãn hàng, giải pháp kiến trúc giao diện tối ưu là gì?",
         options: [
-          "Pre-Approved Content Library (cho chọn từ menu/option có sẵn thay vì gõ text tự do)",
-          "Bắt người dùng phải ký cam kết dân sự trước khi mở microsite",
-          "Nhờ nhân sự trực gác duyệt từng tin nhắn thủ công 24/7",
-          "Xóa hoàn toàn tính năng AI ra khỏi chiến dịch"
+          "Thiết lập Thư viện nội dung phê duyệt trước (Pre-Approved Content Library) dạng nút bấm/dropdown thay vì cho phép nhập text tự do",
+          "Buộc người dùng phải ký cam kết pháp lý trực tuyến trước khi mở website",
+          "Bố trí nhân sự trực duyệt từng câu trả lời theo thời gian thực 24/7",
+          "Hủy bỏ hoàn toàn việc ứng dụng trí tuệ nhân tạo trong chiến dịch"
         ],
         correctIndex: 0,
-        rationale: "Pre-Approved Library (như Zalo hay Momo) chỉ cho phép người dùng click chọn các option định sẵn (chọn màu, chọn tuổi, chọn chủ đề) giúp loại bỏ 100% nguy cơ bị chèn prompt độc hại."
+        rationale: "Phương pháp Pre-Approved Library chỉ cho phép người dùng lựa chọn các trường thông tin định sẵn (giới tính, độ tuổi, sở thích), qua đó triệt tiêu hoàn toàn khả năng người dùng cố tình nhập văn bản độc hại để tấn công hệ thống."
       },
       {
-        category: "Brand Safety",
-        question: "Lĩnh vực nào mà Trainer Trung Nguyễn CẢNH BÁO TUYỆT ĐỐI KHÔNG ĐƯỢC dùng AI đưa ra lời khuyên độc lập nếu không có RAG và sự thẩm định của chuyên gia?",
+        domain: "Risk Management",
+        stem: "Lĩnh vực chuyên môn nào được khuyến cáo TUYỆT ĐỐI KHÔNG sử dụng AI đưa ra tư vấn độc lập nếu không có kiến trúc RAG kiểm định và sự phê duyệt từ hội đồng chuyên gia?",
         options: [
-          "Tư vấn phối màu thời trang theo phong cách vintage",
-          "Tư vấn y tế, sức khỏe, chẩn đoán ảnh chụp X-quang và rủi ro sinh mạng",
-          "Gợi ý lời chúc Tết hóm hỉnh cho bạn bè",
-          "Đoán vận mệnh vui đầu năm dựa trên ngày tháng năm sinh"
+          "Gợi ý phối màu trang phục theo chủ đề thời trang",
+          "Tư vấn y tế, chẩn đoán hình ảnh bệnh học, thuốc và sức khỏe sinh mạng",
+          "Gợi ý câu đối và lời chúc Tết mang tính giải trí",
+          "Dự đoán vận mệnh vui đầu năm dựa trên cung hoàng đạo"
         ],
         correctIndex: 1,
-        rationale: "Y tế và sức khỏe là các ngành có rủi ro cực kỳ cao. Không được dùng AI hallucinate (tự suy diễn) mà bắt buộc phải có tài liệu được chuyên gia kiểm chứng thông qua RAG hoặc từ chối làm."
+        rationale: "Y tế và sức khỏe liên quan trực tiếp đến sinh mạng con người và chịu sự kiểm soát nghiêm ngặt của pháp luật. Tuyệt đối không để AI tự do suy diễn chẩn đoán khi chưa có hệ thống tri thức xác thực và phê duyệt của bác sĩ chuyên khoa."
       },
       {
-        category: "Agency Role",
-        question: "Sau buổi training 'AI for Creative Approach', vai trò thực tế của một Planner hoặc Creative trong Agency là gì?",
+        domain: "Role Definition",
+        stem: "Mục tiêu then chốt của nhân sự Strategic Planner và Creative sau khóa đào tạo 'AI for Creative Approach' là gì?",
         options: [
-          "Tự tay viết code Python và trực tiếp dựng server GPU",
-          "Hiểu bản chất các mô hình để lên concept khả thi và giao tiếp hiệu quả với team Dev / Production House",
-          "Thay thế hoàn toàn toàn bộ lập trình viên trong công ty",
-          "Từ chối mọi dự án có yếu tố công nghệ vì quá phức tạp"
+          "Trực tiếp viết mã nguồn Python và tự tay thiết lập hệ thống máy chủ GPU",
+          "Thấu hiểu bản chất kỹ thuật và giới hạn của từng mô hình để lên ý tưởng khả thi và định hướng chính xác cho đội ngũ Kỹ thuật / Production House",
+          "Thay thế toàn bộ lập trình viên công nghệ thông tin trong tổ chức",
+          "Loại trừ mọi giải pháp công nghệ khỏi đề xuất chiến dịch"
         ],
         correctIndex: 1,
-        rationale: "Mục tiêu cốt lõi của khóa học là cung cấp 'AI Foundation for Advertising', giúp nhân sự sáng tạo hiểu rõ biên giới khả năng của AI để tự tin pitch ý tưởng và brief cho team công nghệ."
+        rationale: "Vai trò của nhân sự truyền thông là nắm vững 'AI Foundation for Advertising' — hiểu rõ khả năng, giới hạn và phương thức vận hành để biến công nghệ thành giải pháp sáng tạo khả thi cho thương hiệu."
       }
     ];
 
-    /* ==========================================================
-       3. DATABASE: 16 FLASHCARDS (3D FLIP)
-       ========================================================== */
-    const flashcardsData = [
+    /* ==============================================================
+       3. DATABASE: 16 COMPREHENSIVE STUDY FLASHCARDS
+       ============================================================== */
+    const studyCardsData = [
       {
         id: 1,
         category: "image",
-        badge: "Image Approach",
-        icon: "🎭",
-        frontTitle: "Face Swap",
-        frontSub: "Cơ chế hoạt động và use-case kinh điển cho chiến dịch Agency?",
-        backTitle: "Hoán đổi mặt người dùng vào ảnh mẫu (Base Image)",
-        backDetail: "• Cách làm: Cần 1 ảnh base chuẩn (ví dụ hình Thần Tài Momo, visual Dove). User chụp selfie rõ mặt để AI đè khớp vào.<br>• Giới hạn: Ảnh base chỉ nên có 1 khuôn mặt duy nhất để AI không bị nhầm lẫn."
+        domainBadge: "Image Model Approach",
+        frontTitle: "Face Swap (Hoán Đổi Khuôn Mặt)",
+        frontSub: "Cơ chế vận hành và giới hạn triển khai thực tế trong chiến dịch là gì?",
+        backTitle: "Ghép khuôn mặt người dùng vào ảnh mẫu cơ sở (Base Image)",
+        backBody: `• <strong>Bản chất:</strong> Cần 1 ảnh base chuẩn chỉn do nhãn hàng thiết kế (ví dụ: visual Thần Tài Momo, poster đại sứ Dove). Người dùng chụp ảnh khuôn mặt để thuật toán đè khớp vào.<br>
+                   • <strong>Giới hạn kỹ thuật:</strong> Ảnh base chỉ nên có duy nhất 1 khuôn mặt chuẩn góc nhìn để thuật toán nhận diện không bị nhầm lẫn đối tượng.`
       },
       {
         id: 2,
         category: "image",
-        badge: "Image Approach",
-        icon: "🖌️",
+        domainBadge: "Image Model Approach",
         frontTitle: "Inpainting / Add-painting",
-        frontSub: "Khi nào cần Inpainting thay vì vẽ mới toàn bộ?",
-        backTitle: "Thay thế hoặc vẽ thêm một chi tiết vào bức ảnh",
-        backDetail: "• Use-case: Đặt đôi giày Biti's Hunter hoặc chai nước hoa vào một bối cảnh mới.<br>• Thay trang phục cho người mẫu ảo bằng cách quét mask lên phần áo cũ rồi prompt quần áo mới."
+        frontSub: "Khi nào cần sử dụng Inpainting thay vì vẽ mới toàn bộ hình ảnh?",
+        backTitle: "Thay thế hoặc vẽ thêm một chi tiết cục bộ vào bối cảnh",
+        backBody: `• <strong>Ứng dụng:</strong> Đặt chính xác đôi giày Biti's Hunter hoặc chai mỹ phẩm vào một bối cảnh mới hoàn toàn mà không làm biến dạng hình học của sản phẩm.<br>
+                   • <strong>Thử trang phục:</strong> Sử dụng mặt nạ (mask) chọn vùng áo quần của người mẫu, sau đó dùng lệnh để AI vẽ trang phục mới hòa hợp ánh sáng.`
       },
       {
         id: 3,
         category: "image",
-        badge: "Fine-Tuning",
-        icon: "🥫",
+        domainBadge: "Model Customization",
         frontTitle: "Product Fine-Tune",
-        frontSub: "Tại sao không thể dùng Midjourney vẽ chai tương ớt Chin-su?",
-        backTitle: "Phải huấn luyện AI nhận diện sản phẩm cụ thể",
-        backDetail: "• Nguyên nhân: Dữ liệu toàn cầu không có sẵn hình ảnh chi tiết của sản phẩm nội địa.<br>• Cách giải quyết: Chụp 20-30 bức ảnh sản phẩm ở nhiều góc độ và ánh sáng khác nhau để train (Fine-tune) cho model Stable Diffusion."
+        frontSub: "Tại sao không thể dùng Midjourney tạo hình chính xác sản phẩm nội địa?",
+        backTitle: "Cần huấn luyện mô hình nhận diện sản phẩm đặc thù",
+        backBody: `• <strong>Nguyên nhân:</strong> Tập dữ liệu công khai trên toàn cầu không có dữ liệu chi tiết về các sản phẩm như chai tương ớt Chin-su hay kính Apple Vision Pro lúc mới công bố.<br>
+                   • <strong>Quy trình xử lý:</strong> Chụp tập dữ liệu 20–30 ảnh sản phẩm ở nhiều góc độ và điều kiện ánh sáng để huấn luyện bổ sung (Fine-tune) cho mô hình Stable Diffusion.`
       },
       {
         id: 4,
         category: "image",
-        badge: "Fine-Tuning",
-        icon: "🎞️",
+        domainBadge: "Model Customization",
         frontTitle: "Style Fine-Tune",
-        frontSub: "Cách đồng bộ hóa phong cách thị giác (Style) cho cả chiến dịch?",
-        backTitle: "Huấn luyện AI theo một gu nghệ thuật nhất định",
-        backDetail: "• Khi brand yêu cầu bộ ảnh mang vibe 'Sài Gòn xưa', 'Phim Barbie' hay 'Poster phim Hai Phượng'.<br>• Cần tập hợp 100-200 bức ảnh mang phong cách đó để AI nắm bắt được ánh sáng, gam màu, nét vẽ đặc trưng."
+        frontSub: "Làm thế nào để đồng bộ hóa phong cách nghệ thuật cho toàn bộ chiến dịch?",
+        backTitle: "Định hình phong cách thị giác xuyên suốt cho chiến dịch",
+        backBody: `• <strong>Yêu cầu:</strong> Khi nhãn hàng đòi hỏi toàn bộ visual phải mang màu sắc 'Sài Gòn xưa', 'Phim Barbie' hoặc 'Tông màu điện ảnh Hai Phượng'.<br>
+                   • <strong>Tập dữ liệu:</strong> Cần chuẩn bị 100–200 hình ảnh mẫu cùng phong cách để AI phân tích cấu trúc màu sắc, chất liệu và đường nét đặc trưng.`
       },
       {
         id: 5,
         category: "image",
-        badge: "Fine-Tuning",
-        icon: "🧍‍♀️",
+        domainBadge: "Model Customization",
         frontTitle: "Character Consistency",
-        frontSub: "Làm thế nào để tạo ra KOL ảo (Virtual Influencer) giữ nguyên khuôn mặt?",
-        backTitle: "Đồng nhất nhân vật qua hàng ngàn bối cảnh",
-        backDetail: "• Ví dụ: Virtual Influencer Tami có thể xuất hiện lúc ở sân bay, lúc ở bãi biển mà khuôn mặt, tỷ lệ cơ thể vẫn là 1 người.<br>• Agency có thể tự tạo đại sứ ảo độc quyền cho nhãn hàng mà không lo scandal đời tư."
+        frontSub: "Phương pháp tạo dựng nhân vật ảo (Virtual Influencer) giữ nguyên diện mạo?",
+        backTitle: "Duy trì tính đồng nhất nhân diện qua hàng loạt bối cảnh",
+        backBody: `• <strong>Thực tế:</strong> Giúp các nhân vật ảo (như Tami với hơn 100k followers) xuất hiện ở sân bay, quán ăn hay sự kiện thời trang mà gương mặt và tỉ lệ không bị méo mó.<br>
+                   • <strong>Lợi ích thương hiệu:</strong> Doanh nghiệp có thể sở hữu đại sứ thương hiệu ảo độc quyền mà không phải chịu rủi ro khủng hoảng đời tư.`
       },
       {
         id: 6,
         category: "image",
-        badge: "Tooling",
-        icon: "🌐",
-        frontTitle: "Replicate.com",
-        frontSub: "Vũ khí bí mật của Creative Technologist & Developer?",
-        backTitle: "Kho lưu trữ hàng ngàn Open-Source AI Model có sẵn API",
-        backDetail: "• Nơi có sẵn các mô hình: Face Swap, Anime conversion, Phục chế ảnh cũ, Tẩy xóa vật thể.<br>• Giúp Agency triển khai ngay chiến dịch mà không cần chi hàng trăm triệu sắm dàn máy tính GPU khủng."
+        domainBadge: "Ecosystem Tools",
+        frontTitle: "Nền tảng Replicate.com",
+        frontSub: "Công cụ hỗ trợ gì cho Account, Planner và Đội ngũ Kỹ thuật?",
+        backTitle: "Kho lưu trữ hàng nghìn Open-Source AI Model tích hợp sẵn API",
+        backBody: `• <strong>Chức năng:</strong> Cung cấp sẵn các mô hình: Face Swap, Anime conversion, phục chế ảnh cũ (Restore), khử nhiễu.<br>
+                   • <strong>Ý nghĩa thực tiễn:</strong> Giúp Agency tích hợp trực tiếp vào dự án với chi phí thấp mà không cần đầu tư máy chủ phần cứng GPU riêng biệt.`
       },
       {
         id: 7,
         category: "llm",
-        badge: "LLM Level 1",
-        icon: "🔌",
-        frontTitle: "LLM Base Model",
-        frontSub: "Base Model hoạt động như thế nào khi gọi qua API?",
-        backTitle: "Mang trí tuệ nguyên bản của AI gắn vào hệ sinh thái của nhãn hàng",
-        backDetail: "• Thay vì bắt người dùng lên trang OpenAI, ta nhúng thẳng ChatGPT vào Microsite, Zalo OA, Website.<br>• Tuy nhiên ở cấp độ này, AI trả lời tự do, chưa được kiểm soát kịch bản cụ thể."
+        domainBadge: "LLM Level 1",
+        frontTitle: "LLM: Base Model",
+        frontSub: "Mô hình ngôn ngữ gốc vận hành như thế nào khi kết nối qua API?",
+        backTitle: "Tích hợp trí tuệ ngôn ngữ nguyên bản vào ứng dụng",
+        backBody: `• <strong>Cơ chế:</strong> Mang toàn bộ năng lực hiểu và sinh văn bản của GPT-4, Claude nhúng vào Microsite, Chatbot hoặc App của doanh nghiệp.<br>
+                   • <strong>Hạn chế:</strong> Phản hồi tự do, chưa được ràng buộc bởi kịch bản hoặc nhân vật cụ thể của chiến dịch.`
       },
       {
         id: 8,
         category: "llm",
-        badge: "LLM Level 2",
-        icon: "🧭",
-        frontTitle: "Instruct (System Prompt)",
-        frontSub: "Vũ khí thần thánh để định hướng nhân vật và kịch bản cho AI?",
-        backTitle: "Giao vai trò và luật lệ chặt chẽ cho LLM",
-        backDetail: "• Ví dụ: 'Bạn là Viv - chuyên gia Tarot của Coca-Cola. Hãy chào thân thiện, hỏi tuổi và nếu chọn số 1 thì chúc may mắn tài lộc'.<br>• Phù hợp dữ liệu nhỏ (&lt; 16.000 từ / ~10 trang A4), triển khai siêu nhanh và chính xác."
+        domainBadge: "LLM Level 2",
+        frontTitle: "LLM: Instruct (System Prompt)",
+        frontSub: "Phương pháp định hướng kịch bản và vai trò thương hiệu cho AI?",
+        backTitle: "Thiết lập vai trò và nguyên tắc phản hồi nghiêm ngặt cho mô hình",
+        backBody: `• <strong>Ví dụ:</strong> 'Bạn là Viv - chuyên gia Tarot của Coca-Cola. Hãy chào hỏi thân thiện, nếu người dùng chọn số 1 thì đưa ra lời chúc tài chính'.<br>
+                   • <strong>Phạm vi:</strong> Phù hợp dữ liệu kịch bản dưới 16.000 từ (~10 trang A4), chi phí thấp và tốc độ xử lý tức thì.`
       },
       {
         id: 9,
         category: "llm",
-        badge: "LLM Level 3",
-        icon: "📚",
-        frontTitle: "RAG (Retrieval Augmented Generation)",
-        frontSub: "Giải pháp cho dữ liệu khổng lồ (Luật giao thông, Sách y khoa)?",
-        backTitle: "Tìm kiếm thông tin trong kho lưu trữ trước khi trả lời",
-        backDetail: "• Giải quyết bài toán hàng ngàn trang tài liệu (Kiki Giao thông, Bác sĩ tư vấn Nhi khoa).<br>• AI không bịa chuyện lung tung mà chỉ trích xuất từ database chuẩn được chuyên gia kiểm duyệt."
+        domainBadge: "LLM Level 3",
+        frontTitle: "LLM: Kiến Trúc RAG",
+        frontSub: "Giải pháp xử lý tập dữ liệu đồ sộ (Luật pháp, Y tế) chống bịa đặt?",
+        backTitle: "Truy xuất thông tin từ cơ sở dữ liệu chuyên ngành trước khi trả lời",
+        backBody: `• <strong>Cơ chế RAG:</strong> Đối với dữ liệu hàng nghìn trang (ví dụ Kiki Giao thông), AI truy vấn đoạn tài liệu gốc liên quan rồi mới tổng hợp câu trả lời.<br>
+                   • <strong>Đặc tính:</strong> AI không tự suy diễn lung tung mà trích xuất chính xác theo tài liệu chuẩn đã được thẩm định.`
       },
       {
         id: 10,
         category: "llm",
-        badge: "Token & Context",
-        icon: "🪟",
-        frontTitle: "Context Window 128K",
-        frontSub: "Hiểu đúng về giới hạn 128k Tokens của GPT-4?",
-        backTitle: "Đầu vào đọc được 300 trang A4 - Đầu ra chỉ vài trang",
-        backDetail: "• Ứng dụng: Nhét 10.000 bình luận Facebook của khách hàng để AI phân tích thái độ (Sentiment Analysis).<br>• Không thể bắt AI viết một lèo ra cuốn tiểu thuyết 300 trang vì giới hạn output ngắn."
+        domainBadge: "Token & Context",
+        frontTitle: "Context Window 128K Tokens",
+        frontSub: "Hiểu đúng về giới hạn cửa sổ ngữ cảnh trong hoạch định chiến dịch?",
+        backTitle: "Đầu vào đọc được 300 trang A4 — Đầu ra giới hạn vài trang",
+        backBody: `• <strong>Ứng dụng:</strong> Phân tích cùng lúc 10.000 bình luận Facebook của chiến dịch để đo lường % tích cực/tiêu cực (Sentiment Analysis).<br>
+                   • <strong>Giới hạn:</strong> Không thể kỳ vọng AI viết ra một tài liệu dài hàng trăm trang chỉ trong một lần phản hồi (Output limit ngắn).`
       },
       {
         id: 11,
         category: "vision",
-        badge: "Vision Model",
-        icon: "👁️",
-        frontTitle: "Vision-Language Model",
-        frontSub: "Khả năng nhìn và đọc hiểu hình ảnh của AI?",
-        backTitle: "Nhận diện vật thể, đọc chữ và hiểu ngữ cảnh bức ảnh",
-        backDetail: "• Ví dụ: Nhìn ảnh Tháp Rùa biết ngay lịch sử, nhìn bài toán giải được công thức, nhận diện đồ chơi của bé.<br>• Dùng làm AI hướng dẫn viên du lịch: Khách chụp ảnh di tích ➔ AI thuyết minh lịch sử."
+        domainBadge: "Vision Model",
+        frontTitle: "Vision-Language Models",
+        frontSub: "Năng lực nhận thức hình ảnh của mô hình thị giác nhân tạo?",
+        backTitle: "Nhận diện vật thể, đọc chữ viết và thấu hiểu ngữ cảnh hình ảnh",
+        backBody: `• <strong>Khả năng:</strong> Nhìn ảnh Tháp Rùa hiểu được lịch sử địa danh, nhìn bài toán nhận diện phương trình, nhìn hình ảnh nhận diện thực phẩm.<br>
+                   • <strong>Chiến dịch mẫu:</strong> Ứng dụng Hướng dẫn viên du lịch AI — Người dùng chụp ảnh di tích, AI thuyết minh kiến thức lịch sử tương ứng.`
       },
       {
         id: 12,
         category: "vision",
-        badge: "Kỹ Thuật Kết Hợp",
-        icon: "⚡",
-        frontTitle: "Quy tắc 2 Bước: Vision + LLM",
-        frontSub: "Tại sao không nên để Vision Model tự biên tự diễn câu trả lời?",
-        backTitle: "Vision chỉ nhận diện - LLM sáng tạo kịch bản",
-        backDetail: "• Bước 1 (Vision): Đoán tuổi em bé khoảng 6-12 tháng tuổi.<br>• Bước 2 (LLM đã Instruct): Nhận input tuổi và xuất ra thực đơn dinh dưỡng chuẩn nhãn hàng.<br>• Tách biệt 2 bước giúp kiểm soát 100% chất lượng nội dung."
+        domainBadge: "Kỹ Thuật Phối Hợp",
+        frontTitle: "Quy Tắc 2 Bước: Vision + LLM",
+        frontSub: "Tại sao không nên để mô hình Vision trực tiếp sáng tạo nội dung văn bản?",
+        backTitle: "Vision nhận diện khách quan — LLM sáng tạo kịch bản",
+        backBody: `• <strong>Bước 1 (Vision):</strong> Dự đoán em bé trong ảnh nằm trong độ tuổi 6–12 tháng.<br>
+                   • <strong>Bước 2 (LLM):</strong> Nhận thông số độ tuổi và xuất ra thực đơn dinh dưỡng chuẩn nhãn hàng.<br>
+                   • <strong>Ý nghĩa:</strong> Đảm bảo kiểm soát tuyệt đối chất lượng nội dung và an toàn y tế.`
       },
       {
         id: 13,
         category: "vision",
-        badge: "Audio & Voice",
-        icon: "🎙️",
+        domainBadge: "Generative Audio",
         frontTitle: "ElevenLabs & Voice Cloning",
-        frontSub: "Tạo giọng đọc quảng cáo AI và nhân bản giọng nói KOL?",
-        backTitle: "Độ chân thật đạt 98%, hỗ trợ tiếng Việt có cảm xúc",
-        backDetail: "• Ứng dụng đọc truyện Audio, lồng tiếng video TVC, làm tổng đài viên ảo trả lời tức thì.<br>• Có thể clone giọng độc quyền của Celebrity (khi có sự đồng ý bản quyền) để tương tác hàng loạt."
+        frontSub: "Ứng dụng giọng đọc AI và nhân bản giọng nói diễn viên?",
+        backTitle: "Giọng đọc đạt độ chân thực 98%, hỗ trợ tiếng Việt có cảm xúc",
+        backBody: `• <strong>Ứng dụng:</strong> Đọc sách nói, thuyết minh video quảng cáo (TVC), lồng tiếng tổng đài tự động tương tác thời gian thực.<br>
+                   • <strong>Nhân bản giọng:</strong> Nhân bản hợp pháp giọng của KOL hoặc diễn viên lồng tiếng để cá nhân hóa thông điệp tới hàng triệu khách hàng.`
       },
       {
         id: 14,
         category: "vision",
-        badge: "Music Creation",
-        icon: "🎵",
-        frontTitle: "Suno AI Music",
-        frontSub: "Tạo bài hát viral bằng AI và rào cản hiện tại?",
-        backTitle: "Sinh bài hát đầy đủ hòa âm và giọng hát chỉ từ lời thơ",
-        backDetail: "• Có thể viết prompt hài hước về ngành quảng cáo và tạo ra bản hit pop, rock, rap cực cuốn.<br>• Rào cản: Chưa mở API chính thức nên chưa thể tự động hóa cho user tự tạo nhạc trên app chiến dịch."
+        domainBadge: "Generative Music",
+        frontTitle: "Suno AI Music Generation",
+        frontSub: "Khả năng hòa âm bài hát và giới hạn tích hợp hệ thống hiện nay?",
+        backTitle: "Tạo bài hát hoàn chỉnh cả lời và nhạc từ câu lệnh mô tả",
+        backBody: `• <strong>Khả năng:</strong> Soạn thảo giai điệu, hòa âm phối khí và tạo giọng hát tự động theo nhiều phong cách âm nhạc (Pop, Rock, Rap).<br>
+                   • <strong>Rào cản:</strong> Chưa mở cổng API thương mại chính thức, chưa thể tự động hóa trên website chiến dịch của khách hàng.`
       },
       {
         id: 15,
         category: "safety",
-        badge: "Brand Safety",
-        icon: "🛡️",
+        domainBadge: "Brand Safety",
         frontTitle: "Pre-Approved Content Library",
-        frontSub: "Cách chống phá hoại nhãn hàng hiệu quả nhất trên Microsite?",
-        backTitle: "Giới hạn người dùng chọn trong danh sách duyệt trước",
-        backDetail: "• Thay vì để ô trống cho người dùng gõ câu hỏi (dễ gõ bậy hoặc hack prompt), ta cung cấp các nút bấm định sẵn.<br>• Chọn giới tính, chọn cung hoàng đạo, chọn mong ước ➔ AI ghép vào kịch bản an toàn tuyệt đối."
+        frontSub: "Phương thức ngăn ngừa phá hoại thương hiệu hiệu quả nhất trên Microsite?",
+        backTitle: "Giới hạn tương tác bằng các tùy chọn đã được kiểm duyệt trước",
+        backBody: `• <strong>Cơ chế:</strong> Thay vì để khung nhập chữ tự do (dễ bị user gõ bậy hoặc hack prompt), ta cung cấp danh sách lựa chọn định sẵn.<br>
+                   • <strong>Kết quả:</strong> Người dùng chọn cung hoàng đạo, nhóm tuổi, sở thích ➔ AI ghép vào kịch bản hoàn toàn an toàn cho thương hiệu.`
       },
       {
         id: 16,
         category: "safety",
-        badge: "Brand Safety",
-        icon: "🚦",
-        frontTitle: "Multi-layer Content Moderation",
-        frontSub: "Mô hình màng lọc 2 lớp bảo vệ thương hiệu?",
-        backTitle: "Lớp lọc kiểm duyệt chặn trước khi prompt đến AI chính",
-        backDetail: "• User Input ➔ Model lọc từ khóa nhạy cảm / bạo lực / chính trị.<br>• Nếu phát hiện độc hại ➔ Từ chối ngay lập tức.<br>• Nếu an toàn ➔ Mới chuyển sang LLM sáng tạo để phản hồi cho người dùng."
+        domainBadge: "Brand Safety",
+        frontTitle: "Multi-layer Moderation Filtering",
+        frontSub: "Cấu trúc màng lọc nhiều lớp bảo vệ tiêu chuẩn nhãn hàng?",
+        backTitle: "Lớp kiểm duyệt ngăn chặn nội dung trước khi đến mô hình chính",
+        backBody: `• <strong>Luồng xử lý:</strong> Lệnh người dùng ➔ Mô hình lọc từ khóa vi phạm (bạo lực, chính trị, công kích đối thủ).<br>
+                   • <strong>Hành vi:</strong> Nếu vi phạm ➔ Từ chối ngay lập tức; nếu an toàn ➔ Mới chuyển tiếp sang mô hình AI chính để tạo nội dung phản hồi.`
       }
     ];
 
-    /* ==========================================================
-       4. KAHOOT ARENA GAMEPLAY LOGIC
-       ========================================================== */
-    let currentQIndex = 0;
-    let score = 0;
-    let streak = 0;
-    let maxStreak = 0;
-    let correctCount = 0;
-    let timerInterval = null;
-    let timeLeft = 20;
-    let isAnswered = false;
+    /* ==============================================================
+       4. ASSESSMENT LOGIC CONTROLLER
+       ============================================================== */
+    let currentQuizIndex = 0;
+    let scoreEarned = 0;
+    let totalCorrectCount = 0;
+    let countdownTimer = null;
+    let secondsRemaining = 30;
+    let hasAnsweredCurrentQuestion = false;
 
-    function startQuiz() {
-      initAudio();
-      currentQIndex = 0;
-      score = 0;
-      streak = 0;
-      maxStreak = 0;
-      correctCount = 0;
+    function startAssessment() {
+      initAudioContext();
+      currentQuizIndex = 0;
+      scoreEarned = 0;
+      totalCorrectCount = 0;
 
-      document.getElementById('kahoot-start').classList.add('hidden');
-      document.getElementById('kahoot-result').classList.add('hidden');
-      document.getElementById('kahoot-play').classList.remove('hidden');
+      document.getElementById('quiz-start-screen').classList.add('hidden');
+      document.getElementById('quiz-result-screen').classList.add('hidden');
+      document.getElementById('quiz-active-screen').classList.remove('hidden');
 
-      loadQuestion(0);
+      renderQuizQuestion(0);
     }
 
-    function loadQuestion(index) {
-      isAnswered = false;
-      clearInterval(timerInterval);
-      timeLeft = 20;
+    function renderQuizQuestion(idx) {
+      hasAnsweredCurrentQuestion = false;
+      clearInterval(countdownTimer);
+      secondsRemaining = 30;
 
-      const q = quizQuestions[index];
-      document.getElementById('question-progress').innerText = `Câu ${index + 1} / ${quizQuestions.length}`;
-      document.getElementById('question-category').innerText = `Tag: ${q.category}`;
-      document.getElementById('question-text').innerText = q.question;
-      document.getElementById('current-score').innerText = `${score.toLocaleString()} pts`;
-      document.getElementById('streak-counter').innerText = `${streak} Streak`;
+      const q = assessmentQuestions[idx];
+      document.getElementById('question-index-badge').innerText = `Câu ${String(idx + 1).padStart(2, '0')} / ${assessmentQuestions.length}`;
+      document.getElementById('question-domain-badge').innerText = q.domain;
+      document.getElementById('question-stem').innerText = q.stem;
+      document.getElementById('explanation-box').classList.add('hidden');
 
-      // Set Options
-      for (let i = 0; i < 4; i++) {
-        document.getElementById(`opt-${i}`).innerText = q.options[i];
-      }
+      const container = document.getElementById('options-container');
+      container.innerHTML = '';
 
-      // Reset tile styles
-      const tiles = document.querySelectorAll('.kahoot-tile');
-      tiles.forEach(tile => {
-        tile.disabled = false;
-        tile.classList.remove('opacity-40', 'ring-4', 'ring-white', 'ring-yellow-300', 'scale-95');
+      q.options.forEach((optText, optIdx) => {
+        const btn = document.createElement('button');
+        btn.onclick = () => selectOption(optIdx);
+        btn.className = "opt-btn w-full text-left p-4 rounded-xl card-surface hover:border-white/20 transition-all flex items-start gap-3.5 group";
+        
+        const labelLetter = String.fromCharCode(65 + optIdx);
+        btn.innerHTML = `
+          <span class="w-6 h-6 rounded-md bg-white/5 border border-apple-border text-xs font-mono font-medium flex items-center justify-center shrink-0 group-hover:bg-white/10 group-hover:text-white transition-colors">
+            ${labelLetter}
+          </span>
+          <span class="text-xs sm:text-sm text-apple-secondary group-hover:text-apple-text font-normal leading-snug pt-0.5 transition-colors">
+            ${optText}
+          </span>
+        `;
+        container.appendChild(btn);
       });
 
-      // Hide Explanation
-      document.getElementById('explanation-modal').classList.add('hidden');
-
-      // Update timer UI
-      updateTimerUI();
-
-      // Start countdown
-      timerInterval = setInterval(() => {
-        timeLeft--;
-        updateTimerUI();
-        if (timeLeft <= 5 && timeLeft > 0) {
-          soundTick();
-        }
-        if (timeLeft <= 0) {
-          clearInterval(timerInterval);
-          handleTimeOut();
+      updateTimerVisual();
+      countdownTimer = setInterval(() => {
+        secondsRemaining--;
+        updateTimerVisual();
+        if (secondsRemaining <= 0) {
+          clearInterval(countdownTimer);
+          triggerTimeout();
         }
       }, 1000);
     }
 
-    function updateTimerUI() {
-      document.getElementById('timer-text').innerText = timeLeft;
-      const pct = (timeLeft / 20) * 100;
-      document.getElementById('timer-bar').style.width = `${pct}%`;
+    function updateTimerVisual() {
+      document.getElementById('timer-display').innerText = `${secondsRemaining}s`;
+      const pct = (secondsRemaining / 30) * 100;
+      const bar = document.getElementById('timer-progress-bar');
+      bar.style.width = `${pct}%`;
+      if (secondsRemaining <= 7) {
+        bar.className = "h-full bg-red-400 transition-all duration-100 ease-linear";
+      } else {
+        bar.className = "h-full bg-apple-accent transition-all duration-100 ease-linear";
+      }
     }
 
-    function handleAnswer(selectedIndex) {
-      if (isAnswered) return;
-      isAnswered = true;
-      clearInterval(timerInterval);
+    function selectOption(chosenIdx) {
+      if (hasAnsweredCurrentQuestion) return;
+      hasAnsweredCurrentQuestion = true;
+      clearInterval(countdownTimer);
 
-      const q = quizQuestions[currentQIndex];
-      const isCorrect = (selectedIndex === q.correctIndex);
-      const tiles = document.querySelectorAll('.kahoot-tile');
+      const q = assessmentQuestions[currentQuizIndex];
+      const isCorrect = (chosenIdx === q.correctIndex);
+      const buttons = document.querySelectorAll('.opt-btn');
 
-      tiles.forEach((tile, idx) => {
-        tile.disabled = true;
+      buttons.forEach((btn, idx) => {
+        btn.disabled = true;
         if (idx === q.correctIndex) {
-          tile.classList.add('ring-4', 'ring-yellow-300', 'scale-105');
+          btn.className = "opt-btn w-full text-left p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/50 flex items-start gap-3.5";
+          btn.querySelector('span:first-child').className = "w-6 h-6 rounded-md bg-emerald-500/20 text-emerald-300 text-xs font-mono font-semibold flex items-center justify-center shrink-0";
+          btn.querySelector('span:last-child').className = "text-xs sm:text-sm text-apple-text font-medium leading-snug pt-0.5";
+        } else if (idx === chosenIdx && !isCorrect) {
+          btn.className = "opt-btn w-full text-left p-4 rounded-xl bg-red-500/10 border border-red-500/40 flex items-start gap-3.5 opacity-80";
+          btn.querySelector('span:first-child').className = "w-6 h-6 rounded-md bg-red-500/20 text-red-300 text-xs font-mono font-semibold flex items-center justify-center shrink-0";
+          btn.querySelector('span:last-child').className = "text-xs sm:text-sm text-red-200 leading-snug pt-0.5";
         } else {
-          tile.classList.add('opacity-40', 'scale-95');
+          btn.classList.add('opacity-30');
         }
       });
 
-      const modal = document.getElementById('explanation-modal');
-      const icon = document.getElementById('feedback-icon');
-      const title = document.getElementById('feedback-title');
-      const pts = document.getElementById('points-earned');
-      const rationale = document.getElementById('feedback-rationale');
+      const explBox = document.getElementById('explanation-box');
+      const statusIcon = document.getElementById('eval-status-icon');
+      const statusText = document.getElementById('eval-status-text');
+      const scoreDelta = document.getElementById('eval-score-delta');
+      const rationaleText = document.getElementById('eval-rationale-content');
 
       if (isCorrect) {
-        soundCorrect();
-        streak++;
-        if (streak > maxStreak) maxStreak = streak;
-        correctCount++;
-
-        // Kahoot scoring: base 600 + speed up to 400 + streak bonus
-        const speedBonus = Math.round((timeLeft / 20) * 400);
-        const streakBonus = Math.min(streak * 50, 300);
-        const earned = 600 + speedBonus + streakBonus;
-        score += earned;
-
-        icon.innerText = "🎉";
-        title.innerText = "CHÍNH XÁC!";
-        title.className = "font-fun text-2xl font-bold text-emerald-400";
-        pts.innerText = `+${earned.toLocaleString()} pts (🔥 Streak x${streak})`;
-        pts.className = "ml-auto font-fun font-bold text-yellow-300 text-lg";
-
-        // Confetti burst on correct
-        try {
-          confetti({
-            particleCount: 50,
-            spread: 60,
-            origin: { y: 0.8 }
-          });
-        } catch(e) {}
-
+        soundAffirmative();
+        totalCorrectCount++;
+        scoreEarned += 10;
+        statusIcon.innerText = "✓";
+        statusIcon.className = "text-sm font-semibold font-mono text-emerald-400";
+        statusText.innerText = "Lựa chọn chính xác";
+        statusText.className = "text-sm font-medium text-emerald-400";
+        scoreDelta.innerText = "+10 Điểm";
       } else {
-        soundWrong();
-        streak = 0;
-        icon.innerText = "❌";
-        title.innerText = "CHƯA CHÍNH XÁC!";
-        title.className = "font-fun text-2xl font-bold text-red-400";
-        pts.innerText = "+0 pts (Mất chuỗi)";
-        pts.className = "ml-auto font-fun font-bold text-gray-400 text-lg";
+        soundNegative();
+        statusIcon.innerText = "✕";
+        statusIcon.className = "text-sm font-semibold font-mono text-red-400";
+        statusText.innerText = "Lựa chọn chưa chính xác";
+        statusText.className = "text-sm font-medium text-red-400";
+        scoreDelta.innerText = "0 Điểm";
       }
 
-      document.getElementById('current-score').innerText = `${score.toLocaleString()} pts`;
-      document.getElementById('streak-counter').innerText = `${streak} Streak`;
-
-      rationale.innerHTML = `<b>Đáp án đúng:</b> ${q.options[q.correctIndex]}<br><br>${q.rationale}`;
-      modal.classList.remove('hidden');
+      rationaleText.innerHTML = `
+        <div><strong class="text-apple-text">Đáp án đúng chuẩn:</strong> ${q.options[q.correctIndex]}</div>
+        <div class="pt-1 text-apple-secondary border-t border-apple-border/40 mt-1">${q.rationale}</div>
+      `;
+      explBox.classList.remove('hidden');
     }
 
-    function handleTimeOut() {
-      if (isAnswered) return;
-      isAnswered = true;
-      soundWrong();
-      streak = 0;
+    function triggerTimeout() {
+      if (hasAnsweredCurrentQuestion) return;
+      hasAnsweredCurrentQuestion = true;
+      soundNegative();
 
-      const q = quizQuestions[currentQIndex];
-      const tiles = document.querySelectorAll('.kahoot-tile');
-      tiles.forEach((tile, idx) => {
-        tile.disabled = true;
+      const q = assessmentQuestions[currentQuizIndex];
+      const buttons = document.querySelectorAll('.opt-btn');
+
+      buttons.forEach((btn, idx) => {
+        btn.disabled = true;
         if (idx === q.correctIndex) {
-          tile.classList.add('ring-4', 'ring-yellow-300');
+          btn.className = "opt-btn w-full text-left p-4 rounded-xl bg-amber-500/10 border border-amber-500/40 flex items-start gap-3.5";
         } else {
-          tile.classList.add('opacity-40');
+          btn.classList.add('opacity-30');
         }
       });
 
-      const modal = document.getElementById('explanation-modal');
-      document.getElementById('feedback-icon').innerText = "⏰";
-      document.getElementById('feedback-title').innerText = "HẾT THỜI GIAN!";
-      document.getElementById('feedback-title').className = "font-fun text-2xl font-bold text-orange-400";
-      document.getElementById('points-earned').innerText = "+0 pts";
-      document.getElementById('feedback-rationale').innerHTML = `<b>Đáp án đúng:</b> ${q.options[q.correctIndex]}<br><br>${q.rationale}`;
-      modal.classList.remove('hidden');
+      const explBox = document.getElementById('explanation-box');
+      document.getElementById('eval-status-icon').innerText = "⏱";
+      document.getElementById('eval-status-icon').className = "text-sm font-semibold font-mono text-amber-400";
+      document.getElementById('eval-status-text').innerText = "Đã hết thời gian phản hồi";
+      document.getElementById('eval-status-text').className = "text-sm font-medium text-amber-400";
+      document.getElementById('eval-score-delta').innerText = "0 Điểm";
+
+      document.getElementById('eval-rationale-content').innerHTML = `
+        <div><strong class="text-apple-text">Đáp án chính xác:</strong> ${q.options[q.correctIndex]}</div>
+        <div class="pt-1 text-apple-secondary border-t border-apple-border/40 mt-1">${q.rationale}</div>
+      `;
+      explBox.classList.remove('hidden');
     }
 
-    function nextQuestion() {
-      currentQIndex++;
-      if (currentQIndex < quizQuestions.length) {
-        loadQuestion(currentQIndex);
+    function advanceNextQuestion() {
+      currentQuizIndex++;
+      if (currentQuizIndex < assessmentQuestions.length) {
+        renderQuizQuestion(currentQuizIndex);
       } else {
-        showResults();
+        showFinalReport();
       }
     }
 
-    function showResults() {
-      soundWin();
-      document.getElementById('kahoot-play').classList.add('hidden');
-      document.getElementById('kahoot-result').classList.remove('hidden');
+    function showFinalReport() {
+      document.getElementById('quiz-active-screen').classList.add('hidden');
+      document.getElementById('quiz-result-screen').classList.remove('hidden');
 
-      const nickname = document.getElementById('player-nickname').value || 'Creative Planner';
-      document.getElementById('final-score').innerText = score.toLocaleString();
-      document.getElementById('final-correct').innerText = `${correctCount}/${quizQuestions.length}`;
-      document.getElementById('final-streak').innerText = `🔥 ${maxStreak}`;
+      const name = document.getElementById('candidate-name').value || 'Học viên';
+      const pct = Math.round((totalCorrectCount / assessmentQuestions.length) * 100);
 
-      const title = document.getElementById('result-title');
-      const sub = document.getElementById('result-subtitle');
-      const trophy = document.getElementById('result-trophy');
+      document.getElementById('result-user-headline').innerText = `Báo cáo đánh giá: ${name}`;
+      document.getElementById('metric-accuracy').innerText = `${totalCorrectCount} / ${assessmentQuestions.length}`;
+      document.getElementById('metric-percentage').innerText = `${pct}%`;
 
-      if (correctCount >= 13) {
-        trophy.innerText = "👑";
-        title.innerText = `Xuất Thần, ${nickname}!`;
-        sub.innerText = "Bạn đã đạt cấp độ AI Creative Director - Tự tin pitch mọi chiến dịch công nghệ!";
-        try {
-          confetti({
-            particleCount: 150,
-            spread: 100,
-            origin: { y: 0.6 }
-          });
-        } catch(e) {}
-      } else if (correctCount >= 9) {
-        trophy.innerText = "🥈";
-        title.innerText = `Rất Tốt, ${nickname}!`;
-        sub.innerText = "Bạn đã nắm chắc hầu hết các khái niệm cốt lõi. Hãy lướt lại Flashcard để hoàn thiện 100%!";
+      const rankBadge = document.getElementById('metric-rank');
+      const summaryText = document.getElementById('result-summary-text');
+
+      if (pct >= 85) {
+        rankBadge.innerText = "Xuất sắc";
+        rankBadge.className = "text-sm font-semibold font-mono text-emerald-400 pt-1";
+        summaryText.innerText = "Bạn đã nắm vững toàn diện kiến thức nền tảng về AI, đủ năng lực lập proposal và định hướng kỹ thuật cho Production House.";
+      } else if (pct >= 65) {
+        rankBadge.innerText = "Đạt yêu cầu";
+        rankBadge.className = "text-sm font-semibold font-mono text-apple-accent pt-1";
+        summaryText.innerText = "Bạn đã hiểu hầu hết các mô hình cốt lõi. Hãy tra cứu thêm mục Flashcard để làm rõ các điểm kỹ thuật chuyên sâu.";
       } else {
-        trophy.innerText = "💪";
-        title.innerText = `Cố Lên, ${nickname}!`;
-        sub.innerText = "Đọc kỹ bản tóm tắt Cheat Sheet và làm lại lần nữa để ghi nhớ sâu sắc nhé!";
+        rankBadge.innerText = "Cần củng cố";
+        rankBadge.className = "text-sm font-semibold font-mono text-amber-400 pt-1";
+        summaryText.innerText = "Khuyến nghị đọc lại mục Tài liệu tổng hợp để củng cố các phân biệt giữa Inpainting, Fine-Tuning và RAG.";
       }
     }
 
-    /* ==========================================================
-       5. FLASHCARDS LOGIC (FILTER, FLIP, SHUFFLE)
-       ========================================================== */
-    let currentFCList = [...flashcardsData];
-    let currentFCIndex = 0;
-    let isFlipped = false;
+    /* ==============================================================
+       5. FLASHCARDS CONTROLLER
+       ============================================================== */
+    let currentDeck = [...studyCardsData];
+    let activeCardIndex = 0;
+    let isCurrentCardFlipped = false;
 
-    function renderCurrentFlashcard() {
-      isFlipped = false;
-      const cardEl = document.getElementById('flashcard-element');
-      cardEl.classList.remove('rotate-y-180');
+    function renderStudyCard() {
+      isCurrentCardFlipped = false;
+      const cardInner = document.getElementById('active-flashcard');
+      cardInner.classList.remove('is-flipped');
 
-      if (currentFCList.length === 0) return;
-      const item = currentFCList[currentFCIndex];
+      if (currentDeck.length === 0) return;
+      const card = currentDeck[activeCardIndex];
 
-      document.getElementById('fc-badge').innerText = item.badge;
-      document.getElementById('fc-icon').innerText = item.icon;
-      document.getElementById('fc-front-title').innerText = item.frontTitle;
-      document.getElementById('fc-front-sub').innerText = item.frontSub;
+      document.getElementById('card-front-category').innerText = card.domainBadge;
+      document.getElementById('card-front-title').innerText = card.frontTitle;
+      document.getElementById('card-front-sub').innerText = card.frontSub;
 
-      document.getElementById('fc-back-title').innerText = item.backTitle;
-      document.getElementById('fc-back-detail').innerHTML = item.backDetail;
+      document.getElementById('card-back-title').innerText = card.backTitle;
+      document.getElementById('card-back-body').innerHTML = card.backBody;
 
-      document.getElementById('fc-progress-counter').innerText = `${currentFCIndex + 1} / ${currentFCList.length}`;
+      document.getElementById('fc-counter').innerText = `${String(activeCardIndex + 1).padStart(2, '0')} / ${String(currentDeck.length).padStart(2, '0')}`;
     }
 
-    function flipFlashcard() {
-      playTone(400, 'sine', 0.08, 0.1);
-      isFlipped = !isFlipped;
-      const cardEl = document.getElementById('flashcard-element');
-      if (isFlipped) {
-        cardEl.classList.add('rotate-y-180');
+    function flipCardAction() {
+      playTone(400, 'sine', 0.05, 0.04);
+      isCurrentCardFlipped = !isCurrentCardFlipped;
+      const cardInner = document.getElementById('active-flashcard');
+      if (isCurrentCardFlipped) {
+        cardInner.classList.add('is-flipped');
       } else {
-        cardEl.classList.remove('rotate-y-180');
+        cardInner.classList.remove('is-flipped');
       }
     }
 
-    function nextFlashcard() {
-      if (currentFCIndex < currentFCList.length - 1) {
-        currentFCIndex++;
+    function nextCard() {
+      if (activeCardIndex < currentDeck.length - 1) {
+        activeCardIndex++;
       } else {
-        currentFCIndex = 0; // loop back
+        activeCardIndex = 0;
       }
-      renderCurrentFlashcard();
+      renderStudyCard();
     }
 
-    function prevFlashcard() {
-      if (currentFCIndex > 0) {
-        currentFCIndex--;
+    function prevCard() {
+      if (activeCardIndex > 0) {
+        activeCardIndex--;
       } else {
-        currentFCIndex = currentFCList.length - 1;
+        activeCardIndex = currentDeck.length - 1;
       }
-      renderCurrentFlashcard();
+      renderStudyCard();
     }
 
-    function shuffleFlashcards() {
-      playTone(600, 'triangle', 0.12, 0.15);
-      for (let i = currentFCList.length - 1; i > 0; i--) {
+    function shuffleDeck() {
+      playTone(550, 'sine', 0.08, 0.04);
+      for (let i = currentDeck.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [currentFCList[i], currentFCList[j]] = [currentFCList[j], currentFCList[i]];
+        [currentDeck[i], currentDeck[j]] = [currentDeck[j], currentDeck[i]];
       }
-      currentFCIndex = 0;
-      renderCurrentFlashcard();
+      activeCardIndex = 0;
+      renderStudyCard();
     }
 
-    function filterFlashcards(category) {
-      document.querySelectorAll('.fc-filter-btn').forEach(btn => {
-        if (btn.getAttribute('data-filter') === category) {
-          btn.className = "fc-filter-btn px-3 py-1.5 rounded-xl bg-pink-500 text-white shadow-md";
+    function setCardFilter(cat) {
+      document.querySelectorAll('.fc-filter').forEach(btn => {
+        if (btn.getAttribute('data-filter') === cat) {
+          btn.className = "fc-filter px-3 py-1.5 rounded-md bg-white text-black font-semibold";
         } else {
-          btn.className = "fc-filter-btn px-3 py-1.5 rounded-xl bg-white/10 text-purple-200 hover:text-white";
+          btn.className = "fc-filter px-3 py-1.5 rounded-md text-apple-secondary hover:text-apple-text";
         }
       });
 
-      if (category === 'all') {
-        currentFCList = [...flashcardsData];
+      if (cat === 'all') {
+        currentDeck = [...studyCardsData];
       } else {
-        currentFCList = flashcardsData.filter(item => item.category === category);
+        currentDeck = studyCardsData.filter(item => item.category === cat);
       }
-      currentFCIndex = 0;
-      renderCurrentFlashcard();
+      activeCardIndex = 0;
+      renderStudyCard();
     }
 
-    function markMemorized(isKnown) {
-      if (isKnown) {
-        soundCorrect();
+    function setCardMastery(known) {
+      if (known) {
+        soundAffirmative();
       } else {
-        playTone(300, 'sine', 0.1, 0.15);
+        playTone(300, 'sine', 0.08, 0.04);
       }
-      setTimeout(nextFlashcard, 300);
+      setTimeout(nextCard, 200);
     }
 
-    // Keyboard support: Space to flip, Arrows to navigate
     window.addEventListener('keydown', (e) => {
-      const activeTab = document.getElementById('view-flashcards');
-      if (!activeTab.classList.contains('hidden')) {
+      const flashcardView = document.getElementById('view-flashcards');
+      if (!flashcardView.classList.contains('hidden')) {
         if (e.code === 'Space') {
           e.preventDefault();
-          flipFlashcard();
+          flipCardAction();
         } else if (e.code === 'ArrowRight') {
-          nextFlashcard();
+          nextCard();
         } else if (e.code === 'ArrowLeft') {
-          prevFlashcard();
+          prevCard();
         }
       }
     });
 
-    /* ==========================================================
-       6. TAB NAVIGATION
-       ========================================================== */
-    function switchTab(tabName) {
-      playTone(500, 'sine', 0.05, 0.1);
-      const views = ['kahoot', 'flashcards', 'cheatsheet'];
+    /* ==============================================================
+       6. TAB NAVIGATION CONTROLLER
+       ============================================================== */
+    function switchTab(target) {
+      playTone(600, 'sine', 0.04, 0.03);
+      const views = ['assessment', 'flashcards', 'reference'];
       views.forEach(v => {
         document.getElementById(`view-${v}`).classList.add('hidden');
-        document.getElementById(`tab-${v}`).className = "px-4 py-2 rounded-lg transition-all flex items-center gap-2 text-purple-200 hover:text-white";
+        document.getElementById(`nav-${v}`).className = "segmented-item px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 text-apple-secondary hover:text-apple-text";
       });
 
-      document.getElementById(`view-${tabName}`).classList.remove('hidden');
-      document.getElementById(`tab-${tabName}`).className = "px-4 py-2 rounded-lg transition-all flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-md";
+      document.getElementById(`view-${target}`).classList.remove('hidden');
+      document.getElementById(`nav-${target}`).className = "segmented-item px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 bg-white text-black font-semibold shadow-sm";
 
-      if (tabName === 'flashcards') {
-        renderCurrentFlashcard();
+      if (target === 'flashcards') {
+        renderStudyCard();
       }
     }
 
-    // Initialize first flashcard render
-    renderCurrentFlashcard();
+    // Initial mount
+    renderStudyCard();
   </script>
 </body>
 </html>
