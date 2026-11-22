@@ -1,1607 +1,720 @@
 <!DOCTYPE html>
-<html lang="vi" class="h-full">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI for Creative Approach — Knowledge Assessment & Reference</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts: Inter with comprehensive Vietnamese sub-setting -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', '"SF Pro Display"', 'Inter', 'system-ui', 'sans-serif'],
-            mono: ['"JetBrains Mono"', 'SFMono-Regular', 'Menlo', 'Consolas', 'monospace']
-          },
-          colors: {
-            apple: {
-              bg: '#000000',
-              surface: '#121214',
-              elevated: '#1c1c1e',
-              border: 'rgba(255, 255, 255, 0.08)',
-              subtle: 'rgba(255, 255, 255, 0.04)',
-              accent: '#2997ff',
-              text: '#f5f5f7',
-              secondary: '#86868b',
-              tertiary: '#515154'
-            }
-          }
-        }
-      }
-    }
-  </script>
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dante's Inferno: Interactive Map &amp; Reader</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    body {
-      background-color: #000000;
-      color: #f5f5f7;
-      font-feature-settings: "cv02", "cv03", "cv04", "cv11";
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
+    :root {
+      --bg-color: #f4f1ea;
+      --text-dark: #1f242d;
+      --accent-red: #9e2a2b;
+      --gloss-blue: #1d6fa5;
+      --paper-bg: #fffdf9;
     }
 
-    /* Apple-grade glassmorphism */
-    .glass-panel {
-      background: rgba(18, 18, 20, 0.85);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
-    .card-surface {
-      background: #161618;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      transition: border-color 0.2s ease, transform 0.2s ease;
+    html, body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-dark);
+      overflow-x: hidden;
+      min-height: 100vh;
     }
 
-    .card-surface:hover {
-      border-color: rgba(255, 255, 255, 0.16);
+    /* Main Split Layout Container */
+    .app-container {
+      display: flex;
+      width: 100%;
+      min-height: 100vh;
+      align-items: stretch;
+      transition: all 0.45s cubic-bezier(0.25, 1, 0.5, 1);
     }
 
-    /* 3D Flashcard mechanics */
-    .perspective-container {
-      perspective: 1400px;
+    /* Left / Center Map Panel */
+    .map-panel {
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      transition: width 0.45s cubic-bezier(0.25, 1, 0.5, 1), padding 0.45s ease, background-color 0.45s ease;
     }
 
-    .flip-card-inner {
+    .app-container.split-active .map-panel {
+      width: 45%;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      min-height: 100vh;
+      border-right: 1px solid rgba(0, 0, 0, 0.12);
+      background-color: #ebe6dc;
+      overflow-y: auto;
+      justify-content: flex-start;
+      padding-top: 2.25rem;
+    }
+
+    .map-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.4rem, 2.5vw, 2.2rem);
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #161920;
+    }
+
+    /* Interactive Funnel Visualization */
+    .inferno-diagram {
+      width: 100%;
+      max-width: 680px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Gate of Hell Header Section */
+    .gate-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 8px;
       position: relative;
+    }
+
+    .gate-btn {
+      background: #2b2d42;
+      color: #fff;
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: 0.08em;
+      padding: 9px 22px;
+      border: 2px solid #8d99ae;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition: all 0.25s ease;
+    }
+
+    .gate-btn:hover, .gate-btn.active {
+      background: var(--accent-red);
+      border-color: #ffccd5;
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 6px 18px rgba(158, 42, 43, 0.35);
+    }
+
+    .gate-inscription {
+      font-family: 'Crimson Text', serif;
+      font-style: italic;
+      font-size: 0.95rem;
+      color: #4a4e69;
+      margin-top: 6px;
+      letter-spacing: 0.02em;
+      user-select: none;
+    }
+
+    /* 9 Concentric Funnel Tiers */
+    .tier-btn {
+      border: none;
+      color: #ffffff;
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      font-size: clamp(0.8rem, 1.3vw, 1rem);
+      letter-spacing: 0.06em;
+      padding: 12px 16px;
+      cursor: pointer;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+      transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      clip-path: polygon(2% 0%, 98% 0%, 95% 100%, 5% 100%);
+    }
+
+    .tier-btn:hover {
+      transform: scale(1.025);
+      filter: brightness(1.1);
+      z-index: 2;
+    }
+
+    .tier-btn.active {
+      outline: 3px solid #fff;
+      filter: brightness(1.15);
+      transform: scale(1.03);
+      z-index: 3;
+    }
+
+    /* Tier Colors & Decreasing Widths */
+    .t-1 { width: 100%; background: linear-gradient(90deg, #5c8db8, #6ea0cb, #5c8db8); }
+    .t-2 { width: 93%;  background: linear-gradient(90deg, #6b3e75, #834e8f, #6b3e75); }
+    .t-3 { width: 86%;  background: linear-gradient(90deg, #d97a2b, #e88d3f, #d97a2b); }
+    .t-4 { width: 79%;  background: linear-gradient(90deg, #e0b422, #f0c432, #e0b422); color: #222; text-shadow: none; }
+    .t-5 { width: 72%;  background: linear-gradient(90deg, #c93b2b, #de4b3a, #c93b2b); }
+    .t-6 { width: 65%;  background: linear-gradient(90deg, #c44921, #d9592e, #c44921); }
+    .t-7 { width: 58%;  background: linear-gradient(90deg, #8c2323, #a62c2c, #8c2323); }
+    .t-8 { width: 51%;  background: linear-gradient(90deg, #592652, #703268, #592652); }
+    .t-9 {
+      width: 44%;
+      background: linear-gradient(180deg, #2a628f, #183a59);
+      padding: 18px 12px 26px;
+      border-bottom-left-radius: 50% 35%;
+      border-bottom-right-radius: 50% 35%;
+      clip-path: polygon(4% 0%, 96% 0%, 88% 100%, 12% 100%);
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    /* Right Reader Panel (Collapsed cleanly by default) */
+    .reader-panel {
+      width: 0;
+      height: 0;
+      min-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      padding: 0;
+      background-color: var(--paper-bg);
+      transition: width 0.45s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.35s ease;
+      display: flex;
+      flex-direction: column;
+      pointer-events: none;
+    }
+
+    .app-container.split-active .reader-panel {
+      width: 55%;
+      height: 100vh;
+      min-height: 100vh;
+      opacity: 1;
+      overflow-y: auto;
+      pointer-events: auto;
+    }
+
+    /* Reader Header & Canto Tabs */
+    .reader-header {
+      position: sticky;
+      top: 0;
+      background: rgba(255, 253, 249, 0.96);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid #e2dcd0;
+      padding: 1.25rem 2rem;
+      z-index: 20;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .region-heading {
+      font-family: 'Cinzel', serif;
+      font-size: 1.35rem;
+      color: var(--accent-red);
+    }
+
+    .close-btn {
+      background: #f7f3eb;
+      border: 1px solid #c9bfae;
+      padding: 7px 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #333;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .close-btn:hover {
+      background: #e8e1d3;
+      color: #111;
+      border-color: #9e2a2b;
+    }
+
+    /* Canto Navigation Tabs */
+    .canto-tabs {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .canto-tab {
+      padding: 8px 18px;
+      border: 1px solid #d4cbb8;
+      background: #f7f3eb;
+      border-radius: 20px;
+      font-family: 'Cinzel', serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      color: #2b2d42;
+      transition: all 0.2s;
+    }
+
+    .canto-tab:hover {
+      border-color: var(--accent-red);
+    }
+
+    .canto-tab.active {
+      background: var(--accent-red);
+      color: #fff;
+      border-color: var(--accent-red);
+    }
+
+    /* Centered Poetry Content */
+    .poem-container {
+      padding: 2.5rem 2rem 5rem;
+      max-width: 680px;
+      margin: 0 auto;
       width: 100%;
-      height: 100%;
-      transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-      transform-style: preserve-3d;
     }
 
-    .flip-card-inner.is-flipped {
-      transform: rotateY(180deg);
+    .canto-title {
+      font-family: 'Cinzel', serif;
+      text-align: center;
+      font-size: 1.75rem;
+      margin-bottom: 0.4rem;
+      color: #1a1a1a;
     }
 
-    .card-face {
+    .canto-subtitle {
+      text-align: center;
+      font-style: italic;
+      color: #666;
+      font-family: 'Crimson Text', serif;
+      font-size: 1.1rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .stanza {
+      position: relative;
+      text-align: center;
+      font-family: 'Crimson Text', serif;
+      font-size: 1.25rem;
+      line-height: 1.75;
+      margin-bottom: 1.65rem;
+      padding: 0.5rem 2.5rem;
+      border-radius: 8px;
+      transition: background-color 0.2s;
+    }
+
+    .stanza:hover {
+      background-color: rgba(158, 42, 43, 0.04);
+    }
+
+    .stanza-num {
       position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #998f80;
+      user-select: none;
     }
 
-    .card-back {
-      transform: rotateY(180deg);
+    /* Interactive Keyword Gloss Styling */
+    .gloss-wrapper {
+      position: relative;
+      display: inline-block;
     }
 
-    /* Segmented pill control */
-    .segmented-item {
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    /* Custom subtle scrollbar */
-    ::-webkit-scrollbar {
-      width: 5px;
-      height: 5px;
-    }
-    ::-webkit-scrollbar-track {
+    .gloss-term {
+      border-bottom: 1.5px dashed var(--gloss-blue);
+      color: var(--gloss-blue);
+      font-weight: 600;
+      cursor: pointer;
+      padding-bottom: 1px;
       background: transparent;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      font-family: inherit;
+      font-size: inherit;
+      line-height: inherit;
+      transition: background-color 0.2s ease, color 0.2s ease;
     }
-    ::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.14);
-      border-radius: 9999px;
+
+    .gloss-term:hover,
+    .gloss-term:focus-visible,
+    .gloss-wrapper.pinned .gloss-term {
+      background-color: rgba(29, 111, 165, 0.12);
+      color: #124c73;
+      outline: none;
     }
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(255, 255, 255, 0.24);
+
+    .gloss-popover {
+      position: absolute;
+      bottom: calc(100% + 12px);
+      left: 50%;
+      transform: translateX(-50%) translateY(6px);
+      width: min(340px, 78vw);
+      background-color: #1b2430;
+      color: #f8fafc;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.86rem;
+      font-weight: 400;
+      line-height: 1.55;
+      text-align: left;
+      padding: 0.85rem 1rem;
+      border-radius: 8px;
+      border: 1px solid rgba(125, 196, 248, 0.35);
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.28);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      z-index: 50;
+      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+    }
+
+    .gloss-popover::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 7px;
+      border-style: solid;
+      border-color: #1b2430 transparent transparent transparent;
+    }
+
+    .gloss-wrapper:hover .gloss-popover,
+    .gloss-wrapper:focus-within .gloss-popover,
+    .gloss-wrapper.pinned .gloss-popover {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0);
+      pointer-events: auto;
+    }
+
+    .gloss-label {
+      display: block;
+      font-family: 'Cinzel', serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #7dc4f8;
+      margin-bottom: 0.3rem;
+    }
+
+    .placeholder-box {
+      text-align: center;
+      padding: 4rem 1.5rem;
+      color: #666;
+      font-family: 'Crimson Text', serif;
+      font-size: 1.25rem;
+      border: 1px dashed #ccc;
+      border-radius: 8px;
+    }
+
+    /* Responsive Mobile Adjustment */
+    @media (max-width: 850px) {
+      .app-container.split-active {
+        flex-direction: column;
+      }
+
+      .app-container.split-active .map-panel {
+        width: 100%;
+        height: auto;
+        min-height: auto;
+        position: static;
+        border-right: none;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+        padding-top: 1.5rem;
+      }
+
+      .app-container.split-active .reader-panel {
+        width: 100%;
+        height: auto;
+        min-height: 75vh;
+        overflow-y: visible;
+      }
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between selection:bg-[#2997ff] selection:text-white">
+<body>
 
-  <!-- HEADER & NAVIGATION -->
-  <header class="border-b border-apple-border/70 sticky top-0 z-30 bg-black/80 backdrop-blur-xl">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-      
-      <!-- Brand & Document Meta -->
-      <div class="flex items-center gap-3">
-        <div class="h-8 w-8 rounded-lg bg-apple-surface border border-apple-border flex items-center justify-center text-xs font-mono text-apple-accent font-semibold">
-          AI
-        </div>
-        <div>
-          <div class="text-sm font-semibold text-apple-text tracking-tight flex items-center gap-2">
-            <span>AI for Creative Approach</span>
-            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-white/10 text-apple-secondary uppercase">Syllabus Review</span>
-          </div>
-          <p class="text-[11px] text-apple-secondary hidden sm:block">Chuyên đề ứng dụng AI trong hoạch định chiến dịch & sản xuất truyền thông</p>
-        </div>
+<div class="app-container" id="app">
+  <!-- LEFT / CENTER: INFERNO MAP -->
+  <div class="map-panel" id="mapPanel">
+    <h1 class="map-title">DANTE&rsquo;S INFERNO: 9 CIRCLES OF HELL</h1>
+
+    <div class="inferno-diagram">
+      <!-- Gate of Hell Button -->
+      <div class="gate-section">
+        <button class="gate-btn" id="btn-gate" type="button" onclick="openRegion('gate')">
+          <span>GATE OF HELL</span>
+        </button>
+        <div class="gate-inscription">Abandon all hope, ye who enter here</div>
       </div>
 
-      <!-- Segmented Control Navigation -->
-      <nav class="flex items-center bg-apple-surface p-1 rounded-xl border border-apple-border text-xs font-medium">
-        <button onclick="switchTab('reference')" id="nav-reference" class="segmented-item px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 bg-white text-black font-semibold shadow-sm">
-          <span>Kiến thức & Sơ đồ</span>
-        </button>
-        <button onclick="switchTab('flashcards')" id="nav-flashcards" class="segmented-item px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 text-apple-secondary hover:text-apple-text">
-          <span>Flashcard ghi nhớ</span>
-        </button>
-        <button onclick="switchTab('assessment')" id="nav-assessment" class="segmented-item px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 text-apple-secondary hover:text-apple-text">
-          <span>Kiểm tra năng lực</span>
-        </button>
-      </nav>
-
-      <!-- Audio Setting Toggle -->
-      <button onclick="toggleAudio()" id="btn-audio" class="h-8 w-8 rounded-lg border border-apple-border bg-apple-surface/60 hover:bg-apple-surface text-apple-secondary hover:text-apple-text flex items-center justify-center transition-colors text-xs" title="Bật/Tắt âm báo phản hồi">
-        <span id="audio-icon">🔊</span>
+      <!-- 9 Circles -->
+      <button class="tier-btn t-1" id="btn-limbo" type="button" onclick="openRegion('limbo')">1. LIMBO</button>
+      <button class="tier-btn t-2" id="btn-lust" type="button" onclick="openRegion('lust')">2. LUST</button>
+      <button class="tier-btn t-3" id="btn-gluttony" type="button" onclick="openRegion('gluttony')">3. GLUTTONY</button>
+      <button class="tier-btn t-4" id="btn-greed" type="button" onclick="openRegion('greed')">4. GREED</button>
+      <button class="tier-btn t-5" id="btn-anger" type="button" onclick="openRegion('anger')">5. ANGER</button>
+      <button class="tier-btn t-6" id="btn-heresy" type="button" onclick="openRegion('heresy')">6. HERESY</button>
+      <button class="tier-btn t-7" id="btn-violence" type="button" onclick="openRegion('violence')">7. VIOLENCE</button>
+      <button class="tier-btn t-8" id="btn-fraud" type="button" onclick="openRegion('fraud')">8. FRAUD</button>
+      <button class="tier-btn t-9" id="btn-treachery" type="button" onclick="openRegion('treachery')">
+        <span>9. TREACHERY</span>
+        <span style="font-size: 0.75rem; opacity: 0.85;">SATAN</span>
       </button>
-
     </div>
-  </header>
+  </div>
 
-  <!-- MAIN WORKSPACE -->
-  <main class="max-w-6xl w-full mx-auto px-4 sm:px-6 py-8 flex-grow flex flex-col justify-start">
-
-    <!-- ============================================================== -->
-    <!-- MODULE 1: COMPREHENSIVE CURRICULUM REFERENCE & INTERACTIVE MINDMAP -->
-    <!-- ============================================================== -->
-    <section id="view-reference" class="w-full">
-      
-      <!-- Section Header -->
-      <div class="mb-6 pb-4 border-b border-apple-border flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
-          <div class="text-xs font-mono text-apple-accent mb-1 uppercase tracking-wider">Hệ thống hóa kiến thức</div>
-          <h2 class="text-2xl sm:text-3xl font-semibold text-white tracking-tight">
-            Cẩm Nang & Sơ Đồ Nền Tảng AI Agency
-          </h2>
-          <p class="text-apple-secondary text-xs sm:text-sm mt-1 max-w-2xl">
-            Cấu trúc bài giảng của Trainer Trung Nguyễn được trực quan hóa dưới dạng Mindmap tương tác và bảng tham chiếu kỹ thuật, hỗ trợ xây dựng Proposal và Brief khả thi cho Production House.
-          </p>
-        </div>
-
-        <!-- View Mode Switcher -->
-        <div class="inline-flex p-1 rounded-lg bg-apple-surface border border-apple-border text-xs shrink-0">
-          <button onclick="setReferenceView('mindmap')" id="btn-view-mindmap" class="px-3 py-1.5 rounded-md bg-white text-black font-semibold transition-all">
-            Sơ đồ tư duy (Mindmap)
-          </button>
-          <button onclick="setReferenceView('bento')" id="btn-view-bento" class="px-3 py-1.5 rounded-md text-apple-secondary hover:text-apple-text transition-all">
-            Bảng tham chiếu chi tiết
-          </button>
-        </div>
+  <!-- RIGHT: CANTO READER -->
+  <div class="reader-panel" id="readerPanel">
+    <div class="reader-header">
+      <div class="header-top">
+        <h2 class="region-heading" id="regionHeading">Gate of Hell</h2>
+        <button class="close-btn" type="button" onclick="closeReader()">Back to Overview</button>
       </div>
-
-      <!-- INTERACTIVE MINDMAP CONTAINER -->
-      <div id="mindmap-container" class="space-y-6">
-        
-        <!-- Mindmap Navigator Canvas & Tree -->
-        <div class="card-surface rounded-2xl p-5 sm:p-6 border border-apple-border">
-          <div class="flex items-center justify-between pb-3 mb-4 border-b border-apple-border/60 text-xs">
-            <span class="text-apple-secondary">Nhấp vào từng nhánh bên dưới để truy xuất phân tích kỹ thuật và bối cảnh ứng dụng thực tế:</span>
-            <span class="font-mono text-apple-accent text-[11px] hidden sm:inline">Interactive Mindmap 2.0</span>
-          </div>
-
-          <!-- Mindmap Branches Layout -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 mb-6">
-            
-            <!-- Branch 1 -->
-            <button onclick="selectMindmapNode('ecosystem')" id="node-ecosystem" class="mindmap-node text-left p-3.5 rounded-xl border border-apple-border bg-apple-surface hover:border-apple-accent/60 transition-all group">
-              <div class="flex items-center justify-between mb-2">
-                <span class="w-2 h-2 rounded-full bg-apple-accent"></span>
-                <span class="text-[10px] font-mono text-apple-tertiary">01</span>
-              </div>
-              <div class="text-xs font-semibold text-white group-hover:text-apple-accent transition-colors">Hệ Sinh Thái & API</div>
-              <div class="text-[11px] text-apple-secondary mt-1 line-clamp-2">6 nhóm mô hình AI nền tảng và giao thức tích hợp API vào hệ thống nhãn hàng.</div>
-            </button>
-
-            <!-- Branch 2 -->
-            <button onclick="selectMindmapNode('image')" id="node-image" class="mindmap-node text-left p-3.5 rounded-xl border border-apple-border bg-apple-surface hover:border-emerald-400/60 transition-all group">
-              <div class="flex items-center justify-between mb-2">
-                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-                <span class="text-[10px] font-mono text-apple-tertiary">02</span>
-              </div>
-              <div class="text-xs font-semibold text-white group-hover:text-emerald-300 transition-colors">Image Deployment</div>
-              <div class="text-[11px] text-apple-secondary mt-1 line-clamp-2">Face Swap, Inpainting và 3 nhóm Fine-Tuning (Product, Style, Consistency).</div>
-            </button>
-
-            <!-- Branch 3 -->
-            <button onclick="selectMindmapNode('llm')" id="node-llm" class="mindmap-node text-left p-3.5 rounded-xl border border-apple-border bg-apple-surface hover:border-amber-400/60 transition-all group">
-              <div class="flex items-center justify-between mb-2">
-                <span class="w-2 h-2 rounded-full bg-amber-400"></span>
-                <span class="text-[10px] font-mono text-apple-tertiary">03</span>
-              </div>
-              <div class="text-xs font-semibold text-white group-hover:text-amber-300 transition-colors">Cấu Trúc LLM & RAG</div>
-              <div class="text-[11px] text-apple-secondary mt-1 line-clamp-2">Phân tầng Base, Instruct (System Prompt) và RAG truy xuất Vector Database.</div>
-            </button>
-
-            <!-- Branch 4 -->
-            <button onclick="selectMindmapNode('vision')" id="node-vision" class="mindmap-node text-left p-3.5 rounded-xl border border-apple-border bg-apple-surface hover:border-sky-400/60 transition-all group">
-              <div class="flex items-center justify-between mb-2">
-                <span class="w-2 h-2 rounded-full bg-sky-400"></span>
-                <span class="text-[10px] font-mono text-apple-tertiary">04</span>
-              </div>
-              <div class="text-xs font-semibold text-white group-hover:text-sky-300 transition-colors">Vision, Speech & Audio</div>
-              <div class="text-[11px] text-apple-secondary mt-1 line-clamp-2">Quy trình 2 lớp Vision+LLM, ElevenLabs voice cloning và giới hạn API âm nhạc.</div>
-            </button>
-
-            <!-- Branch 5 -->
-            <button onclick="selectMindmapNode('safety')" id="node-safety" class="mindmap-node text-left p-3.5 rounded-xl border border-apple-border bg-apple-surface hover:border-rose-400/60 transition-all group">
-              <div class="flex items-center justify-between mb-2">
-                <span class="w-2 h-2 rounded-full bg-rose-400"></span>
-                <span class="text-[10px] font-mono text-apple-tertiary">05</span>
-              </div>
-              <div class="text-xs font-semibold text-white group-hover:text-rose-300 transition-colors">Brand Safety</div>
-              <div class="text-[11px] text-apple-secondary mt-1 line-clamp-2">Bộ tiêu chuẩn kiểm duyệt nhiều lớp, Pre-Approved Library và phòng chống rủi ro.</div>
-            </button>
-
-          </div>
-
-          <!-- Selected Node Deep-dive Panel -->
-          <div id="mindmap-detail-panel" class="bg-black/50 rounded-xl p-5 sm:p-6 border border-apple-border">
-            <!-- Dynamically populated via JS -->
-          </div>
-
-        </div>
-
-      </div>
-
-      <!-- BENTO REFERENCE VIEW CONTAINER (Hidden by default) -->
-      <div id="bento-container" class="hidden grid grid-cols-1 md:grid-cols-2 gap-5">
-
-        <!-- Block 1: Model Ecosystem & API -->
-        <article class="card-surface rounded-2xl p-6 border border-apple-border">
-          <div class="flex items-center justify-between mb-4 pb-3 border-b border-apple-border/60">
-            <h3 class="text-sm font-semibold text-white tracking-tight flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-apple-accent"></span>
-              <span>1. Hệ Sinh Thái Mô Hình & Sức Mạnh API</span>
-            </h3>
-            <span class="text-[11px] font-mono text-apple-secondary">Foundation</span>
-          </div>
-
-          <div class="space-y-3 text-xs sm:text-sm text-apple-secondary leading-relaxed">
-            <div>
-              <strong class="text-apple-text block font-medium">Sáu phân nhóm mô hình thông dụng:</strong>
-              <ul class="list-disc pl-4 mt-1 space-y-1 text-xs">
-                <li><b class="text-apple-text">LLM (Large Language Model):</b> Xử lý, thấu hiểu ngữ cảnh và tạo sinh văn bản (OpenAI GPT, Anthropic Claude, Google Gemini).</li>
-                <li><b class="text-apple-text">Image Models:</b> Tạo ảnh từ mô tả văn bản (Stable Diffusion, Midjourney, DALL-E 3).</li>
-                <li><b class="text-apple-text">Vision-Language Models:</b> Nhận diện đối tượng, bối cảnh và trích xuất dữ liệu từ hình ảnh.</li>
-                <li><b class="text-apple-text">Speech Recognition:</b> Chuyển đổi giọng nói thành văn bản (Whisper AI, phục vụ ghi nhận họp, phân tích call center).</li>
-                <li><b class="text-apple-text">Generative Audio:</b> Tạo âm thanh môi trường, clone giọng đọc (ElevenLabs), hòa âm tạo nhạc (Suno).</li>
-                <li><b class="text-apple-text">Video Models:</b> Text-to-Video (OpenAI Sora, Runway).</li>
-              </ul>
-            </div>
-
-            <div class="p-3.5 rounded-xl bg-apple-surface border border-apple-border text-xs">
-              <span class="font-semibold text-apple-text block mb-1">Bản chất của API (Application Programming Interface):</span>
-              Là giao thức kết nối cho phép Agency mang toàn bộ trí thông minh nhân tạo tích hợp trực tiếp vào Microsite, Zalo Mini App, Web App hoặc hệ thống nội bộ của nhãn hàng, không buộc người dùng cuối phải thao tác trên website của nhà cung cấp mô hình.
-            </div>
-          </div>
-        </article>
-
-        <!-- Block 2: Image Deployment Approaches -->
-        <article class="card-surface rounded-2xl p-6 border border-apple-border">
-          <div class="flex items-center justify-between mb-4 pb-3 border-b border-apple-border/60">
-            <h3 class="text-sm font-semibold text-white tracking-tight flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-              <span>2. Ba Hướng Triển Khai Image Model</span>
-            </h3>
-            <span class="text-[11px] font-mono text-apple-secondary">Computer Vision</span>
-          </div>
-
-          <div class="space-y-3.5 text-xs sm:text-sm text-apple-secondary leading-relaxed">
-            <div>
-              <strong class="text-apple-text font-medium">A. Face Swap (Hoán đổi khuôn mặt):</strong>
-              <p class="text-xs mt-0.5">Ghép khuôn mặt người dùng vào ảnh mẫu cơ sở (Base image) đã được thiết kế sẵn. Áp dụng hiệu quả trong các campaign tương tác nhanh (Momo lì xì QR, Zalo Tết). <em class="text-apple-text">Điều kiện kỹ thuật:</em> Ảnh base chỉ chứa duy nhất 1 khuôn mặt chuẩn góc nhìn.</p>
-            </div>
-
-            <div>
-              <strong class="text-apple-text font-medium">B. Inpainting / Add-painting:</strong>
-              <p class="text-xs mt-0.5">Giữ nguyên cấu trúc sản phẩm thực tế (chai serum, đôi giày Biti's Hunter) và vẽ hòa quyện background mới xung quanh, hoặc vẽ đè trang phục lên người mẫu ảo.</p>
-            </div>
-
-            <div>
-              <strong class="text-apple-text font-medium">C. Fine-Tuning (Huấn luyện tùy biến mô hình):</strong>
-              <ul class="list-disc pl-4 mt-1 space-y-1 text-xs">
-                <li><strong>Product Fine-Tune:</strong> Nạp tập dữ liệu 20–30 ảnh đa góc độ để AI học sản phẩm đặc thù chưa có trong tập dữ liệu toàn cầu (như tương ớt Chin-su, Apple Vision Pro).</li>
-                <li><strong>Style Fine-Tune:</strong> Định hình một phong cách thẩm mỹ riêng (retro Sài Gòn, visual phim chiếu rạp) với tập mẫu 100–200 hình.</li>
-                <li><strong>Character Consistency:</strong> Xây dựng đại sứ ảo (Virtual Influencer) giữ đồng nhất nhân diện qua nhiều bối cảnh khác nhau.</li>
-              </ul>
-            </div>
-
-            <div class="p-2.5 rounded-lg bg-apple-surface border border-apple-border text-xs text-apple-text">
-              <strong>Nguồn tài nguyên Replicate.com:</strong> Nền tảng lưu trữ hàng nghìn Open-Source Models đã tích hợp sẵn API gọi dùng ngay, giảm thiểu tối đa chi phí đầu tư máy chủ GPU riêng.
-            </div>
-          </div>
-        </article>
-
-        <!-- Block 3: LLM Architecture: Base vs Instruct vs RAG -->
-        <article class="card-surface rounded-2xl p-6 border border-apple-border">
-          <div class="flex items-center justify-between mb-4 pb-3 border-b border-apple-border/60">
-            <h3 class="text-sm font-semibold text-white tracking-tight flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-amber-400"></span>
-              <span>3. Cấu Trúc Vận Hành LLM & Token</span>
-            </h3>
-            <span class="text-[11px] font-mono text-apple-secondary">Natural Language</span>
-          </div>
-
-          <div class="space-y-3 text-xs sm:text-sm text-apple-secondary leading-relaxed">
-            <div class="space-y-2">
-              <div>
-                <strong class="text-apple-text font-medium">Cấp độ 1 — Base Model:</strong> Gọi trực tiếp API nguyên bản, văn bản phản hồi chưa qua định hướng luồng hay persona.
-              </div>
-              <div>
-                <strong class="text-apple-text font-medium">Cấp độ 2 — Instruct (System Prompting):</strong> Đóng vai và kiểm soát luật phản hồi theo kịch bản nhãn hàng (ví dụ: bói toán LaVie, Tarot Coca-Cola). Phù hợp dữ liệu nhỏ (&lt; 16.000 từ / ~10 trang A4), chi phí thấp, tốc độ nhanh.
-              </div>
-              <div>
-                <strong class="text-apple-text font-medium">Cấp độ 3 — RAG (Retrieval-Augmented Generation):</strong> Truy xuất dữ liệu từ Vector Database đối với kho tài liệu khổng lồ (bộ luật giao thông, tài liệu y khoa 1.000 trang). Ngăn ngừa triệt để tình trạng AI bịa đặt (hallucination).
-              </div>
-            </div>
-
-            <div class="p-3 rounded-xl bg-apple-surface border border-apple-border text-xs">
-              <strong class="text-apple-text block mb-1">Hiểu đúng về Context Window 128K Tokens:</strong>
-              Mô hình có khả năng tiếp nhận khối lượng đầu vào (Input) lên tới ~300 trang A4 (như tổng hợp 10.000 bình luận để phân tích tình cảm - Sentiment Analysis), tuy nhiên độ dài phản hồi đầu ra (Output) bị giới hạn ở quy mô văn bản ngắn gọn.
-            </div>
-          </div>
-        </article>
-
-        <!-- Block 4: Vision Pipeline & Brand Safety Protocols -->
-        <article class="card-surface rounded-2xl p-6 border border-apple-border">
-          <div class="flex items-center justify-between mb-4 pb-3 border-b border-apple-border/60">
-            <h3 class="text-sm font-semibold text-white tracking-tight flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-rose-400"></span>
-              <span>4. Quy Trình Phối Hợp & Brand Safety</span>
-            </h3>
-            <span class="text-[11px] font-mono text-apple-secondary">Governance</span>
-          </div>
-
-          <div class="space-y-3 text-xs sm:text-sm text-apple-secondary leading-relaxed">
-            <div>
-              <strong class="text-apple-text font-medium">Quy trình 2 bước chuẩn kỹ thuật:</strong>
-              <p class="text-xs mt-0.5">Sử dụng mô hình thị giác (Vision) độc quyền cho bước <span class="text-apple-text font-medium underline">nhận diện đối tượng/độ tuổi</span>, sau đó chuyển giao thông số sang LLM đã cài đặt hướng dẫn (Instruct) để <span class="text-apple-text font-medium underline">sáng tạo thông điệp</span>. Không để Vision tự ý suy diễn nội dung.</p>
-            </div>
-
-            <div>
-              <strong class="text-apple-text font-medium">Bộ 6 tiêu chuẩn Brand Safety trong chiến dịch:</strong>
-              <ol class="list-decimal pl-4 mt-1 space-y-1 text-xs">
-                <li><strong>Minh bạch (Transparency):</strong> Công bố rõ nội dung do AI hỗ trợ tạo lập.</li>
-                <li><strong>System Prompt Safeguards:</strong> Đặt quy định loại trừ đối thủ, chính trị, tôn giáo.</li>
-                <li><strong>Mô hình kiểm duyệt 2 lớp (Moderation Model):</strong> Lọc từ khóa độc hại trước khi chuyển lệnh tới mô hình chính.</li>
-                <li><strong>Thư viện phê duyệt trước (Pre-Approved Library):</strong> Giới hạn người dùng chọn các option định sẵn thay vì nhập văn bản tự do nhằm chặn đứng Prompt Injection.</li>
-                <li><strong>Không tư vấn sức khỏe/tài chính độc lập:</strong> Bắt buộc phải có RAG và chuyên gia phê duyệt nguồn.</li>
-                <li><strong>Thu thập phản hồi (Feedback Mechanism):</strong> Tích hợp nút đánh giá để ghi nhận và hiệu chỉnh thuật toán.</li>
-              </ol>
-            </div>
-          </div>
-        </article>
-
-      </div>
-
-      <!-- Quick Step Actions -->
-      <div class="mt-8 pt-6 border-t border-apple-border flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-apple-secondary">
-        <span>Bước tiếp theo trong lộ trình ôn tập:</span>
-        <div class="flex items-center gap-2">
-          <button onclick="switchTab('flashcards')" class="px-4 py-2 rounded-lg bg-apple-surface hover:bg-apple-elevated border border-apple-border text-apple-text font-medium transition-colors">
-            Chuyển sang Flashcard ghi nhớ →
-          </button>
-        </div>
-      </div>
-
-    </section>
-
-    <!-- ============================================================== -->
-    <!-- MODULE 2: FLASHCARD STUDY CARDS                                -->
-    <!-- ============================================================== -->
-    <section id="view-flashcards" class="hidden w-full max-w-3xl mx-auto">
-      
-      <!-- Toolbar & Category Filter -->
-      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-apple-border">
-        
-        <!-- Filter Tabs -->
-        <div class="flex items-center gap-1.5 flex-wrap text-xs">
-          <button onclick="setCardFilter('all')" class="fc-filter px-3 py-1.5 rounded-md bg-white text-black font-semibold" data-filter="all">Tất cả (16)</button>
-          <button onclick="setCardFilter('image')" class="fc-filter px-3 py-1.5 rounded-md text-apple-secondary hover:text-apple-text" data-filter="image">Image & Fine-Tune</button>
-          <button onclick="setCardFilter('llm')" class="fc-filter px-3 py-1.5 rounded-md text-apple-secondary hover:text-apple-text" data-filter="llm">LLM & RAG</button>
-          <button onclick="setCardFilter('vision')" class="fc-filter px-3 py-1.5 rounded-md text-apple-secondary hover:text-apple-text" data-filter="vision">Vision & Audio</button>
-          <button onclick="setCardFilter('safety')" class="fc-filter px-3 py-1.5 rounded-md text-apple-secondary hover:text-apple-text" data-filter="safety">Brand Safety</button>
-        </div>
-
-        <!-- Utility Counter & Shuffle -->
-        <div class="flex items-center gap-3 text-xs text-apple-secondary self-end sm:self-center">
-          <span id="fc-counter" class="font-mono text-apple-text">01 / 16</span>
-          <button onclick="shuffleDeck()" class="px-2.5 py-1 rounded bg-apple-surface hover:bg-apple-elevated border border-apple-border text-apple-text transition-colors">
-            Xáo trộn thẻ
-          </button>
-        </div>
-      </div>
-
-      <!-- 3D Flashcard Presentation -->
-      <div class="perspective-container w-full h-[360px] sm:h-[380px] mb-6">
-        <div id="active-flashcard" onclick="flipCardAction()" class="flip-card-inner cursor-pointer rounded-2xl shadow-xl">
-          
-          <!-- FRONT SIDE (Question / Concept Definition) -->
-          <div class="card-face card-surface rounded-2xl p-7 flex flex-col justify-between">
-            <div class="flex items-center justify-between text-xs text-apple-secondary border-b border-apple-border/60 pb-3">
-              <span id="card-front-category" class="font-mono text-apple-accent uppercase tracking-wider font-medium">Image Architecture</span>
-              <span>Nhấp chuột hoặc phím [Space] để lật</span>
-            </div>
-
-            <div class="my-auto py-4">
-              <h3 id="card-front-title" class="text-xl sm:text-2xl font-semibold text-apple-text mb-2 tracking-tight">
-                Face Swap vs Inpainting
-              </h3>
-              <p id="card-front-sub" class="text-apple-secondary text-sm leading-relaxed">
-                Khi nào Agency nên dùng Face Swap và khi nào nên dùng Inpainting?
-              </p>
-            </div>
-
-            <div class="text-[11px] text-apple-tertiary flex items-center justify-between border-t border-apple-border/40 pt-3">
-              <span>Học phần: AI for Creative Approach</span>
-              <span>Mặt trước: Vấn đề / Khái niệm</span>
-            </div>
-          </div>
-
-          <!-- BACK SIDE (Technical Rationale & Practical Agency Use Case) -->
-          <div class="card-face card-back card-surface bg-[#141416] border-apple-accent/30 rounded-2xl p-7 flex flex-col justify-between">
-            <div class="flex items-center justify-between text-xs border-b border-apple-border/60 pb-3">
-              <span class="font-mono text-apple-accent font-medium">Bản chất kỹ thuật & Ứng dụng</span>
-              <span class="text-apple-secondary">Nhấp để quay lại</span>
-            </div>
-
-            <div class="my-auto overflow-y-auto max-h-[220px] pr-2">
-              <h4 id="card-back-title" class="text-base font-semibold text-apple-text mb-2">
-                Face Swap ghép khuôn mặt — Inpainting chỉnh sửa chi tiết cục bộ
-              </h4>
-              <div id="card-back-body" class="text-xs sm:text-sm text-apple-secondary leading-relaxed space-y-2">
-                <!-- Detailed explanation -->
-              </div>
-            </div>
-
-            <div class="flex items-center justify-between border-t border-apple-border/40 pt-3">
-              <span class="text-[11px] text-apple-tertiary">Đánh giá mức độ ghi nhớ:</span>
-              <div class="flex items-center gap-2">
-                <button onclick="event.stopPropagation(); setCardMastery(false)" class="px-3 py-1 rounded bg-white/5 hover:bg-red-500/10 hover:text-red-400 border border-apple-border text-xs text-apple-secondary transition-colors">
-                  Cần xem lại
-                </button>
-                <button onclick="event.stopPropagation(); setCardMastery(true)" class="px-3 py-1 rounded bg-white/5 hover:bg-emerald-500/10 hover:text-emerald-400 border border-apple-border text-xs text-apple-secondary transition-colors">
-                  Đã ghi nhớ
-                </button>
-              </div>
-            </div>
-
-          </div>
-
-        </div>
-      </div>
-
-      <!-- Navigation Arrows -->
-      <div class="flex items-center justify-center gap-3">
-        <button onclick="prevCard()" class="px-4 py-2 rounded-lg bg-apple-surface hover:bg-apple-elevated border border-apple-border text-xs font-medium text-apple-text transition-colors">
-          ← Thẻ trước
-        </button>
-        <button onclick="flipCardAction()" class="px-6 py-2 rounded-lg bg-apple-text text-black hover:bg-white font-medium text-xs transition-colors">
-          Lật thẻ [Space]
-        </button>
-        <button onclick="nextCard()" class="px-4 py-2 rounded-lg bg-apple-surface hover:bg-apple-elevated border border-apple-border text-xs font-medium text-apple-text transition-colors">
-          Thẻ tiếp theo →
-        </button>
-      </div>
-
-      <div class="mt-8 pt-4 border-t border-apple-border text-center">
-        <button onclick="switchTab('assessment')" class="text-xs text-apple-secondary hover:text-apple-text underline">
-          Đã sẵn sàng? Chuyển sang bài kiểm tra trắc nghiệm 15 câu →
-        </button>
-      </div>
-
-    </section>
-
-    <!-- ============================================================== -->
-    <!-- MODULE 3: MULTIPLE CHOICE ASSESSMENT (FORMER KAHOOT)           -->
-    <!-- ============================================================== -->
-    <section id="view-assessment" class="hidden w-full">
-      
-      <!-- START PANEL -->
-      <div id="quiz-start-screen" class="max-w-2xl mx-auto py-12 px-6 sm:px-8 card-surface rounded-2xl border border-apple-border text-center">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-apple-accent/10 border border-apple-accent/20 text-apple-accent text-xs font-mono mb-4">
-          Phần 3: Bài đánh giá hiểu biết thực tế
-        </div>
-        <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-white mb-3">
-          Kiểm Tra Năng Lực Ứng Dụng AI Agency
-        </h2>
-        <p class="text-apple-secondary text-xs sm:text-sm mt-1 max-w-2xl">
-          Đúc kết toàn bộ các nguyên lý kỹ thuật trọng tâm theo bài giảng của Trainer Trung Nguyễn, hỗ trợ xây dựng Proposal, định hướng khả thi cho chiến dịch và brief chuẩn xác với đội ngũ Lập trình / Production House.
-        </p>
-      </div>
-
-      <!-- 4 Structured Bento Sections -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-
-        <!-- Block 1: Model Ecosystem & API -->
-        <article class="card-surface rounded-2xl p-6 border border-apple-border">
-          <div class="flex items-center justify-between mb-4 pb-3 border-b border-apple-border/60">
-            <h3 class="text-sm font-semibold text-white tracking-tight flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-apple-accent"></span>
-              <span>1. Hệ Sinh Thái Mô Hình & Sức Mạnh API</span>
-            </h3>
-            <span class="text-[11px] font-mono text-apple-secondary">Foundation</span>
-          </div>
-
-          <div class="space-y-3 text-xs sm:text-sm text-apple-secondary leading-relaxed">
-            <div>
-              <strong class="text-apple-text block font-medium">Sáu phân nhóm mô hình thông dụng:</strong>
-              <ul class="list-disc pl-4 mt-1 space-y-1 text-xs">
-                <li><b class="text-apple-text">LLM (Large Language Model):</b> Xử lý, thấu hiểu ngữ cảnh và tạo sinh văn bản (OpenAI GPT, Anthropic Claude, Google Gemini).</li>
-                <li><b class="text-apple-text">Image Models:</b> Tạo ảnh từ mô tả văn bản (Stable Diffusion, Midjourney, DALL-E 3).</li>
-                <li><b class="text-apple-text">Vision-Language Models:</b> Nhận diện đối tượng, bối cảnh và trích xuất dữ liệu từ hình ảnh.</li>
-                <li><b class="text-apple-text">Speech Recognition:</b> Chuyển đổi giọng nói thành văn bản (Whisper AI, phục vụ ghi nhận họp, phân tích call center).</li>
-                <li><b class="text-apple-text">Generative Audio:</b> Tạo âm thanh môi trường, clone giọng đọc (ElevenLabs), hòa âm tạo nhạc (Suno).</li>
-                <li><b class="text-apple-text">Video Models:</b> Text-to-Video (OpenAI Sora, Runway).</li>
-              </ul>
-            </div>
-
-            <div class="p-3.5 rounded-xl bg-apple-surface border border-apple-border text-xs">
-              <span class="font-semibold text-apple-text block mb-1">Bản chất của API (Application Programming Interface):</span>
-              Là giao thức kết nối cho phép Agency mang toàn bộ trí thông minh nhân tạo tích hợp trực tiếp vào Microsite, Zalo Mini App, Web App hoặc hệ thống nội bộ của nhãn hàng, không buộc người dùng cuối phải thao tác trên website của nhà cung cấp mô hình.
-            </div>
-          </div>
-        </article>
-
-        <!-- Block 2: Image Deployment Approaches -->
-        <article class="card-surface rounded-2xl p-6 border border-apple-border">
-          <div class="flex items-center justify-between mb-4 pb-3 border-b border-apple-border/60">
-            <h3 class="text-sm font-semibold text-white tracking-tight flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-              <span>2. Ba Hướng Triển Khai Image Model</span>
-            </h3>
-            <span class="text-[11px] font-mono text-apple-secondary">Computer Vision</span>
-          </div>
-
-          <div class="space-y-3.5 text-xs sm:text-sm text-apple-secondary leading-relaxed">
-            <div>
-              <strong class="text-apple-text font-medium">A. Face Swap (Hoán đổi khuôn mặt):</strong>
-              <p class="text-xs mt-0.5">Ghép khuôn mặt người dùng vào ảnh mẫu cơ sở (Base image) đã được thiết kế sẵn. Áp dụng hiệu quả trong các campaign tương tác nhanh (Momo lì xì QR, Zalo Tết). <em class="text-apple-text">Điều kiện kỹ thuật:</em> Ảnh base chỉ chứa duy nhất 1 khuôn mặt chuẩn góc nhìn.</p>
-            </div>
-
-            <div>
-              <strong class="text-apple-text font-medium">B. Inpainting / Add-painting:</strong>
-              <p class="text-xs mt-0.5">Giữ nguyên cấu trúc sản phẩm thực tế (chai serum, đôi giày Biti's Hunter) và vẽ hòa quyện background mới xung quanh, hoặc vẽ đè trang phục lên người mẫu ảo.</p>
-            </div>
-
-            <div>
-              <strong class="text-apple-text font-medium">C. Fine-Tuning (Huấn luyện tùy biến mô hình):</strong>
-              <ul class="list-disc pl-4 mt-1 space-y-1 text-xs">
-                <li><strong>Product Fine-Tune:</strong> Nạp tập dữ liệu 20–30 ảnh đa góc độ để AI học sản phẩm đặc thù chưa có trong tập dữ liệu toàn cầu (như tương ớt Chin-su, Apple Vision Pro).</li>
-                <li><strong>Style Fine-Tune:</strong> Định hình một phong cách thẩm mỹ riêng (retro Sài Gòn, visual phim chiếu rạp) với tập mẫu 100–200 hình.</li>
-                <li><strong>Character Consistency:</strong> Xây dựng đại sứ ảo (Virtual Influencer) giữ đồng nhất nhân diện qua nhiều bối cảnh khác nhau.</li>
-              </ul>
-            </div>
-
-            <div class="p-2.5 rounded-lg bg-apple-surface border border-apple-border text-xs text-apple-text">
-              <strong>Nguồn tài nguyên Replicate.com:</strong> Nền tảng lưu trữ hàng nghìn Open-Source Models đã tích hợp sẵn API gọi dùng ngay, giảm thiểu tối đa chi phí đầu tư máy chủ GPU riêng.
-            </div>
-          </div>
-        </article>
-
-        <!-- Block 3: LLM Architecture: Base vs Instruct vs RAG -->
-        <article class="card-surface rounded-2xl p-6 border border-apple-border">
-          <div class="flex items-center justify-between mb-4 pb-3 border-b border-apple-border/60">
-            <h3 class="text-sm font-semibold text-white tracking-tight flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-amber-400"></span>
-              <span>3. Cấu Trúc Vận Hành LLM & Token</span>
-            </h3>
-            <span class="text-[11px] font-mono text-apple-secondary">Natural Language</span>
-          </div>
-
-          <div class="space-y-3 text-xs sm:text-sm text-apple-secondary leading-relaxed">
-            <div class="space-y-2">
-              <div>
-                <strong class="text-apple-text font-medium">Cấp độ 1 — Base Model:</strong> Gọi trực tiếp API nguyên bản, văn bản phản hồi chưa qua định hướng luồng hay persona.
-              </div>
-              <div>
-                <strong class="text-apple-text font-medium">Cấp độ 2 — Instruct (System Prompting):</strong> Đóng vai và kiểm soát luật phản hồi theo kịch bản nhãn hàng (ví dụ: bói toán LaVie, Tarot Coca-Cola). Phù hợp dữ liệu nhỏ (&lt; 16.000 từ / ~10 trang A4), chi phí thấp, tốc độ nhanh.
-              </div>
-              <div>
-                <strong class="text-apple-text font-medium">Cấp độ 3 — RAG (Retrieval-Augmented Generation):</strong> Truy xuất dữ liệu từ Vector Database đối với kho tài liệu khổng lồ (bộ luật giao thông, tài liệu y khoa 1.000 trang). Ngăn ngừa triệt để tình trạng AI bịa đặt (hallucination).
-              </div>
-            </div>
-
-            <div class="p-3 rounded-xl bg-apple-surface border border-apple-border text-xs">
-              <strong class="text-apple-text block mb-1">Hiểu đúng về Context Window 128K Tokens:</strong>
-              Mô hình có khả năng tiếp nhận khối lượng đầu vào (Input) lên tới ~300 trang A4 (như tổng hợp 10.000 bình luận để phân tích tình cảm - Sentiment Analysis), tuy nhiên độ dài phản hồi đầu ra (Output) bị giới hạn ở quy mô văn bản ngắn gọn.
-            </div>
-          </div>
-        </article>
-
-        <!-- Block 4: Vision Pipeline & Brand Safety Protocols -->
-        <article class="card-surface rounded-2xl p-6 border border-apple-border">
-          <div class="flex items-center justify-between mb-4 pb-3 border-b border-apple-border/60">
-            <h3 class="text-sm font-semibold text-white tracking-tight flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-rose-400"></span>
-              <span>4. Quy Trình Phối Hợp & Brand Safety</span>
-            </h3>
-            <span class="text-[11px] font-mono text-apple-secondary">Governance</span>
-          </div>
-
-          <div class="space-y-3 text-xs sm:text-sm text-apple-secondary leading-relaxed">
-            <div>
-              <strong class="text-apple-text font-medium">Quy trình 2 bước chuẩn kỹ thuật:</strong>
-              <p class="text-xs mt-0.5">Sử dụng mô hình thị giác (Vision) độc quyền cho bước <span class="text-apple-text font-medium underline">nhận diện đối tượng/độ tuổi</span>, sau đó chuyển giao thông số sang LLM đã cài đặt hướng dẫn (Instruct) để <span class="text-apple-text font-medium underline">sáng tạo thông điệp</span>. Không để Vision tự ý suy diễn nội dung.</p>
-            </div>
-
-            <div>
-              <strong class="text-apple-text font-medium">Bộ 6 tiêu chuẩn Brand Safety trong chiến dịch:</strong>
-              <ol class="list-decimal pl-4 mt-1 space-y-1 text-xs">
-                <li><strong>Minh bạch (Transparency):</strong> Công bố rõ nội dung do AI hỗ trợ tạo lập.</li>
-                <li><strong>System Prompt Safeguards:</strong> Đặt quy định loại trừ đối thủ, chính trị, tôn giáo.</li>
-                <li><strong>Mô hình kiểm duyệt 2 lớp (Moderation Model):</strong> Lọc từ khóa độc hại trước khi chuyển lệnh tới mô hình chính.</li>
-                <li><strong>Thư viện phê duyệt trước (Pre-Approved Library):</strong> Giới hạn người dùng chọn các option định sẵn thay vì nhập văn bản tự do nhằm chặn đứng Prompt Injection.</li>
-                <li><strong>Không tư vấn sức khỏe/tài chính độc lập:</strong> Bắt buộc phải có RAG và chuyên gia phê duyệt nguồn.</li>
-                <li><strong>Thu thập phản hồi (Feedback Mechanism):</strong> Tích hợp nút đánh giá để ghi nhận và hiệu chỉnh thuật toán.</li>
-              </ol>
-            </div>
-          </div>
-        </article>
-
-        <div class="flex flex-col sm:flex-row gap-3 justify-center">
-          <button onclick="startAssessment()" class="px-5 py-2.5 rounded-lg bg-apple-text text-black hover:bg-white text-xs sm:text-sm font-medium transition-colors">
-            Thực hiện lại bài kiểm tra
-          </button>
-          <button onclick="switchTab('reference')" class="px-5 py-2.5 rounded-lg border border-apple-border bg-apple-surface hover:bg-apple-elevated text-apple-text text-xs sm:text-sm font-medium transition-colors">
-            Quay lại sơ đồ kiến thức
-          </button>
-        </div>
-      </div>
-
-    </section>
-
-  </main>
-
-  <!-- FOOTER -->
-  <footer class="border-t border-apple-border py-4 mt-8 bg-black">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-apple-secondary">
-      <div>AI for Creative Approach — Knowledge Assessment & Documentation Workspace</div>
-      <div class="font-mono text-[11px] text-apple-tertiary">Version 2.0 (Pro Academic)</div>
+      <div class="canto-tabs" id="cantoTabs"></div>
     </div>
-  </footer>
 
-  <!-- JAVASCRIPT ENGINE -->
-  <script>
-    /* ==============================================================
-       1. SUBTLE AUDIO NOTIFICATION SYSTEM (Web Audio API)
-       ============================================================== */
-    let audioContext = null;
-    let isAudioActive = true;
+    <div class="poem-container" id="poemContainer"></div>
+  </div>
+</div>
 
-    function initAudioContext() {
-      if (!audioContext) {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      }
+<script>
+  const keywordGlosses = {
+    virgil: {
+      term: "Virgil",
+      definition: "Virgil (Publius Vergilius Maro; 70 BC\u201319 BC) was an ancient Roman poet of the Augustan period best known for composing the Eclogues, the Georgics, and Rome's national epic, the Aeneid."
     }
+  };
 
-    function toggleAudio() {
-      isAudioActive = !isAudioActive;
-      document.getElementById('audio-icon').innerText = isAudioActive ? '🔊' : '🔇';
+  function renderGlossWord(key) {
+    const entry = keywordGlosses[key];
+    if (!entry) return "";
+    return `
+      <span class="gloss-wrapper" id="gloss-${key}">
+        <button
+          type="button"
+          class="gloss-term"
+          aria-expanded="false"
+          aria-controls="popover-${key}"
+          onclick="toggleGlossPin(event, '${key}')"
+        >${entry.term}</button>
+        <span class="gloss-popover" id="popover-${key}" role="dialog" aria-label="${entry.term} definition">
+          <span class="gloss-label">Reference Note</span>
+          <span>${entry.definition}</span>
+        </span>
+      </span>
+    `;
+  }
+
+  // Canto I Full Text Data (Separated into Tercets / Stanzas)
+  const canto1Stanzas = [
+    "When I had journeyed half of our life\u2019s way,\nI found myself within a shadowed forest,\nfor I had lost the path that does not stray.",
+    "Ah, it is hard to speak of what it was,\nthat savage forest, dense and difficult,\nwhich even in recall renews my fear:",
+    "so bitter \u2014 death is hardly more severe!\nBut to retell the good discovered there,\nI\u2019ll also tell the other things I saw.",
+    "I cannot clearly say how I had entered\nthe wood; I was so full of sleep just at\nthe point where I abandoned the true path.",
+    "But when I\u2019d reached the bottom of a hill \u2014\nit rose along the boundary of the valley\nthat had harassed my heart with so much fear \u2014",
+    "I looked on high and saw its shoulders clothed\nalready by the rays of that same planet\nwhich serves to lead men straight along all roads.",
+    "At this my fear was somewhat quieted;\nfor through the night of sorrow I had spent,\nthe lake within my heart felt terror present.",
+    "And just as he who, with exhausted breath,\nhaving escaped from sea to shore, turns back\nto watch the dangerous waters he has quit,",
+    "so did my spirit, still a fugitive,\nturn back to look intently at the pass\nthat never has let any man survive.",
+    "I let my tired body rest awhile.\nMoving again, I tried the lonely slope \u2014\nmy firm foot always was the one below.",
+    "And almost where the hillside starts to rise \u2014\nlook there! \u2014 a leopard, very quick and lithe,\na leopard covered with a spotted hide.",
+    "He did not disappear from sight, but stayed;\nindeed, he so impeded my ascent\nthat I had often to turn back again.",
+    "The time was the beginning of the morning;\nthe sun was rising now in fellowship\nwith the same stars that had escorted it",
+    "when Divine Love first moved those things of beauty;\nso that the hour and the gentle season\ngave me good cause for hopefulness on seeing",
+    "that beast before me with his speckled skin;\nbut hope was hardly able to prevent\nthe fear I felt when I beheld a lion.",
+    "His head held high and ravenous with hunger \u2014\neven the air around him seemed to shudder \u2014\nthis lion seemed to make his way against me.",
+    "And then a she-wolf showed herself; she seemed\nto carry every craving in her leanness;\nshe had already brought despair to many.",
+    "The very sight of her so weighted me\nwith fearfulness that I abandoned hope\nof ever climbing up that mountain slope.",
+    "Even as he who glories while he gains\nwill, when the time has come to tally loss,\nlament with every thought and turn despondent,",
+    "so was I when I faced that restless beast\nwhich, even as she stalked me, step by step\nhad thrust me back to where the sun is speechless.",
+    "While I retreated down to lower ground,\nbefore my eyes there suddenly appeared\none who seemed faint because of the long silence.",
+    "When I saw him in that vast wilderness,\n\u201cHave pity on me,\u201d were the words I cried,\n\u201cwhatever you may be \u2014 a shade, a man.\u201d",
+    "He answered me: \u201cNot man; I once was man.\nBoth of my parents came from Lombardy,\nand both claimed Mantua as native city.",
+    "And I was born, though late, sub Julio,\nand lived in Rome under the good Augustus \u2014\nthe season of the false and lying gods.",
+    "I was a poet, and I sang the righteous\nson of Anchises who had come from Troy\nwhen flames destroyed the pride of Ilium.",
+    "But why do you return to wretchedness?\nWhy not climb up the mountain of delight,\nthe origin and cause of every joy?\u201d",
+    () => `\u201cAnd are you then that ${renderGlossWord("virgil")}, you the fountain\nthat freely pours so rich a stream of speech?\u201d\nI answered him with shame upon my brow.`,
+    "\u201cO light and honor of all other poets,\nmay my long study and the intense love\nthat made me search your volume serve me now.",
+    "You are my master and my author, you \u2014\nthe only one from whom my writing drew\nthe noble style for which I have been honored.",
+    "You see the beast that made me turn aside;\nhelp me, o famous sage, to stand against her,\nfor she has made my blood and pulses shudder,\u201d",
+    "\u201cIt is another path that you must take,\u201d\nhe answered when he saw my tearfulness,\n\u201cif you would leave this savage wilderness;",
+    "the beast that is the cause of your outcry\nallows no man to pass along her track,\nbut blocks him even to the point of death;",
+    "her nature is so squalid, so malicious\nthat she can never sate her greedy will;\nwhen she has fed, she\u2019s hungrier than ever.",
+    "She mates with many living souls and shall\nyet mate with many more, until the Greyhound\narrives, inflicting painful death on her.",
+    "That Hound will never feed on land or pewter,\nbut find his fare in wisdom, love, and virtue;\nhis place of birth shall be between two felts.",
+    "He will restore low-lying Italy for which\nthe maid Camilla died of wounds,\nand Nisus, Turnus, and Euryalus.",
+    "And he will hunt that beast through every city\nuntil he thrusts her back again to Hell,\nfor which she was first sent above by envy.",
+    "Therefore, I think and judge it best for you\nto follow me, and I shall guide you, taking\nyou from this place through an eternal place,",
+    "where you shall hear the howls of desperation\nand see the ancient spirits in their pain,\nas each of them laments his second death;",
+    "and you shall see those souls who are content\nwithin the fire, for they hope to reach \u2014\nwhenever that may be \u2014 the blessed people.",
+    "If you would then ascend as high as these,\na soul more worthy than I am will guide you;\nI\u2019ll leave you in her care when I depart,",
+    "because that Emperor who reigns above,\nsince I have been rebellious to His law,\nwill not allow me entry to His city.",
+    "He governs everywhere, but rules from there;\nthere is His city, His high capital:\no happy those He chooses to be there!\u201d",
+    "And I replied: \u201cO poet \u2014 by that God\nwhom you had never come to know \u2014 I beg you,\nthat I may flee this evil and worse evils,",
+    "to lead me to the place of which you spoke,\nthat I may see the gateway of Saint Peter\nand those whom you describe as sorrowful.\u201d",
+    "Then he set out, and I moved on behind him."
+  ];
+
+  // Region Data Structure
+  const regions = {
+    gate: {
+      title: "Gate of Hell (Dark Wood & Vestibule)",
+      cantos: [
+        { id: "c1", label: "Canto I", subtitle: "The Dark Wood & Meeting Virgil", stanzas: canto1Stanzas },
+        { id: "c2", label: "Canto II", subtitle: "Dante's Doubts & Beatrice's Intercession", stanzas: null },
+        { id: "c3", label: "Canto III", subtitle: "The Gate of Hell & The Opportunists", stanzas: null }
+      ]
+    },
+    limbo: {
+      title: "Circle 1: Limbo",
+      cantos: [
+        { id: "c4", label: "Canto IV", subtitle: "Virtuous Pagans & The Noble Castle", stanzas: null }
+      ]
+    },
+    lust: { title: "Circle 2: Lust", cantos: [{ id: "c5", label: "Canto V", subtitle: "Paolo and Francesca", stanzas: null }] },
+    gluttony: { title: "Circle 3: Gluttony", cantos: [{ id: "c6", label: "Canto VI", subtitle: "Cerberus & Ciacco", stanzas: null }] },
+    greed: { title: "Circle 4: Greed", cantos: [{ id: "c7", label: "Canto VII", subtitle: "Plutus & The Hoarders", stanzas: null }] },
+    anger: { title: "Circle 5: Anger", cantos: [{ id: "c8", label: "Canto VIII", subtitle: "The River Styx & Phlegyas", stanzas: null }] },
+    heresy: { title: "Circle 6: Heresy", cantos: [{ id: "c10", label: "Canto X", subtitle: "Flaming Tombs & Farinata", stanzas: null }] },
+    violence: { title: "Circle 7: Violence", cantos: [{ id: "c12", label: "Canto XII", subtitle: "The Minotaur & River of Blood", stanzas: null }] },
+    fraud: { title: "Circle 8: Fraud", cantos: [{ id: "c18", label: "Canto XVIII", subtitle: "Malebolge (Evil Ditches)", stanzas: null }] },
+    treachery: { title: "Circle 9: Treachery", cantos: [{ id: "c34", label: "Canto XXXIV", subtitle: "Cocytus & Lucifer", stanzas: null }] }
+  };
+
+  function toggleGlossPin(event, key) {
+    event.stopPropagation();
+    const wrapper = document.getElementById("gloss-" + key);
+    if (!wrapper) return;
+
+    const isPinned = wrapper.classList.contains("pinned");
+    clearPinnedGlosses();
+
+    if (!isPinned) {
+      wrapper.classList.add("pinned");
+      const btn = wrapper.querySelector(".gloss-term");
+      if (btn) btn.setAttribute("aria-expanded", "true");
     }
+  }
 
-    function playTone(frequency, type = 'sine', duration = 0.12, gainVolume = 0.08) {
-      if (!isAudioActive) return;
-      try {
-        initAudioContext();
-        if (audioContext.state === 'suspended') {
-          audioContext.resume();
-        }
-        const osc = audioContext.createOscillator();
-        const gain = audioContext.createGain();
-        osc.type = type;
-        osc.frequency.setValueAtTime(frequency, audioContext.currentTime);
-        gain.gain.setValueAtTime(gainVolume, audioContext.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + duration);
-        osc.connect(gain);
-        gain.connect(audioContext.destination);
-        osc.start();
-        osc.stop(audioContext.currentTime + duration);
-      } catch (err) {}
+  function clearPinnedGlosses() {
+    document.querySelectorAll(".gloss-wrapper.pinned").forEach(el => {
+      el.classList.remove("pinned");
+      const btn = el.querySelector(".gloss-term");
+      if (btn) btn.setAttribute("aria-expanded", "false");
+    });
+  }
+
+  document.addEventListener("click", (event) => {
+    if (!event.target.closest(".gloss-wrapper")) {
+      clearPinnedGlosses();
     }
+  });
 
-    function soundAffirmative() {
-      playTone(523.25, 'sine', 0.08, 0.06);
-      setTimeout(() => playTone(659.25, 'sine', 0.14, 0.07), 80);
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      clearPinnedGlosses();
     }
+  });
 
-    function soundNegative() {
-      playTone(260, 'sine', 0.12, 0.06);
-      setTimeout(() => playTone(220, 'sine', 0.16, 0.06), 90);
-    }
+  function openRegion(regionKey) {
+    const app = document.getElementById('app');
+    app.classList.add('split-active');
 
-    /* ==============================================================
-       1.5. INTERACTIVE MINDMAP KNOWLEDGE REPOSITORY
-       ============================================================== */
-    const mindmapData = {
-      ecosystem: {
-        badgeColor: "bg-apple-accent",
-        category: "Khối 01: Hệ Sinh Thái & Sức Mạnh API",
-        headline: "Nền tảng kết nối và 6 phân nhóm mô hình trọng tâm",
-        principles: [
-          {
-            term: "Bản chất cốt lõi của API",
-            desc: "Application Programming Interface là cầu nối mã lệnh cho phép Agency mang toàn bộ trí tuệ nhân tạo của OpenAI, Claude hay Stable Diffusion tích hợp thẳng vào Microsite, Zalo Mini App, Web Game hoặc hệ thống CRM của nhãn hàng. Người dùng cuối tham gia campaign không bao giờ phải truy cập chat.openai.com."
-          },
-          {
-            term: "Sáu phân nhóm mô hình thông dụng",
-            desc: "1. LLM (Text generation) — 2. Image Model (Tạo ảnh) — 3. Vision-Language (Hiểu thị giác) — 4. Speech Recognition (Whisper gỡ băng) — 5. Generative Audio (TTS & Voice clone) — 6. Text-to-Video (Sora, Runway)."
-          },
-          {
-            term: "Mô hình đóng (Closed) vs Mở (Open-Source)",
-            desc: "Closed-source (DALL-E 3, Midjourney): Trả phí, không thể can thiệp sâu vào trọng số hoặc huấn luyện lại cho sản phẩm nội địa. Open-source (Stable Diffusion): Cho phép tùy biến hoàn toàn, tự do huấn luyện và lưu trữ linh hoạt trên Replicate.com."
-          }
-        ],
-        agencyTakeaway: "Strategic Planner và Account cần xác định ngay từ buổi họp khách hàng đầu tiên: Campaign cần tích hợp vào đâu? Nếu cần web app tự động, bắt buộc giải pháp phải có API mở; không đề xuất các công cụ chỉ thao tác được trên giao diện web độc quyền."
-      },
-      image: {
-        badgeColor: "bg-emerald-400",
-        category: "Khối 02: Ba Hướng Triển Khai Image Model",
-        headline: "Face Swap, Inpainting và Huấn luyện tùy biến (Fine-Tuning)",
-        principles: [
-          {
-            term: "1. Face Swap (Hoán đổi khuôn mặt)",
-            desc: "Ghép mặt người dùng vào ảnh mẫu cơ sở (Base image) được vẽ sẵn. Rất phổ biến cho Momo QR lì xì, Zalo Tết. Giới hạn bắt buộc: Ảnh base chỉ chứa đúng 1 khuôn mặt rõ nét và cùng góc nhìn."
-          },
-          {
-            term: "2. Inpainting / Add-painting (Vẽ cục bộ)",
-            desc: "Giữ nguyên cấu trúc hình học sản phẩm thực tế (chai serum It'S SKIN, đôi giày Biti's Hunter) và vẽ hòa quyện background mới xung quanh, hoặc dùng mask chọn áo quần để thay đổi trang phục trên người mẫu ảo."
-          },
-          {
-            term: "3. Fine-Tuning (Huấn luyện bổ sung)",
-            desc: "• Product Fine-Tune: Chụp 20–30 góc để AI học sản phẩm chưa có trong dữ liệu toàn cầu (Chin-su, Vision Pro).<br>• Style Fine-Tune: Dạy AI nhận diện 1 phong cách mỹ thuật riêng với 100–200 hình mẫu.<br>• Character Consistency: Tạo đại sứ ảo (như Tami) giữ diện mạo bất biến qua mọi hoạt động."
-          }
-        ],
-        agencyTakeaway: "Không hứa hẹn với khách hàng rằng Midjourney hay ChatGPT có thể tạo ra sản phẩm nội địa nếu chưa qua bước Fine-Tuning. Hãy tận dụng kho mô hình mã nguồn mở trên Replicate.com để giảm thiểu chi phí máy chủ."
-      },
-      llm: {
-        badgeColor: "bg-amber-400",
-        category: "Khối 03: Ba Cấp Độ Vận Hành LLM & Context Window",
-        headline: "Từ API nguyên bản, System Prompting đến kiến trúc RAG",
-        principles: [
-          {
-            term: "Cấp độ 1 — Base Model",
-            desc: "Gọi trực tiếp trí thông minh ngôn ngữ nguyên bản. Phản hồi tự do, không kiểm soát được giọng điệu hay vai trò theo kịch bản nhãn hàng."
-          },
-          {
-            term: "Cấp độ 2 — Instruct (System Prompting)",
-            desc: "Quy định vai trò và nguyên tắc phản hồi nghiêm ngặt (Ví dụ: 'Bạn là Viv - Tarot của Coca-Cola...'). Nhanh, chuẩn xác, tiết kiệm chi phí cho tài liệu dưới 16.000 từ (~10 trang A4)."
-          },
-          {
-            term: "Cấp độ 3 — RAG (Retrieval-Augmented Generation)",
-            desc: "Truy xuất thông tin từ cơ sở dữ liệu Vector Database đối với kho tài liệu khổng lồ (bộ luật giao thông, cẩm nang y khoa 1.000 trang). Chống triệt để hiện tượng AI bịa đặt thông tin (hallucination)."
-          },
-          {
-            term: "Quy luật Context Window 128K Tokens",
-            desc: "Đầu vào (Input) có thể đọc hiểu tới 300 trang A4 (như phân tích 10.000 comment Facebook), nhưng đầu ra (Output) bị giới hạn độ dài ngắn. Cần ghi nhớ điều này khi xây dựng tính năng báo cáo tự động."
-          }
-        ],
-        agencyTakeaway: "Chiến dịch minigame ngắn hạn hãy dùng Instruct; dịch vụ chăm sóc khách hàng hoặc cổng tri thức doanh nghiệp bắt buộc phải dùng kiến trúc RAG."
-      },
-      vision: {
-        badgeColor: "bg-sky-400",
-        category: "Khối 04: Vision Pipeline, Speech & Generative Audio",
-        headline: "Nhận thức thị giác, chuyển hóa văn bản thành âm thanh và âm nhạc",
-        principles: [
-          {
-            term: "Quy tắc 2 bước (Vision + LLM Pipeline)",
-            desc: "Bước 1: Mô hình Vision chỉ làm nhiệm vụ nhận diện khách quan (Ví dụ: đoán em bé 6–12 tháng tuổi).<br>Bước 2: Truyền thông số tuổi sang mô hình LLM đã cài đặt Instruct chuẩn để sáng tạo thực đơn. Không để Vision tự ý suy diễn nội dung y tế."
-          },
-          {
-            term: "Speech Recognition (Whisper)",
-            desc: "Chuyển giọng nói cuộc họp hay cuộc gọi tổng đài thành văn bản, sau đó dùng LLM phân tích cảm xúc (Sentiment Analysis) xem khách hàng vui hay giận dữ."
-          },
-          {
-            term: "ElevenLabs & Voice Cloning",
-            desc: "Công nghệ TTS hàng đầu đạt độ tự nhiên 98%, hỗ trợ tiếng Việt có ngữ điệu và cho phép nhân bản giọng nói (Voice Cloning) của KOL hoặc diễn viên lồng tiếng có bản quyền."
-          },
-          {
-            term: "Suno AI Music Generation",
-            desc: "Sáng tác hoàn chỉnh bài hát cả lời và nhạc theo phong cách Pop, Rock, Rap. Giới hạn thương mại: Hiện chưa cung cấp API chính thức để nhúng vào web app của chiến dịch."
-          }
-        ],
-        agencyTakeaway: "Tách bạch rõ ràng giữa nhận thức (Vision/Speech) và tạo tác (LLM/Audio). Tránh đề xuất tính năng tự động tạo bài hát trực tiếp trên web cho người dùng do hạn chế API của bên thứ ba."
-      },
-      safety: {
-        badgeColor: "bg-rose-400",
-        category: "Khối 05: Brand Safety & Tiêu Chuẩn Bảo Vệ Thương Hiệu",
-        headline: "Bộ 6 nguyên tắc quản trị rủi ro tối cao trong chiến dịch",
-        principles: [
-          {
-            term: "1. Minh bạch (Transparency)",
-            desc: "Thông báo rõ cho người dùng nội dung được hỗ trợ tạo sinh bởi trí tuệ nhân tạo."
-          },
-          {
-            term: "2. System Prompt Safeguards",
-            desc: "Cài đặt câu lệnh hệ thống cấm nhắc đến đối thủ, nội dung bạo lực, chính trị, tôn giáo."
-          },
-          {
-            term: "3. Pre-Approved Content Library",
-            desc: "Giới hạn người dùng chọn các option định sẵn (dạng nút bấm/dropdown) thay vì ô nhập chữ tự do, ngăn chặn 100% tấn công chiếm quyền câu lệnh (Prompt Injection)."
-          },
-          {
-            term: "4. Multi-layer Moderation Filtering",
-            desc: "Sử dụng mô hình kiểm duyệt từ khóa nhạy cảm lọc trước khi dữ liệu đi vào mô hình tạo sinh chính."
-          },
-          {
-            term: "5. Tuyệt đối không tư vấn Y tế / Sức khỏe độc lập",
-            desc: "Các lĩnh vực liên quan sinh mạng con người bắt buộc phải có chuyên gia thẩm định và cấu trúc RAG chuẩn mực."
-          },
-          {
-            term: "6. Cơ chế thu thập phản hồi (Feedback Loop)",
-            desc: "Cung cấp nút Like/Dislike để người dùng phản ánh và đội ngũ kỹ thuật hiệu chỉnh thuật toán."
-          }
-        ],
-        agencyTakeaway: "Đối với minigame diện rộng của nhãn hàng lớn, phương án an toàn nhất luôn là Pre-Approved Library để loại bỏ mọi nguy cơ người dùng cố ý phá hoại thương hiệu."
-      }
-    };
+    document.querySelectorAll('.gate-btn, .tier-btn').forEach(btn => btn.classList.remove('active'));
+    const activeBtn = document.getElementById('btn-' + regionKey);
+    if (activeBtn) activeBtn.classList.add('active');
 
-    function selectMindmapNode(nodeKey) {
-      playTone(500, 'sine', 0.05, 0.03);
-      const data = mindmapData[nodeKey];
-      if (!data) return;
+    const region = regions[regionKey];
+    document.getElementById('regionHeading').textContent = region.title;
 
-      // Update active button state
-      document.querySelectorAll('.mindmap-node').forEach(btn => {
-        btn.classList.remove('border-white', 'bg-white/10', 'shadow-md');
-        btn.classList.add('border-apple-border', 'bg-apple-surface');
-      });
-      const activeBtn = document.getElementById(`node-${nodeKey}`);
-      if (activeBtn) {
-        activeBtn.classList.remove('border-apple-border', 'bg-apple-surface');
-        activeBtn.classList.add('border-white', 'bg-white/10', 'shadow-md');
-      }
+    const tabsContainer = document.getElementById('cantoTabs');
+    tabsContainer.innerHTML = '';
 
-      // Render deep dive details
-      const panel = document.getElementById('mindmap-detail-panel');
-      let principlesHtml = data.principles.map(p => `
-        <div class="p-3.5 rounded-xl bg-apple-surface/80 border border-apple-border">
-          <div class="font-medium text-apple-text text-xs sm:text-sm mb-1">${p.term}</div>
-          <div class="text-xs text-apple-secondary leading-relaxed">${p.desc}</div>
-        </div>
-      `).join('');
-
-      panel.innerHTML = `
-        <div class="flex items-center justify-between pb-3 mb-4 border-b border-apple-border/60">
-          <div class="flex items-center gap-2">
-            <span class="w-2.5 h-2.5 rounded-full ${data.badgeColor}"></span>
-            <span class="text-xs font-mono font-medium text-apple-text uppercase tracking-wide">${data.category}</span>
-          </div>
-          <span class="text-[11px] text-apple-tertiary">Chi tiết phân tích</span>
-        </div>
-        <h4 class="text-base sm:text-lg font-semibold text-white tracking-tight mb-4">${data.headline}</h4>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
-          ${principlesHtml}
-        </div>
-
-        <div class="p-3.5 rounded-xl bg-apple-accent/10 border border-apple-accent/20 text-xs">
-          <strong class="text-apple-accent block mb-1">Góc nhìn Strategic Planner & Account:</strong>
-          <span class="text-apple-secondary">${data.agencyTakeaway}</span>
-        </div>
-      `;
-    }
-
-    function setReferenceView(mode) {
-      playTone(600, 'sine', 0.04, 0.03);
-      const mindmapSection = document.getElementById('mindmap-container');
-      const bentoSection = document.getElementById('bento-container');
-      const btnMindmap = document.getElementById('btn-view-mindmap');
-      const btnBento = document.getElementById('btn-view-bento');
-
-      if (mode === 'mindmap') {
-        mindmapSection.classList.remove('hidden');
-        bentoSection.classList.add('hidden');
-        btnMindmap.className = "px-3 py-1.5 rounded-md bg-white text-black font-semibold transition-all";
-        btnBento.className = "px-3 py-1.5 rounded-md text-apple-secondary hover:text-apple-text transition-all";
-      } else {
-        mindmapSection.classList.add('hidden');
-        bentoSection.classList.remove('hidden');
-        btnBento.className = "px-3 py-1.5 rounded-md bg-white text-black font-semibold transition-all";
-        btnMindmap.className = "px-3 py-1.5 rounded-md text-apple-secondary hover:text-apple-text transition-all";
-      }
-    }
-
-    /* ==============================================================
-       2. DATABASE: 15 ACADEMIC MULTIPLE CHOICE QUESTIONS
-       ============================================================== */
-    const assessmentQuestions = [
-      {
-        domain: "Image Deployment Models",
-        stem: "Agency được giao bài toán xây dựng minigame Tết cho một nhãn hàng tiêu dùng: Cho phép người dùng ghép khuôn mặt của mình vào hình ảnh nhân vật đại diện thần tài kèm mã QR nhận tiền may mắn. Giải pháp công nghệ tối ưu về chi phí và tính khả thi là gì?",
-        options: [
-          "Huấn luyện bổ sung toàn bộ trọng số (Full Fine-Tune) của mô hình Stable Diffusion",
-          "Kỹ thuật Face Swap (Hoán đổi khuôn mặt vào ảnh mẫu cơ sở đã dựng sẵn)",
-          "Sử dụng Inpainting để xóa toàn bộ phông nền và vẽ lại bối cảnh",
-          "Gọi API mô hình DALL-E 3 để tạo lập toàn bộ bức ảnh mới từ đầu"
-        ],
-        correctIndex: 1,
-        rationale: "Kỹ thuật Face Swap cho phép cố định hoàn toàn bức ảnh gốc (Base Image) chứa thông điệp thương hiệu và mã QR, chỉ hoán đổi vị trí khuôn mặt của người dùng. Đây là phương thức tiết kiệm chi phí tính toán và bảo toàn 100% bố cục nhãn hàng mong muốn."
-      },
-      {
-        domain: "Dataset & Training Limitations",
-        stem: "Tại sao các thương hiệu toàn cầu như Coca-Cola có thể dễ dàng yêu cầu các mô hình như DALL-E 3 tạo sinh hình ảnh chính xác về sản phẩm của họ, trong khi các nhãn hàng nội địa như tương ớt Chin-su hay giày Biti's lại không thể thực hiện tương tự?",
-        options: [
-          "Vì các tập đoàn toàn cầu sở hữu độc quyền máy chủ phần cứng của các nhà phát triển AI",
-          "Vì tập dữ liệu huấn luyện mở rộng ban đầu của mô hình đã bao gồm hàng triệu hình ảnh của thương hiệu toàn cầu",
-          "Vì các mô hình tạo ảnh thương mại chủ động cấm hiển thị sản phẩm từ khu vực châu Á",
-          "Vì các sản phẩm tiêu dùng nội địa có độ phức tạp hình học vượt quá khả năng của AI"
-        ],
-        correctIndex: 1,
-        rationale: "Các mô hình nền tảng (Foundation Models) được huấn luyện trên dữ liệu Internet toàn cầu. Do đó, các thương hiệu lớn đã có sẵn dữ liệu nhận diện trong tập train gốc. Các thương hiệu địa phương bắt buộc phải trải qua bước Fine-Tuning nếu muốn AI hiểu chính xác sản phẩm của mình."
-      },
-      {
-        domain: "Fine-Tuning Architecture",
-        stem: "Khi một thương hiệu chuẩn bị tung ra dòng sản phẩm điện thoại thông minh hoàn toàn mới và yêu cầu Agency tạo hàng loạt visual quảng cáo, phương án kỹ thuật nào cho phép AI tạo hình ảnh chuẩn xác 100% hình dáng sản phẩm mới đó?",
-        options: [
-          "Soạn thảo câu lệnh mô tả (Prompt) thật dài và chi tiết trong giao diện ChatGPT",
-          "Thực hiện Product Fine-Tune với bộ dữ liệu ảnh mẫu chụp từ 20–30 góc độ khác nhau",
-          "Sử dụng mô hình Vision-Language để tự động suy luận cấu trúc",
-          "Áp dụng kiến trúc RAG cho cơ sở dữ liệu ảnh vector"
-        ],
-        correctIndex: 1,
-        rationale: "Đối với sản phẩm hoàn toàn mới chưa từng xuất hiện trên thế giới, việc duy nhất để mô hình nắm bắt được hình dáng, chất liệu và logo là huấn luyện riêng (Product Fine-Tune) dựa trên tập dữ liệu chụp đa chiều của chính sản phẩm đó."
-      },
-      {
-        domain: "Character Consistency",
-        stem: "Mục tiêu duy trì một nhân vật ảo (Virtual Influencer) xuất hiện đồng nhất về nhận diện khuôn mặt và tỷ lệ hình thể qua nhiều bối cảnh khác nhau (sân bay, quán cà phê, phim trường) thuộc nhóm giải pháp nào?",
-        options: [
-          "Character Consistency Fine-Tune",
-          "Style Fine-Tune",
-          "Text-to-Speech Voice Cloning",
-          "Outpainting Background Extension"
-        ],
-        correctIndex: 0,
-        rationale: "Character Consistency là kỹ thuật huấn luyện mô hình ghi nhớ các đặc điểm nhân dạng cố định của một nhân vật, cho phép tái hiện nhất quán nhân vật đó trong vô số môi trường và hành động khác nhau theo kịch bản truyền thông."
-      },
-      {
-        domain: "Image Inpainting",
-        stem: "Nhãn hàng thời trang muốn chụp một đôi giày mẫu và sau đó đưa đôi giày thực tế này xuất hiện tự nhiên trên nhiều bối cảnh địa lý khác nhau (đường phố Tokyo, núi tuyết, bờ biển). Kỹ thuật nào xử lý đúng yêu cầu này?",
-        options: [
-          "Inpainting / Add-painting",
-          "Face Swapping",
-          "Speech-to-Text Transcription",
-          "Prompt Engineering thuần túy bằng văn bản"
-        ],
-        correctIndex: 0,
-        rationale: "Inpainting (hoặc Add-painting) cho phép đặt đối tượng sản phẩm thật vào khung hình, sau đó AI sẽ phân tích ánh sáng, góc đổ bóng để vẽ hòa nhập phần hậu cảnh xung quanh một cách tự nhiên."
-      },
-      {
-        domain: "Production Resources",
-        stem: "Nền tảng cộng đồng mã nguồn mở nào được khuyến nghị để Account và Planner tra cứu các mô hình AI đã đóng gói sẵn API (như Face Swap, chuyển phong cách Anime, phục chế ảnh) trước khi yêu cầu team Kỹ thuật triển khai từ đầu?",
-        options: [
-          "Replicate.com",
-          "Canva.com",
-          "Unsplash.com",
-          "Dribbble.com"
-        ],
-        correctIndex: 0,
-        rationale: "Replicate.com là kho lưu trữ hàng nghìn mô hình AI mã nguồn mở đã được cấu hình sẵn API phục vụ thương mại, giúp Agency tận dụng ngay mà không phải đầu tư cơ sở hạ tầng GPU đắt đỏ."
-      },
-      {
-        domain: "LLM System Instructions",
-        stem: "Trong 3 cấp độ vận hành của LLM, chiến dịch 'Thông điệp vũ trụ LaVie' hoặc 'Chuyên gia tư vấn tarot Coca-Cola' (định sẵn vai trò và điều kiện: chọn số 1 ra tài chính, số 2 ra tình duyên) thuộc cấp độ nào?",
-        options: [
-          "Base Model nguyên bản",
-          "Instruct (System Prompt Guidance)",
-          "RAG với Vector Database",
-          "Full Pre-training lại toàn bộ mô hình ngôn ngữ"
-        ],
-        correctIndex: 1,
-        rationale: "Cấp độ Instruct (System Prompting) cho phép gán vai trò nhân vật (Persona) và quy định luồng phản hồi theo điều kiện logic một cách nhanh chóng, chính xác đối với khối lượng văn bản hướng dẫn dưới 10 trang A4."
-      },
-      {
-        domain: "RAG Architecture",
-        stem: "Một ngân hàng thương mại yêu cầu xây dựng chatbot tự động giải đáp chính sách thẻ dựa trên tập tài liệu Q&A nội bộ dài hơn 500 trang A4. Giải pháp kiến trúc nào tối ưu để ngăn ngừa hiện tượng AI tự bịa đặt câu trả lời (hallucination)?",
-        options: [
-          "Sao chép toàn bộ 500 trang văn bản vào ô nhập lệnh của ChatGPT",
-          "Kiến trúc RAG (Retrieval-Augmented Generation) kết hợp Vector Database",
-          "Sử dụng mô hình Vision-Language để đọc ảnh chụp của từng trang sách",
-          "Sử dụng mô hình chuyển văn bản thành giọng nói để đọc tài liệu"
-        ],
-        correctIndex: 1,
-        rationale: "RAG chia nhỏ tài liệu vào cơ sở dữ liệu vector. Khi người dùng truy vấn, hệ thống sẽ trích xuất chính xác đoạn quy định liên quan nhất từ 500 trang dữ liệu rồi chuyển cho LLM tổng hợp, loại bỏ nguy cơ thông tin sai lệch."
-      },
-      {
-        domain: "LLM Context Window",
-        stem: "Nguyên lý kỹ thuật cốt lõi mà Strategic Planner cần ghi nhớ về 'Cửa sổ ngữ cảnh' (Context Window, ví dụ 128.000 tokens của GPT-4) khi xây dựng ý tưởng chiến dịch là gì?",
-        options: [
-          "AI có khả năng vừa đọc 300 trang tài liệu và đồng thời viết ra được một văn bản mới dài đúng 300 trang",
-          "AI tiếp nhận được khối lượng đọc đầu vào (Input) rất lớn nhưng độ dài nội dung tạo ra (Output) bị giới hạn ngắn hơn nhiều",
-          "Cửa sổ ngữ cảnh chỉ áp dụng cho pixel hình ảnh, không áp dụng cho văn bản",
-          "128.000 tokens tương đương với tối đa 128 từ tiếng Việt có dấu"
-        ],
-        correctIndex: 1,
-        rationale: "Context Window cho phép đọc hiểu tập dữ liệu đầu vào khổng lồ (như phân tích 10.000 bình luận người dùng), tuy nhiên độ dài phản hồi (output generation) của các mô hình thương mại luôn bị giới hạn trong vài trang A4."
-      },
-      {
-        domain: "Vision-Language Pipeline",
-        stem: "Trong quy trình đề xuất dinh dưỡng cho trẻ em: Người mẹ chụp ảnh đứa trẻ, hệ thống sẽ gợi ý thực đơn phù hợp. Quy chuẩn phối hợp kỹ thuật 2 bước được khuyến nghị là gì?",
-        options: [
-          "Yêu cầu mô hình Vision vừa phân tích hình ảnh vừa trực tiếp sáng tác công thức dinh dưỡng",
-          "Mô hình Vision chỉ nhận diện độ tuổi, sau đó truyền tham số tuổi sang mô hình LLM đã cài đặt hướng dẫn chuẩn để tư vấn món ăn",
-          "Sử dụng mô hình Text-to-Video để giả lập hoạt hình em bé đang ăn",
-          "Sử dụng mô hình Inpainting để xóa hình ảnh đứa trẻ và thay bằng hình đĩa thức ăn"
-        ],
-        correctIndex: 1,
-        rationale: "Mô hình thị giác (Vision) đạt hiệu quả cao nhất ở khâu nhận diện khách quan. Việc sáng tạo thông điệp hoặc đối chiếu công thức y tế an toàn nên được phân công cho LLM đã được kiểm duyệt hướng dẫn."
-      },
-      {
-        domain: "Audio Generation",
-        stem: "Nền tảng công nghệ nào hiện nay dẫn đầu về khả năng tạo giọng đọc nhân tạo (TTS) và nhân bản giọng nói (Voice Cloning) hỗ trợ tiếng Việt với độ tự nhiên đạt trên 95%?",
-        options: [
-          "ElevenLabs",
-          "Midjourney",
-          "Runway Gen-2",
-          "Stable Audio"
-        ],
-        correctIndex: 0,
-        rationale: "ElevenLabs là nền tảng xử lý giọng nói hàng đầu hiện nay, cung cấp chất lượng phát âm tiếng Việt đa cảm xúc và tính năng Voice Cloning cho phép nhân bản giọng nói của diễn viên lồng tiếng hoặc KOL."
-      },
-      {
-        domain: "Commercial Constraints",
-        stem: "Nền tảng tạo nhạc Suno AI có khả năng sáng tác bài hát hoàn chỉnh kèm lời và giai điệu từ văn bản. Rào cản lớn nhất khi Agency muốn nhúng tính năng này vào microsite tự động cho người dùng là gì?",
-        options: [
-          "Suno AI không hỗ trợ bất kỳ thể loại âm nhạc hiện đại nào",
-          "Nhà phát hành chưa cung cấp API chính thức cho các nhà phát triển bên thứ ba",
-          "Chi phí tính toán cho mỗi bản nhạc lên tới hàng chục nghìn USD",
-          "Chất lượng âm thanh xuất xưởng chỉ tương thích với định dạng MIDI cổ điển"
-        ],
-        correctIndex: 1,
-        rationale: "Tại thời điểm đào tạo, Suno AI là giải pháp độc quyền chưa mở cổng API lập trình công khai, do đó các Production House chưa thể tự động hóa quy trình cho phép user tự tạo nhạc trực tiếp trên web app của chiến dịch."
-      },
-      {
-        domain: "Brand Safety & Security",
-        stem: "Để loại bỏ hoàn toàn rủi ro người dùng nhập các câu lệnh phá hoại (Prompt Injection) hoặc kích động chatbot phát ngôn sai lệch tiêu chuẩn nhãn hàng, giải pháp kiến trúc giao diện tối ưu là gì?",
-        options: [
-          "Thiết lập Thư viện nội dung phê duyệt trước (Pre-Approved Content Library) dạng nút bấm/dropdown thay vì cho phép nhập text tự do",
-          "Buộc người dùng phải ký cam kết pháp lý trực tuyến trước khi mở website",
-          "Bố trí nhân sự trực duyệt từng câu trả lời theo thời gian thực 24/7",
-          "Hủy bỏ hoàn toàn việc ứng dụng trí tuệ nhân tạo trong chiến dịch"
-        ],
-        correctIndex: 0,
-        rationale: "Phương pháp Pre-Approved Library chỉ cho phép người dùng lựa chọn các trường thông tin định sẵn (giới tính, độ tuổi, sở thích), qua đó triệt tiêu hoàn toàn khả năng người dùng cố tình nhập văn bản độc hại để tấn công hệ thống."
-      },
-      {
-        domain: "Risk Management",
-        stem: "Lĩnh vực chuyên môn nào được khuyến cáo TUYỆT ĐỐI KHÔNG sử dụng AI đưa ra tư vấn độc lập nếu không có kiến trúc RAG kiểm định và sự phê duyệt từ hội đồng chuyên gia?",
-        options: [
-          "Gợi ý phối màu trang phục theo chủ đề thời trang",
-          "Tư vấn y tế, chẩn đoán hình ảnh bệnh học, thuốc và sức khỏe sinh mạng",
-          "Gợi ý câu đối và lời chúc Tết mang tính giải trí",
-          "Dự đoán vận mệnh vui đầu năm dựa trên cung hoàng đạo"
-        ],
-        correctIndex: 1,
-        rationale: "Y tế và sức khỏe liên quan trực tiếp đến sinh mạng con người và chịu sự kiểm soát nghiêm ngặt của pháp luật. Tuyệt đối không để AI tự do suy diễn chẩn đoán khi chưa có hệ thống tri thức xác thực và phê duyệt của bác sĩ chuyên khoa."
-      },
-      {
-        domain: "Role Definition",
-        stem: "Mục tiêu then chốt của nhân sự Strategic Planner và Creative sau khóa đào tạo 'AI for Creative Approach' là gì?",
-        options: [
-          "Trực tiếp viết mã nguồn Python và tự tay thiết lập hệ thống máy chủ GPU",
-          "Thấu hiểu bản chất kỹ thuật và giới hạn của từng mô hình để lên ý tưởng khả thi và định hướng chính xác cho đội ngũ Kỹ thuật / Production House",
-          "Thay thế toàn bộ lập trình viên công nghệ thông tin trong tổ chức",
-          "Loại trừ mọi giải pháp công nghệ khỏi đề xuất chiến dịch"
-        ],
-        correctIndex: 1,
-        rationale: "Vai trò của nhân sự truyền thông là nắm vững 'AI Foundation for Advertising' — hiểu rõ khả năng, giới hạn và phương thức vận hành để biến công nghệ thành giải pháp sáng tạo khả thi cho thương hiệu."
-      }
-    ];
-
-    /* ==============================================================
-       3. DATABASE: 16 COMPREHENSIVE STUDY FLASHCARDS
-       ============================================================== */
-    const studyCardsData = [
-      {
-        id: 1,
-        category: "image",
-        domainBadge: "Image Model Approach",
-        frontTitle: "Face Swap (Hoán Đổi Khuôn Mặt)",
-        frontSub: "Cơ chế vận hành và giới hạn triển khai thực tế trong chiến dịch là gì?",
-        backTitle: "Ghép khuôn mặt người dùng vào ảnh mẫu cơ sở (Base Image)",
-        backBody: `• <strong>Bản chất:</strong> Cần 1 ảnh base chuẩn chỉn do nhãn hàng thiết kế (ví dụ: visual Thần Tài Momo, poster đại sứ Dove). Người dùng chụp ảnh khuôn mặt để thuật toán đè khớp vào.<br>
-                   • <strong>Giới hạn kỹ thuật:</strong> Ảnh base chỉ nên có duy nhất 1 khuôn mặt chuẩn góc nhìn để thuật toán nhận diện không bị nhầm lẫn đối tượng.`
-      },
-      {
-        id: 2,
-        category: "image",
-        domainBadge: "Image Model Approach",
-        frontTitle: "Inpainting / Add-painting",
-        frontSub: "Khi nào cần sử dụng Inpainting thay vì vẽ mới toàn bộ hình ảnh?",
-        backTitle: "Thay thế hoặc vẽ thêm một chi tiết cục bộ vào bối cảnh",
-        backBody: `• <strong>Ứng dụng:</strong> Đặt chính xác đôi giày Biti's Hunter hoặc chai mỹ phẩm vào một bối cảnh mới hoàn toàn mà không làm biến dạng hình học của sản phẩm.<br>
-                   • <strong>Thử trang phục:</strong> Sử dụng mặt nạ (mask) chọn vùng áo quần của người mẫu, sau đó dùng lệnh để AI vẽ trang phục mới hòa hợp ánh sáng.`
-      },
-      {
-        id: 3,
-        category: "image",
-        domainBadge: "Model Customization",
-        frontTitle: "Product Fine-Tune",
-        frontSub: "Tại sao không thể dùng Midjourney tạo hình chính xác sản phẩm nội địa?",
-        backTitle: "Cần huấn luyện mô hình nhận diện sản phẩm đặc thù",
-        backBody: `• <strong>Nguyên nhân:</strong> Tập dữ liệu công khai trên toàn cầu không có dữ liệu chi tiết về các sản phẩm như chai tương ớt Chin-su hay kính Apple Vision Pro lúc mới công bố.<br>
-                   • <strong>Quy trình xử lý:</strong> Chụp tập dữ liệu 20–30 ảnh sản phẩm ở nhiều góc độ và điều kiện ánh sáng để huấn luyện bổ sung (Fine-tune) cho mô hình Stable Diffusion.`
-      },
-      {
-        id: 4,
-        category: "image",
-        domainBadge: "Model Customization",
-        frontTitle: "Style Fine-Tune",
-        frontSub: "Làm thế nào để đồng bộ hóa phong cách nghệ thuật cho toàn bộ chiến dịch?",
-        backTitle: "Định hình phong cách thị giác xuyên suốt cho chiến dịch",
-        backBody: `• <strong>Yêu cầu:</strong> Khi nhãn hàng đòi hỏi toàn bộ visual phải mang màu sắc 'Sài Gòn xưa', 'Phim Barbie' hoặc 'Tông màu điện ảnh Hai Phượng'.<br>
-                   • <strong>Tập dữ liệu:</strong> Cần chuẩn bị 100–200 hình ảnh mẫu cùng phong cách để AI phân tích cấu trúc màu sắc, chất liệu và đường nét đặc trưng.`
-      },
-      {
-        id: 5,
-        category: "image",
-        domainBadge: "Model Customization",
-        frontTitle: "Character Consistency",
-        frontSub: "Phương pháp tạo dựng nhân vật ảo (Virtual Influencer) giữ nguyên diện mạo?",
-        backTitle: "Duy trì tính đồng nhất nhân diện qua hàng loạt bối cảnh",
-        backBody: `• <strong>Thực tế:</strong> Giúp các nhân vật ảo (như Tami với hơn 100k followers) xuất hiện ở sân bay, quán ăn hay sự kiện thời trang mà gương mặt và tỉ lệ không bị méo mó.<br>
-                   • <strong>Lợi ích thương hiệu:</strong> Doanh nghiệp có thể sở hữu đại sứ thương hiệu ảo độc quyền mà không phải chịu rủi ro khủng hoảng đời tư.`
-      },
-      {
-        id: 6,
-        category: "image",
-        domainBadge: "Ecosystem Tools",
-        frontTitle: "Nền tảng Replicate.com",
-        frontSub: "Công cụ hỗ trợ gì cho Account, Planner và Đội ngũ Kỹ thuật?",
-        backTitle: "Kho lưu trữ hàng nghìn Open-Source AI Model tích hợp sẵn API",
-        backBody: `• <strong>Chức năng:</strong> Cung cấp sẵn các mô hình: Face Swap, Anime conversion, phục chế ảnh cũ (Restore), khử nhiễu.<br>
-                   • <strong>Ý nghĩa thực tiễn:</strong> Giúp Agency tích hợp trực tiếp vào dự án với chi phí thấp mà không cần đầu tư máy chủ phần cứng GPU riêng biệt.`
-      },
-      {
-        id: 7,
-        category: "llm",
-        domainBadge: "LLM Level 1",
-        frontTitle: "LLM: Base Model",
-        frontSub: "Mô hình ngôn ngữ gốc vận hành như thế nào khi kết nối qua API?",
-        backTitle: "Tích hợp trí tuệ ngôn ngữ nguyên bản vào ứng dụng",
-        backBody: `• <strong>Cơ chế:</strong> Mang toàn bộ năng lực hiểu và sinh văn bản của GPT-4, Claude nhúng vào Microsite, Chatbot hoặc App của doanh nghiệp.<br>
-                   • <strong>Hạn chế:</strong> Phản hồi tự do, chưa được ràng buộc bởi kịch bản hoặc nhân vật cụ thể của chiến dịch.`
-      },
-      {
-        id: 8,
-        category: "llm",
-        domainBadge: "LLM Level 2",
-        frontTitle: "LLM: Instruct (System Prompt)",
-        frontSub: "Phương pháp định hướng kịch bản và vai trò thương hiệu cho AI?",
-        backTitle: "Thiết lập vai trò và nguyên tắc phản hồi nghiêm ngặt cho mô hình",
-        backBody: `• <strong>Ví dụ:</strong> 'Bạn là Viv - chuyên gia Tarot của Coca-Cola. Hãy chào hỏi thân thiện, nếu người dùng chọn số 1 thì đưa ra lời chúc tài chính'.<br>
-                   • <strong>Phạm vi:</strong> Phù hợp dữ liệu kịch bản dưới 16.000 từ (~10 trang A4), chi phí thấp và tốc độ xử lý tức thì.`
-      },
-      {
-        id: 9,
-        category: "llm",
-        domainBadge: "LLM Level 3",
-        frontTitle: "LLM: Kiến Trúc RAG",
-        frontSub: "Giải pháp xử lý tập dữ liệu đồ sộ (Luật pháp, Y tế) chống bịa đặt?",
-        backTitle: "Truy xuất thông tin từ cơ sở dữ liệu chuyên ngành trước khi trả lời",
-        backBody: `• <strong>Cơ chế RAG:</strong> Đối với dữ liệu hàng nghìn trang (ví dụ Kiki Giao thông), AI truy vấn đoạn tài liệu gốc liên quan rồi mới tổng hợp câu trả lời.<br>
-                   • <strong>Đặc tính:</strong> AI không tự suy diễn lung tung mà trích xuất chính xác theo tài liệu chuẩn đã được thẩm định.`
-      },
-      {
-        id: 10,
-        category: "llm",
-        domainBadge: "Token & Context",
-        frontTitle: "Context Window 128K Tokens",
-        frontSub: "Hiểu đúng về giới hạn cửa sổ ngữ cảnh trong hoạch định chiến dịch?",
-        backTitle: "Đầu vào đọc được 300 trang A4 — Đầu ra giới hạn vài trang",
-        backBody: `• <strong>Ứng dụng:</strong> Phân tích cùng lúc 10.000 bình luận Facebook của chiến dịch để đo lường % tích cực/tiêu cực (Sentiment Analysis).<br>
-                   • <strong>Giới hạn:</strong> Không thể kỳ vọng AI viết ra một tài liệu dài hàng trăm trang chỉ trong một lần phản hồi (Output limit ngắn).`
-      },
-      {
-        id: 11,
-        category: "vision",
-        domainBadge: "Vision Model",
-        frontTitle: "Vision-Language Models",
-        frontSub: "Năng lực nhận thức hình ảnh của mô hình thị giác nhân tạo?",
-        backTitle: "Nhận diện vật thể, đọc chữ viết và thấu hiểu ngữ cảnh hình ảnh",
-        backBody: `• <strong>Khả năng:</strong> Nhìn ảnh Tháp Rùa hiểu được lịch sử địa danh, nhìn bài toán nhận diện phương trình, nhìn hình ảnh nhận diện thực phẩm.<br>
-                   • <strong>Chiến dịch mẫu:</strong> Ứng dụng Hướng dẫn viên du lịch AI — Người dùng chụp ảnh di tích, AI thuyết minh kiến thức lịch sử tương ứng.`
-      },
-      {
-        id: 12,
-        category: "vision",
-        domainBadge: "Kỹ Thuật Phối Hợp",
-        frontTitle: "Quy Tắc 2 Bước: Vision + LLM",
-        frontSub: "Tại sao không nên để mô hình Vision trực tiếp sáng tạo nội dung văn bản?",
-        backTitle: "Vision nhận diện khách quan — LLM sáng tạo kịch bản",
-        backBody: `• <strong>Bước 1 (Vision):</strong> Dự đoán em bé trong ảnh nằm trong độ tuổi 6–12 tháng.<br>
-                   • <strong>Bước 2 (LLM):</strong> Nhận thông số độ tuổi và xuất ra thực đơn dinh dưỡng chuẩn nhãn hàng.<br>
-                   • <strong>Ý nghĩa:</strong> Đảm bảo kiểm soát tuyệt đối chất lượng nội dung và an toàn y tế.`
-      },
-      {
-        id: 13,
-        category: "vision",
-        domainBadge: "Generative Audio",
-        frontTitle: "ElevenLabs & Voice Cloning",
-        frontSub: "Ứng dụng giọng đọc AI và nhân bản giọng nói diễn viên?",
-        backTitle: "Giọng đọc đạt độ chân thực 98%, hỗ trợ tiếng Việt có cảm xúc",
-        backBody: `• <strong>Ứng dụng:</strong> Đọc sách nói, thuyết minh video quảng cáo (TVC), lồng tiếng tổng đài tự động tương tác thời gian thực.<br>
-                   • <strong>Nhân bản giọng:</strong> Nhân bản hợp pháp giọng của KOL hoặc diễn viên lồng tiếng để cá nhân hóa thông điệp tới hàng triệu khách hàng.`
-      },
-      {
-        id: 14,
-        category: "vision",
-        domainBadge: "Generative Music",
-        frontTitle: "Suno AI Music Generation",
-        frontSub: "Khả năng hòa âm bài hát và giới hạn tích hợp hệ thống hiện nay?",
-        backTitle: "Tạo bài hát hoàn chỉnh cả lời và nhạc từ câu lệnh mô tả",
-        backBody: `• <strong>Khả năng:</strong> Soạn thảo giai điệu, hòa âm phối khí và tạo giọng hát tự động theo nhiều phong cách âm nhạc (Pop, Rock, Rap).<br>
-                   • <strong>Rào cản:</strong> Chưa mở cổng API thương mại chính thức, chưa thể tự động hóa trên website chiến dịch của khách hàng.`
-      },
-      {
-        id: 15,
-        category: "safety",
-        domainBadge: "Brand Safety",
-        frontTitle: "Pre-Approved Content Library",
-        frontSub: "Phương thức ngăn ngừa phá hoại thương hiệu hiệu quả nhất trên Microsite?",
-        backTitle: "Giới hạn tương tác bằng các tùy chọn đã được kiểm duyệt trước",
-        backBody: `• <strong>Cơ chế:</strong> Thay vì để khung nhập chữ tự do (dễ bị user gõ bậy hoặc hack prompt), ta cung cấp danh sách lựa chọn định sẵn.<br>
-                   • <strong>Kết quả:</strong> Người dùng chọn cung hoàng đạo, nhóm tuổi, sở thích ➔ AI ghép vào kịch bản hoàn toàn an toàn cho thương hiệu.`
-      },
-      {
-        id: 16,
-        category: "safety",
-        domainBadge: "Brand Safety",
-        frontTitle: "Multi-layer Moderation Filtering",
-        frontSub: "Cấu trúc màng lọc nhiều lớp bảo vệ tiêu chuẩn nhãn hàng?",
-        backTitle: "Lớp kiểm duyệt ngăn chặn nội dung trước khi đến mô hình chính",
-        backBody: `• <strong>Luồng xử lý:</strong> Lệnh người dùng ➔ Mô hình lọc từ khóa vi phạm (bạo lực, chính trị, công kích đối thủ).<br>
-                   • <strong>Hành vi:</strong> Nếu vi phạm ➔ Từ chối ngay lập tức; nếu an toàn ➔ Mới chuyển tiếp sang mô hình AI chính để tạo nội dung phản hồi.`
-      }
-    ];
-
-    /* ==============================================================
-       4. ASSESSMENT LOGIC CONTROLLER
-       ============================================================== */
-    let currentQuizIndex = 0;
-    let scoreEarned = 0;
-    let totalCorrectCount = 0;
-    let countdownTimer = null;
-    let secondsRemaining = 30;
-    let hasAnsweredCurrentQuestion = false;
-
-    function startAssessment() {
-      initAudioContext();
-      currentQuizIndex = 0;
-      scoreEarned = 0;
-      totalCorrectCount = 0;
-
-      document.getElementById('quiz-start-screen').classList.add('hidden');
-      document.getElementById('quiz-result-screen').classList.add('hidden');
-      document.getElementById('quiz-active-screen').classList.remove('hidden');
-
-      renderQuizQuestion(0);
-    }
-
-    function renderQuizQuestion(idx) {
-      hasAnsweredCurrentQuestion = false;
-      clearInterval(countdownTimer);
-      secondsRemaining = 30;
-
-      const q = assessmentQuestions[idx];
-      document.getElementById('question-index-badge').innerText = `Câu ${String(idx + 1).padStart(2, '0')} / ${assessmentQuestions.length}`;
-      document.getElementById('question-domain-badge').innerText = q.domain;
-      document.getElementById('question-stem').innerText = q.stem;
-      document.getElementById('explanation-box').classList.add('hidden');
-
-      const container = document.getElementById('options-container');
-      container.innerHTML = '';
-
-      q.options.forEach((optText, optIdx) => {
-        const btn = document.createElement('button');
-        btn.onclick = () => selectOption(optIdx);
-        btn.className = "opt-btn w-full text-left p-4 rounded-xl card-surface hover:border-white/20 transition-all flex items-start gap-3.5 group";
-        
-        const labelLetter = String.fromCharCode(65 + optIdx);
-        btn.innerHTML = `
-          <span class="w-6 h-6 rounded-md bg-white/5 border border-apple-border text-xs font-mono font-medium flex items-center justify-center shrink-0 group-hover:bg-white/10 group-hover:text-white transition-colors">
-            ${labelLetter}
-          </span>
-          <span class="text-xs sm:text-sm text-apple-secondary group-hover:text-apple-text font-normal leading-snug pt-0.5 transition-colors">
-            ${optText}
-          </span>
-        `;
-        container.appendChild(btn);
-      });
-
-      updateTimerVisual();
-      countdownTimer = setInterval(() => {
-        secondsRemaining--;
-        updateTimerVisual();
-        if (secondsRemaining <= 0) {
-          clearInterval(countdownTimer);
-          triggerTimeout();
-        }
-      }, 1000);
-    }
-
-    function updateTimerVisual() {
-      document.getElementById('timer-display').innerText = `${secondsRemaining}s`;
-      const pct = (secondsRemaining / 30) * 100;
-      const bar = document.getElementById('timer-progress-bar');
-      bar.style.width = `${pct}%`;
-      if (secondsRemaining <= 7) {
-        bar.className = "h-full bg-red-400 transition-all duration-100 ease-linear";
-      } else {
-        bar.className = "h-full bg-apple-accent transition-all duration-100 ease-linear";
-      }
-    }
-
-    function selectOption(chosenIdx) {
-      if (hasAnsweredCurrentQuestion) return;
-      hasAnsweredCurrentQuestion = true;
-      clearInterval(countdownTimer);
-
-      const q = assessmentQuestions[currentQuizIndex];
-      const isCorrect = (chosenIdx === q.correctIndex);
-      const buttons = document.querySelectorAll('.opt-btn');
-
-      buttons.forEach((btn, idx) => {
-        btn.disabled = true;
-        if (idx === q.correctIndex) {
-          btn.className = "opt-btn w-full text-left p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/50 flex items-start gap-3.5";
-          btn.querySelector('span:first-child').className = "w-6 h-6 rounded-md bg-emerald-500/20 text-emerald-300 text-xs font-mono font-semibold flex items-center justify-center shrink-0";
-          btn.querySelector('span:last-child').className = "text-xs sm:text-sm text-apple-text font-medium leading-snug pt-0.5";
-        } else if (idx === chosenIdx && !isCorrect) {
-          btn.className = "opt-btn w-full text-left p-4 rounded-xl bg-red-500/10 border border-red-500/40 flex items-start gap-3.5 opacity-80";
-          btn.querySelector('span:first-child').className = "w-6 h-6 rounded-md bg-red-500/20 text-red-300 text-xs font-mono font-semibold flex items-center justify-center shrink-0";
-          btn.querySelector('span:last-child').className = "text-xs sm:text-sm text-red-200 leading-snug pt-0.5";
-        } else {
-          btn.classList.add('opacity-30');
-        }
-      });
-
-      const explBox = document.getElementById('explanation-box');
-      const statusIcon = document.getElementById('eval-status-icon');
-      const statusText = document.getElementById('eval-status-text');
-      const scoreDelta = document.getElementById('eval-score-delta');
-      const rationaleText = document.getElementById('eval-rationale-content');
-
-      if (isCorrect) {
-        soundAffirmative();
-        totalCorrectCount++;
-        scoreEarned += 10;
-        statusIcon.innerText = "✓";
-        statusIcon.className = "text-sm font-semibold font-mono text-emerald-400";
-        statusText.innerText = "Lựa chọn chính xác";
-        statusText.className = "text-sm font-medium text-emerald-400";
-        scoreDelta.innerText = "+10 Điểm";
-      } else {
-        soundNegative();
-        statusIcon.innerText = "✕";
-        statusIcon.className = "text-sm font-semibold font-mono text-red-400";
-        statusText.innerText = "Lựa chọn chưa chính xác";
-        statusText.className = "text-sm font-medium text-red-400";
-        scoreDelta.innerText = "0 Điểm";
-      }
-
-      rationaleText.innerHTML = `
-        <div><strong class="text-apple-text">Đáp án đúng chuẩn:</strong> ${q.options[q.correctIndex]}</div>
-        <div class="pt-1 text-apple-secondary border-t border-apple-border/40 mt-1">${q.rationale}</div>
-      `;
-      explBox.classList.remove('hidden');
-    }
-
-    function triggerTimeout() {
-      if (hasAnsweredCurrentQuestion) return;
-      hasAnsweredCurrentQuestion = true;
-      soundNegative();
-
-      const q = assessmentQuestions[currentQuizIndex];
-      const buttons = document.querySelectorAll('.opt-btn');
-
-      buttons.forEach((btn, idx) => {
-        btn.disabled = true;
-        if (idx === q.correctIndex) {
-          btn.className = "opt-btn w-full text-left p-4 rounded-xl bg-amber-500/10 border border-amber-500/40 flex items-start gap-3.5";
-        } else {
-          btn.classList.add('opacity-30');
-        }
-      });
-
-      const explBox = document.getElementById('explanation-box');
-      document.getElementById('eval-status-icon').innerText = "⏱";
-      document.getElementById('eval-status-icon').className = "text-sm font-semibold font-mono text-amber-400";
-      document.getElementById('eval-status-text').innerText = "Đã hết thời gian phản hồi";
-      document.getElementById('eval-status-text').className = "text-sm font-medium text-amber-400";
-      document.getElementById('eval-score-delta').innerText = "0 Điểm";
-
-      document.getElementById('eval-rationale-content').innerHTML = `
-        <div><strong class="text-apple-text">Đáp án chính xác:</strong> ${q.options[q.correctIndex]}</div>
-        <div class="pt-1 text-apple-secondary border-t border-apple-border/40 mt-1">${q.rationale}</div>
-      `;
-      explBox.classList.remove('hidden');
-    }
-
-    function advanceNextQuestion() {
-      currentQuizIndex++;
-      if (currentQuizIndex < assessmentQuestions.length) {
-        renderQuizQuestion(currentQuizIndex);
-      } else {
-        showFinalReport();
-      }
-    }
-
-    function showFinalReport() {
-      document.getElementById('quiz-active-screen').classList.add('hidden');
-      document.getElementById('quiz-result-screen').classList.remove('hidden');
-
-      const name = document.getElementById('candidate-name').value || 'Học viên';
-      const pct = Math.round((totalCorrectCount / assessmentQuestions.length) * 100);
-
-      document.getElementById('result-user-headline').innerText = `Báo cáo đánh giá: ${name}`;
-      document.getElementById('metric-accuracy').innerText = `${totalCorrectCount} / ${assessmentQuestions.length}`;
-      document.getElementById('metric-percentage').innerText = `${pct}%`;
-
-      const rankBadge = document.getElementById('metric-rank');
-      const summaryText = document.getElementById('result-summary-text');
-
-      if (pct >= 85) {
-        rankBadge.innerText = "Xuất sắc";
-        rankBadge.className = "text-sm font-semibold font-mono text-emerald-400 pt-1";
-        summaryText.innerText = "Bạn đã nắm vững toàn diện kiến thức nền tảng về AI, đủ năng lực lập proposal và định hướng kỹ thuật cho Production House.";
-      } else if (pct >= 65) {
-        rankBadge.innerText = "Đạt yêu cầu";
-        rankBadge.className = "text-sm font-semibold font-mono text-apple-accent pt-1";
-        summaryText.innerText = "Bạn đã hiểu hầu hết các mô hình cốt lõi. Hãy tra cứu thêm mục Flashcard để làm rõ các điểm kỹ thuật chuyên sâu.";
-      } else {
-        rankBadge.innerText = "Cần củng cố";
-        rankBadge.className = "text-sm font-semibold font-mono text-amber-400 pt-1";
-        summaryText.innerText = "Khuyến nghị đọc lại mục Tài liệu tổng hợp để củng cố các phân biệt giữa Inpainting, Fine-Tuning và RAG.";
-      }
-    }
-
-    /* ==============================================================
-       5. FLASHCARDS CONTROLLER
-       ============================================================== */
-    let currentDeck = [...studyCardsData];
-    let activeCardIndex = 0;
-    let isCurrentCardFlipped = false;
-
-    function renderStudyCard() {
-      isCurrentCardFlipped = false;
-      const cardInner = document.getElementById('active-flashcard');
-      cardInner.classList.remove('is-flipped');
-
-      if (currentDeck.length === 0) return;
-      const card = currentDeck[activeCardIndex];
-
-      document.getElementById('card-front-category').innerText = card.domainBadge;
-      document.getElementById('card-front-title').innerText = card.frontTitle;
-      document.getElementById('card-front-sub').innerText = card.frontSub;
-
-      document.getElementById('card-back-title').innerText = card.backTitle;
-      document.getElementById('card-back-body').innerHTML = card.backBody;
-
-      document.getElementById('fc-counter').innerText = `${String(activeCardIndex + 1).padStart(2, '0')} / ${String(currentDeck.length).padStart(2, '0')}`;
-    }
-
-    function flipCardAction() {
-      playTone(400, 'sine', 0.05, 0.04);
-      isCurrentCardFlipped = !isCurrentCardFlipped;
-      const cardInner = document.getElementById('active-flashcard');
-      if (isCurrentCardFlipped) {
-        cardInner.classList.add('is-flipped');
-      } else {
-        cardInner.classList.remove('is-flipped');
-      }
-    }
-
-    function nextCard() {
-      if (activeCardIndex < currentDeck.length - 1) {
-        activeCardIndex++;
-      } else {
-        activeCardIndex = 0;
-      }
-      renderStudyCard();
-    }
-
-    function prevCard() {
-      if (activeCardIndex > 0) {
-        activeCardIndex--;
-      } else {
-        activeCardIndex = currentDeck.length - 1;
-      }
-      renderStudyCard();
-    }
-
-    function shuffleDeck() {
-      playTone(550, 'sine', 0.08, 0.04);
-      for (let i = currentDeck.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [currentDeck[i], currentDeck[j]] = [currentDeck[j], currentDeck[i]];
-      }
-      activeCardIndex = 0;
-      renderStudyCard();
-    }
-
-    function setCardFilter(cat) {
-      document.querySelectorAll('.fc-filter').forEach(btn => {
-        if (btn.getAttribute('data-filter') === cat) {
-          btn.className = "fc-filter px-3 py-1.5 rounded-md bg-white text-black font-semibold";
-        } else {
-          btn.className = "fc-filter px-3 py-1.5 rounded-md text-apple-secondary hover:text-apple-text";
-        }
-      });
-
-      if (cat === 'all') {
-        currentDeck = [...studyCardsData];
-      } else {
-        currentDeck = studyCardsData.filter(item => item.category === cat);
-      }
-      activeCardIndex = 0;
-      renderStudyCard();
-    }
-
-    function setCardMastery(known) {
-      if (known) {
-        soundAffirmative();
-      } else {
-        playTone(300, 'sine', 0.08, 0.04);
-      }
-      setTimeout(nextCard, 200);
-    }
-
-    window.addEventListener('keydown', (e) => {
-      const flashcardView = document.getElementById('view-flashcards');
-      if (!flashcardView.classList.contains('hidden')) {
-        if (e.code === 'Space') {
-          e.preventDefault();
-          flipCardAction();
-        } else if (e.code === 'ArrowRight') {
-          nextCard();
-        } else if (e.code === 'ArrowLeft') {
-          prevCard();
-        }
-      }
+    region.cantos.forEach((canto, idx) => {
+      const tab = document.createElement('button');
+      tab.type = 'button';
+      tab.className = 'canto-tab' + (idx === 0 ? ' active' : '');
+      tab.textContent = canto.label;
+      tab.onclick = () => {
+        document.querySelectorAll('.canto-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        renderCanto(canto);
+      };
+      tabsContainer.appendChild(tab);
     });
 
-    /* ==============================================================
-       6. TAB NAVIGATION CONTROLLER
-       ============================================================== */
-    function switchTab(target) {
-      playTone(600, 'sine', 0.04, 0.03);
-      const views = ['reference', 'flashcards', 'assessment'];
-      views.forEach(v => {
-        document.getElementById(`view-${v}`).classList.add('hidden');
-        document.getElementById(`nav-${v}`).className = "segmented-item px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 text-apple-secondary hover:text-apple-text";
+    renderCanto(region.cantos[0]);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function renderCanto(canto) {
+    const container = document.getElementById('poemContainer');
+    const readerPanel = document.getElementById('readerPanel');
+    readerPanel.scrollTop = 0;
+    clearPinnedGlosses();
+
+    let html = `
+      <h3 class="canto-title">${canto.label}</h3>
+      <p class="canto-subtitle">${canto.subtitle}</p>
+    `;
+
+    if (canto.stanzas) {
+      canto.stanzas.forEach((entry, index) => {
+        const rawText = typeof entry === "function" ? entry() : entry;
+        const formattedText = rawText.replace(/\n/g, '<br>');
+        html += `
+          <div class="stanza">
+            <span class="stanza-num">${index + 1}</span>
+            <p>${formattedText}</p>
+          </div>
+        `;
       });
-
-      document.getElementById(`view-${target}`).classList.remove('hidden');
-      document.getElementById(`nav-${target}`).className = "segmented-item px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 bg-white text-black font-semibold shadow-sm";
-
-      if (target === 'flashcards') {
-        renderStudyCard();
-      }
+    } else {
+      html += `
+        <div class="placeholder-box">
+          <p><strong>${canto.label}</strong> translation and notes are being prepared.</p>
+          <p style="margin-top: 8px; font-size: 1rem;">Select <strong>Gate of Hell &rarr; Canto I</strong> to read the full sample text.</p>
+        </div>
+      `;
     }
 
-    // Initial mount: Default to Reference Mindmap
-    selectMindmapNode('ecosystem');
-    renderStudyCard();
-  </script>
+    container.innerHTML = html;
+  }
+
+  function closeReader() {
+    const app = document.getElementById('app');
+    const readerPanel = document.getElementById('readerPanel');
+    const mapPanel = document.getElementById('mapPanel');
+
+    clearPinnedGlosses();
+    app.classList.remove('split-active');
+    document.querySelectorAll('.gate-btn, .tier-btn').forEach(btn => btn.classList.remove('active'));
+
+    readerPanel.scrollTop = 0;
+    if (mapPanel) mapPanel.scrollTop = 0;
+    document.getElementById('poemContainer').innerHTML = '';
+    document.getElementById('cantoTabs').innerHTML = '';
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+</script>
+
 </body>
 </html>
