@@ -348,6 +348,7 @@
       font-family: inherit;
       font-size: inherit;
       line-height: inherit;
+      display: inline;
       transition: background-color 0.2s ease, color 0.2s ease;
     }
 
@@ -503,24 +504,50 @@
     }
   };
 
-  function renderGlossWord(key) {
+  function createGlossElement(key) {
     const entry = keywordGlosses[key];
-    if (!entry) return "";
-    return `
-      <span class="gloss-wrapper" id="gloss-${key}">
-        <button
-          type="button"
-          class="gloss-term"
-          aria-expanded="false"
-          aria-controls="popover-${key}"
-          onclick="toggleGlossPin(event, '${key}')"
-        >${entry.term}</button>
-        <span class="gloss-popover" id="popover-${key}" role="dialog" aria-label="${entry.term} definition">
-          <span class="gloss-label">Reference Note</span>
-          <span>${entry.definition}</span>
-        </span>
-      </span>
-    `;
+    const wrapper = document.createElement("span");
+    wrapper.className = "gloss-wrapper";
+    wrapper.id = "gloss-" + key;
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "gloss-term";
+    btn.setAttribute("aria-expanded", "false");
+    btn.setAttribute("aria-controls", "popover-" + key);
+    btn.textContent = entry.term;
+    btn.addEventListener("click", (event) => toggleGlossPin(event, key));
+
+    const popover = document.createElement("span");
+    popover.className = "gloss-popover";
+    popover.id = "popover-" + key;
+    popover.setAttribute("role", "dialog");
+    popover.setAttribute("aria-label", entry.term + " definition");
+
+    const label = document.createElement("span");
+    label.className = "gloss-label";
+    label.textContent = "Reference Note";
+
+    const defText = document.createElement("span");
+    defText.textContent = entry.definition;
+
+    popover.appendChild(label);
+    popover.appendChild(defText);
+
+    wrapper.appendChild(btn);
+    wrapper.appendChild(popover);
+
+    return wrapper;
+  }
+
+  function appendFormattedLines(targetEl, text) {
+    const lines = text.split("\n");
+    lines.forEach((line, i) => {
+      targetEl.appendChild(document.createTextNode(line));
+      if (i < lines.length - 1) {
+        targetEl.appendChild(document.createElement("br"));
+      }
+    });
   }
 
   // Canto I Full Text Data (Separated into Tercets / Stanzas)
@@ -551,7 +578,11 @@
     "And I was born, though late, sub Julio,\nand lived in Rome under the good Augustus \u2014\nthe season of the false and lying gods.",
     "I was a poet, and I sang the righteous\nson of Anchises who had come from Troy\nwhen flames destroyed the pride of Ilium.",
     "But why do you return to wretchedness?\nWhy not climb up the mountain of delight,\nthe origin and cause of every joy?\u201d",
-    () => `\u201cAnd are you then that ${renderGlossWord("virgil")}, you the fountain\nthat freely pours so rich a stream of speech?\u201d\nI answered him with shame upon my brow.`,
+    [
+      "\u201cAnd are you then that ",
+      { gloss: "virgil" },
+      ", you the fountain\nthat freely pours so rich a stream of speech?\u201d\nI answered him with shame upon my brow."
+    ],
     "\u201cO light and honor of all other poets,\nmay my long study and the intense love\nthat made me search your volume serve me now.",
     "You are my master and my author, you \u2014\nthe only one from whom my writing drew\nthe noble style for which I have been honored.",
     "You see the beast that made me turn aside;\nhelp me, o famous sage, to stand against her,\nfor she has made my blood and pulses shudder,\u201d",
@@ -670,33 +701,69 @@
     const readerPanel = document.getElementById('readerPanel');
     readerPanel.scrollTop = 0;
     clearPinnedGlosses();
+    container.innerHTML = '';
 
-    let html = `
-      <h3 class="canto-title">${canto.label}</h3>
-      <p class="canto-subtitle">${canto.subtitle}</p>
-    `;
+    const titleEl = document.createElement('h3');
+    titleEl.className = 'canto-title';
+    titleEl.textContent = canto.label;
+
+    const subtitleEl = document.createElement('p');
+    subtitleEl.className = 'canto-subtitle';
+    subtitleEl.textContent = canto.subtitle;
+
+    container.appendChild(titleEl);
+    container.appendChild(subtitleEl);
 
     if (canto.stanzas) {
       canto.stanzas.forEach((entry, index) => {
-        const rawText = typeof entry === "function" ? entry() : entry;
-        const formattedText = rawText.replace(/\n/g, '<br>');
-        html += `
-          <div class="stanza">
-            <span class="stanza-num">${index + 1}</span>
-            <p>${formattedText}</p>
-          </div>
-        `;
+        const stanzaDiv = document.createElement('div');
+        stanzaDiv.className = 'stanza';
+
+        const numSpan = document.createElement('span');
+        numSpan.className = 'stanza-num';
+        numSpan.textContent = String(index + 1);
+
+        const pEl = document.createElement('p');
+
+        if (Array.isArray(entry)) {
+          entry.forEach(part => {
+            if (typeof part === 'string') {
+              appendFormattedLines(pEl, part);
+            } else if (part && part.gloss) {
+              pEl.appendChild(createGlossElement(part.gloss));
+            }
+          });
+        } else {
+          appendFormattedLines(pEl, entry);
+        }
+
+        stanzaDiv.appendChild(numSpan);
+        stanzaDiv.appendChild(pEl);
+        container.appendChild(stanzaDiv);
       });
     } else {
-      html += `
-        <div class="placeholder-box">
-          <p><strong>${canto.label}</strong> translation and notes are being prepared.</p>
-          <p style="margin-top: 8px; font-size: 1rem;">Select <strong>Gate of Hell &rarr; Canto I</strong> to read the full sample text.</p>
-        </div>
-      `;
-    }
+      const box = document.createElement('div');
+      box.className = 'placeholder-box';
 
-    container.innerHTML = html;
+      const p1 = document.createElement('p');
+      const strong = document.createElement('strong');
+      strong.textContent = canto.label;
+      p1.appendChild(strong);
+      p1.appendChild(document.createTextNode(' translation and notes are being prepared.'));
+
+      const p2 = document.createElement('p');
+      p2.style.marginTop = '8px';
+      p2.style.fontSize = '1rem';
+      p2.appendChild(document.createTextNode('Select '));
+      const strong2 = document.createElement('strong');
+      strong2.textContent = 'Gate of Hell -> Canto I';
+      p2.appendChild(strong2);
+      p2.appendChild(document.createTextNode(' to read the full sample text.'));
+
+      box.appendChild(p1);
+      box.appendChild(p2);
+      container.appendChild(box);
+    }
   }
 
   function closeReader() {
